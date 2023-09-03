@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const NavBar = () => {
     return (
-        <div className="navbar bg-gradient-to-r from-ygreen to-green flex items-center h-24 bg-size-400%">
+        <div className="absolute flex items-center h-16 bg-[#0000004a] w-full">
             <div className="flex-1">
                 <a className="btn btn-ghost normal-case text-xl navBarHeader">
                     My Website

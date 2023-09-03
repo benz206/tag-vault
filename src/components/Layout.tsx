@@ -1,10 +1,10 @@
 import React, { PropsWithChildren } from "react";
-import Navbar from "./navigation/NavBar";
+import Navbar from "@/components/NavBar";
 
 const Layout = ({ children }: PropsWithChildren) => {
     return (
         <>
-            {/* <Navbar /> */}
+            <Navbar />
             {children}
         </>
     );
