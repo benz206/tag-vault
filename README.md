@@ -4,6 +4,8 @@ This is not affiliated or endorsed by BotLabs, Carl-bots parent company.
 
 ## Running the project
 
+Currently you can't.
+
 You'll need to have [Node.js](https://nodejs.org/en/) installed. Then do the following:
 
 ```sh
