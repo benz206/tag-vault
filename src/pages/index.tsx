@@ -30,33 +30,30 @@ export default function Home() {
                 <div className="flex flex-row justify-center w-full content-center flex-wrap -top-24 space-x-20 relative">
                     <div className="rounded-xl bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-cyan-400 shadow-xl border-t-8 border-cyan-400 w-128 hover:scale-110 transform transition-transform duration-440">
                         <h2 className="text-center">Explore TagScript</h2>
-                        {statsData?.tag_count ? (
-                            <p>
-                                Explore a dynamic database with{" "}
-                                <span className="font-bold text-cyan-300 animate-pulse">
-                                    {statsData.tag_count.toLocaleString()}
-                                </span>{" "}
-                                tags.
-                            </p>
-                        ) : (
-                            <p>
-                                Explore a dynamic database with{" "}
-                                <span className="font-bold text-cyan-300">
-                                    loading...
-                                </span>{" "}
-                                tags.
-                            </p>
-                        )}
+                        <p>
+                            Explore a{" "} 
+                            <span className="font-bold text-cyan-300 animate-pulse">
+                                dynamic
+                            </span>{" "} database with{" "}
+                            <span className="font-bold text-cyan-300 animate-pulse">
+                                {statsData?.tag_count ? (
+                                    <>{statsData.tag_count.toLocaleString()}</>
+                                ) : (
+                                    "loading..."
+                                )}
+                            </span>{" "}
+                            tags.
+                        </p>
                     </div>
                     <div className="rounded-xl bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-green-500 shadow-xl border-t-8 border-green-500 w-128 hover:scale-110 transform transition-transform duration-440">
                         <h2 className="text-center">Find PreBuilt Tags</h2>
                         <p>
                             From{" "}
-                            <span className="font-bold text-green-300 animate-pulse">
+                            <span className="font-thin text-green-300 animate-pulse">
                                 simple
                             </span>{" "}
                             tags to{" "}
-                            <span className="font-bold text-green-500 animate-pulse">
+                            <span className="font-bold text-green-600 animate-pulse">
                                 complex
                             </span>{" "}
                             commands, find what you need with ease.
@@ -64,27 +61,26 @@ export default function Home() {
                     </div>
                     <div className="rounded-xl bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-rose-400 shadow-xl border-t-8 border-rose-400 w-128 hover:scale-110 transform transition-transform duration-440">
                         <h2 className="text-center">Endless Discovery</h2>
-                        {statsData?.latest_last_fetched ? (
-                            <p>
-                                Tags are updated constantly! The last update was
-                                only{" "}
-                                <span className="font-bold text-rose-400 animate-pulse">
-                                    {getTimeSince(
-                                        new Date(statsData.latest_last_fetched)
-                                    )}{" "}
-                                    milliseconds
-                                </span>{" "}
-                                ago.
-                            </p>
-                        ) : (
-                            <p>
-                                Explore a dynamic database with{" "}
-                                <span className="font-bold text-rose-400">
-                                    loading...
-                                </span>{" "}
-                                tags.
-                            </p>
-                        )}
+                        <p>
+                            Tags are updated{" "}
+                            <span className="font-bold text-rose-400 animate-pulse">constantly!</span>{" "}The last update was
+                            only{" "}
+                            <span className="font-bold text-rose-400 animate-pulse">
+                                {statsData?.latest_last_fetched ? (
+                                    <>
+                                        {getTimeSince(
+                                            new Date(
+                                                statsData.latest_last_fetched
+                                            )
+                                        )}{" "}
+                                        milliseconds
+                                    </>
+                                ) : (
+                                    "loading..."
+                                )}
+                            </span>{" "}
+                            ago.
+                        </p>
                     </div>
                 </div>
                 <div className="flex flex-row justify-center h-128 w-full content-center flex-wrap space-x-40 relative">
