@@ -14,3 +14,8 @@ export type TagData = {
     description: string | null;
     restricted: boolean;
 };
+
+export type Statistics = {
+    tag_count: number;
+    latest_last_fetched: Date;
+};

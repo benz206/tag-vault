@@ -37,8 +37,21 @@ body {
 }
 
 h1 {
+    font-size: 7rem;
+    font-weight: 800;
+}
+
+h2 {
     font-size: 3rem;
     font-weight: 700;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
+}
+
+p {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+span {
+    font-size: 1.25rem;
+    font-weight: 500;
 }

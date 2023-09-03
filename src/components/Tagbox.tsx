@@ -1,20 +1,9 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { TagData } from "@/types";
+import { getTagData } from "@/utils";
 
-async function getData(id: number) {
-    const res = await fetch("/api/tags/" + id);
-
-    if (!res.ok) {
-        throw new Error("Failed to fetch data");
-    }
-
-    return res.json();
-}
-
-export default function Page() {
-    const router = useRouter();
-    const { id } = router.query;
+export default function Tagbox({ id }: { id: number }) {
     const [data, setData] = useState<TagData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -24,7 +13,7 @@ export default function Page() {
             return;
         }
 
-        getData(Number(id))
+        getTagData(Number(id))
             .then((result) => {
                 setData(result);
                 setLoading(false);
@@ -36,7 +25,7 @@ export default function Page() {
     }, [id]);
 
     return (
-        <div>
+        <div className="rounded-xl bg-pink-400 p-8 bg-slate-800 w-128 h-128">
             {loading ? (
                 <p>Loading data...</p>
             ) : data ? (

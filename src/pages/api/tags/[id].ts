@@ -1,15 +1,11 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { MongoClient } from "mongodb";
+import client from "@/utils/mongodb/mongo";
 import { TagData } from "@/types";
 
 type Error = {
     error: string;
 };
 
-const client = new MongoClient(
-    `mongodb+srv://${process.env.Mongo_User}:${process.env.Mongo_Pass}@carltagscluster.nyxt2.mongodb.net/TagDB?retryWrites=true&w=majority`
-);
 const db = client.db("TagDB");
 const collection = db.collection("NewTags");
 
