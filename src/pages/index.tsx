@@ -24,10 +24,10 @@ export default function Home() {
     return (
         <>
             <div className="flex justify-center h-full w-full flex-col">
-                <div className="flex justify-center h-96 w-full bg-sky-950 content-center flex-wrap">
+                <div className="flex justify-center h-96 w-full bg-gradient-to-r from-pink-500 to-rose-500 content-center flex-wrap">
                     <h1 className="-top-8 relative">Tag Store</h1>
                 </div>
-                <div className="flex flex-row justify-center w-full content-center flex-wrap -top-24 space-x-20 relative">
+                <div className="flex flex-row justify-center w-full content-center flex-wrap -top-24 space-x-28 relative">
                     <div className="rounded-xl bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-cyan-400 shadow-xl border-t-8 border-cyan-400 w-128 hover:scale-110 transform transition-transform duration-440">
                         <h2 className="text-center">Explore TagScript</h2>
                         <p>
@@ -83,7 +83,7 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="flex flex-row justify-center h-128 w-full content-center flex-wrap space-x-40 relative">
+                <div className="flex flex-row justify-center h-128 w-full content-center flex-wrap space-x-28 relative">
                     <Tagbox id={22} />
                     <Tagbox id={22} />
                     <Tagbox id={22} />
