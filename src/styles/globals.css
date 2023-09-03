@@ -1,10 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
     --background: #000311;
     --background-light: #32374f;
     --blue: #51e5ff;
     --pink: #ec368d;
     --yellow-green: #bbcd4c;
-    --green: #768041; 
+    --green: #768041;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+main {
+    height: 100%;
+    width: 100%;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -18,17 +32,13 @@
 body {
     color: white;
     background: var(--background);
+    height: 100%;
+    width: 100%;
 }
 
 h1 {
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    margin-left: 1rem;
-}
-
-.navBarHeader {
-    font-size: 2rem;
-    font-weight: 700;
     margin-left: 1rem;
 }

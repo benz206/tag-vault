@@ -3,9 +3,9 @@ import type { AppProps } from "next/app";
 import Layout from "@/components/Layout";
 import { Fira_Sans } from "next/font/google";
 
-const firaSans = Fira_Sans({ 
+const firaSans = Fira_Sans({
     weight: ["400", "700"],
-    subsets: ["latin"]
+    subsets: ["latin"],
 });
 
 export default function App({ Component, pageProps }: AppProps) {
