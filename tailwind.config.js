@@ -22,7 +22,7 @@ module.exports = {
             cover: "cover",
             contain: "contain",
             "400%": "400%",
-        }
+        },
     },
     plugins: [],
 };
