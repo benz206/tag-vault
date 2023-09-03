@@ -1,0 +1,24 @@
+{
+    "name": "tag-store",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "prettier --write ."
+    },
+    "dependencies": {
+        "autoprefixer": "^10.4.14",
+        "eslint": "^8.38.0",
+        "mongodb": "^6.0.0",
+        "next": "^13.3.0",
+        "prettier": "^2.8.7",
+        "swr": "^2.1.5"
+    },
+    "devDependencies": {
+        "@types/node": "^20.5.9",
+        "@types/react": "18.0.35",
+        "typescript": "5.0.4"
+    }
+}
