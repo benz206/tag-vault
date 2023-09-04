@@ -29,12 +29,13 @@ export default function Home() {
                 </div>
                 <div className="flex flex-row justify-center w-full content-center flex-wrap -top-24 space-x-28 relative">
                     <div className="rounded-xl bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-cyan-400 shadow-xl border-t-8 border-cyan-400 w-128 hover:scale-110 transform transition-transform duration-440">
-                        <h2 className="text-center">Explore TagScript</h2>
+                        <h2 className="text-center text-cyan-300">Explore TagScript</h2>
                         <p>
-                            Explore a{" "} 
+                            Explore a{" "}
                             <span className="font-bold text-cyan-300 animate-pulse">
                                 dynamic
-                            </span>{" "} database with{" "}
+                            </span>{" "}
+                            database with{" "}
                             <span className="font-bold text-cyan-300 animate-pulse">
                                 {statsData?.tag_count ? (
                                     <>{statsData.tag_count.toLocaleString()}</>
@@ -46,7 +47,7 @@ export default function Home() {
                         </p>
                     </div>
                     <div className="rounded-xl bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-green-500 shadow-xl border-t-8 border-green-500 w-128 hover:scale-110 transform transition-transform duration-440">
-                        <h2 className="text-center">Find PreBuilt Tags</h2>
+                        <h2 className="text-center text-green-400">Find PreBuilt Tags</h2>
                         <p>
                             From{" "}
                             <span className="font-thin text-green-300 animate-pulse">
@@ -60,11 +61,13 @@ export default function Home() {
                         </p>
                     </div>
                     <div className="rounded-xl bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-rose-400 shadow-xl border-t-8 border-rose-400 w-128 hover:scale-110 transform transition-transform duration-440">
-                        <h2 className="text-center">Endless Discovery</h2>
+                        <h2 className="text-center text-rose-400">Endless Discovery</h2>
                         <p>
                             Tags are updated{" "}
-                            <span className="font-bold text-rose-400 animate-pulse">constantly!</span>{" "}The last update was
-                            only{" "}
+                            <span className="font-bold text-rose-400 animate-pulse">
+                                constantly!
+                            </span>{" "}
+                            The last update was only{" "}
                             <span className="font-bold text-rose-400 animate-pulse">
                                 {statsData?.latest_last_fetched ? (
                                     <>
@@ -83,10 +86,13 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
+                <div className="flex flex-row justify-center w-full content-center flex-wrap -top-8 space-x-28 relative">
+                    <h1 className="text-center">Featured Tags</h1>
+                </div>
                 <div className="flex flex-row justify-center h-128 w-full content-center flex-wrap space-x-28 relative">
-                    <Tagbox id={22} />
-                    <Tagbox id={22} />
-                    <Tagbox id={22} />
+                    <Tagbox id={1157946} />
+                    <Tagbox id={1111722} />
+                    <Tagbox id={1217391} />
                 </div>
             </div>
         </>

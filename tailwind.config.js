@@ -24,5 +24,10 @@ module.exports = {
             "400%": "400%",
         },
     },
+    safelist: [
+        {
+            pattern: /(border|shadow)-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(500|600|700)/,
+        },
+    ],
     plugins: [],
 };
