@@ -43,20 +43,28 @@ export default function Page() {
     return (
         <>
             <div
-                className={`flex justify-center h-128 w-full bg-${color} content-center flex-wrap`}
+                className={`flex justify-center h-36 lg:h-80 w-full bg-${color} content-center flex-wrap`}
             >
-                <h1 className="-top-8 relative">{data?.tag_name}</h1>
+                <h1 className="top-2 lg:-top-4 relative text-3xl lg:text-9xl">
+                    {data?.tag_name}
+                </h1>
             </div>
-            {loading ? (
-                <p>Loading data...</p>
-            ) : data ? (
-                <>
-                    <pre>{JSON.stringify(data, null, 2)}</pre>
-                    <p>{data.tag_name}</p>
-                </>
-            ) : (
-                <p>Sorry, but there was an error loading data.</p>
-            )}
+            <div className="flex justify-center">
+                <div
+                    className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${color} shadow-${color} shadow-xl transform transition-transform duration-440 mt-4 lg:mt-12`}
+                >
+                    {loading ? (
+                        <p>Loading data...</p>
+                    ) : data ? (
+                        <>
+                            <pre>{JSON.stringify(data, null, 2)}</pre>
+                            <p>{data.tag_name}</p>
+                        </>
+                    ) : (
+                        <p>Sorry, but there was an error loading data.</p>
+                    )}
+                </div>
+            </div>
         </>
     );
 }

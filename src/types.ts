@@ -19,3 +19,17 @@ export type Statistics = {
     tag_count: number;
     latest_last_fetched: Date;
 };
+
+export type DiscordUser = {
+    id: string;
+    username: string;
+    avatar: string;
+    discriminator: string;
+    public_flags: number;
+    flags: number;
+    banner: string | null;
+    accent_color: number;
+    global_name: string;
+    avatar_decoration_data: null;
+    banner_color: string;
+};

@@ -5,7 +5,9 @@ import { Statistics } from "@/types";
 
 function getTimeSince(startDate: Date): number {
     const currentDate = new Date();
-    return Math.abs(currentDate.getTime() - startDate.getTime());
+    return Math.round(
+        Math.abs(currentDate.getTime() - startDate.getTime()) / 1000
+    );
 }
 
 export default function Home() {
@@ -29,7 +31,7 @@ export default function Home() {
                         Tag Vault
                     </h1>
                 </div>
-                <div className="flex flex-row justify-center w-full content-center flex-wrap -top-20 lg:space-x-18 relative lg:h-48">
+                <div className="flex flex-row justify-center w-full content-center flex-wrap -mt-20 lg:space-x-18 relative lg:h-48">
                     <div className="rounded-xl mb-10 lg:m-0 bg-slate-600 p-8 flex flex-col border-cyan-400 shadow-cyan-400 shadow-xl border-t-8 border-cyan-400 w-80 lg:w-128 hover:scale-110 transform transition-transform duration-440">
                         <h2 className="text-center text-cyan-300 text-2xl lg:text-5xl mb-4">
                             Explore TagScript
@@ -84,7 +86,7 @@ export default function Home() {
                                                 statsData.latest_last_fetched
                                             )
                                         )}{" "}
-                                        milliseconds
+                                        seconds
                                     </>
                                 ) : (
                                     "loading..."
@@ -94,15 +96,20 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="flex justify-center w-full content-center -top-8 lg:-top-4 relative -mb-24 lg:-mb-32">
+                <div className="flex justify-center w-full content-center pt-12 relative">
                     <h1 className="text-center text-5xl lg:text-7xl">
                         Featured Tags
                     </h1>
                 </div>
-                <div className="flex flex-row justify-center lg:h-128 w-full content-center flex-wrap top-24 lg:top-0lg:space-x-28 relative">
+                <div className="flex flex-row justify-center lg:h-96 w-full content-center flex-wrap relative lg:-mb-12">
                     <Tagbox id={1157946} />
                     <Tagbox id={1111722} />
                     <Tagbox id={1217391} />
+                </div>
+                <div className="flex flex-row justify-center lg:h-96 w-full content-center flex-wrap relative lg:-mb-18 -mb-24">
+                    <Tagbox id={825576} />
+                    <Tagbox id={962280} />
+                    <Tagbox id={865606} />
                 </div>
             </div>
         </>
