@@ -42,7 +42,9 @@ export default function Page() {
 
     return (
         <>
-            <div className={`flex justify-center h-128 w-full bg-${color} content-center flex-wrap`}>
+            <div
+                className={`flex justify-center h-128 w-full bg-${color} content-center flex-wrap`}
+            >
                 <h1 className="-top-8 relative">{data?.tag_name}</h1>
             </div>
             {loading ? (
