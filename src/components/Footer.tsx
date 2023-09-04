@@ -7,7 +7,9 @@ export default function Footer() {
                     className="text-slate-700"
                     href="https://github.com/Leg3ndary"
                 >
-                    <span className="text-xs lg:text-md font-bold">Leg3ndary</span>
+                    <span className="text-xs lg:text-md font-bold">
+                        Leg3ndary
+                    </span>
                 </a>
                 , 2023
             </p>
