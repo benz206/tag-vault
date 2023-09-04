@@ -60,7 +60,7 @@ export default function Tagbox({ id }: { id: number }) {
             ) : tagData ? (
                 <>
                     <div className="flex flex-row mb-2 -top-2 relative">
-                        <h2 className="truncate text-2xl lg:text-5xl">
+                        <h2 className="truncate text-2xl lg:text-4xl">
                             {tagData.tag_name}
                         </h2>
                         <img
