@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { TagData } from "@/types";
+import { getTagColor } from "@/utils";
 
 async function getData(id: number) {
     const res = await fetch("/api/tags/" + id);
@@ -17,6 +18,7 @@ export default function Page() {
     const { id } = router.query;
     const [data, setData] = useState<TagData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [color, setColor] = useState<string | null>(null);
 
     useEffect(() => {
         if (!id || isNaN(Number(id))) {
@@ -27,6 +29,9 @@ export default function Page() {
         getData(Number(id))
             .then((result) => {
                 setData(result);
+                setColor(
+                    getTagColor(Number(result.id), Number(result.owner_id))
+                );
                 setLoading(false);
             })
             .catch((error) => {
@@ -36,7 +41,10 @@ export default function Page() {
     }, [id]);
 
     return (
-        <div>
+        <>
+            <div className={`flex justify-center h-128 w-full bg-${color} content-center flex-wrap`}>
+                <h1 className="-top-8 relative">{data?.tag_name}</h1>
+            </div>
             {loading ? (
                 <p>Loading data...</p>
             ) : data ? (
@@ -47,6 +55,6 @@ export default function Page() {
             ) : (
                 <p>Sorry, but there was an error loading data.</p>
             )}
-        </div>
+        </>
     );
 }
