@@ -7,7 +7,7 @@ type Error = {
 };
 
 const db = client.db("TagDB");
-const collection = db.collection("NewTags");
+const collection = db.collection("Tags");
 
 export default async function handler(
     req: NextApiRequest,

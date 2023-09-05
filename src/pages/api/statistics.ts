@@ -25,7 +25,7 @@ export default async function handler(
     res: NextApiResponse<Statistics>
 ) {
     const db = client.db("TagDB");
-    const collection = db.collection("NewTags");
+    const collection = db.collection("Tags");
 
     const tagCount = await collection.countDocuments();
     const lastFetched = await getLatestLastFetched(collection);
