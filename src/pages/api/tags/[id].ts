@@ -27,12 +27,16 @@ export default async function handler(
         return res.status(404).json({ error: "Tag ID Non Existent" });
     }
 
-    if (rawTagData.deleted) {
+    if (rawTagData.deleted || !rawTagData.shared) {
         return res.status(404).json({ error: "Tag is Private" });
     }
 
     if (rawTagData.nsfw) {
         return res.status(404).json({ error: "Tag is NSFW" });
+    }
+
+    if (rawTagData.safe === "not_safe") {
+        return res.status(404).json({ error: "This tag is currently under review" });
     }
 
     const convertedTagData: TagData = {
@@ -50,6 +54,8 @@ export default async function handler(
         deleted: rawTagData.deleted,
         description: rawTagData.description,
         restricted: rawTagData.restricted,
+        shared: rawTagData.shared,
+        safe: rawTagData.safe,
     };
 
     res.status(200).json(convertedTagData);

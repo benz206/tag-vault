@@ -13,6 +13,8 @@ export type TagData = {
     deleted: boolean;
     description: string | null;
     restricted: boolean;
+    shared: boolean;
+    safe: string;
 };
 
 export type Statistics = {
