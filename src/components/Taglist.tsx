@@ -1,7 +1,9 @@
 import { TagData, ShortTagData } from "@/types";
 import Tagbox from "@/components/Tagbox";
 
-export default function Taglist({ tags }: { tags: TagData[]} | { tags: ShortTagData[]}) {
+export default function Taglist({
+    tags,
+}: { tags: TagData[] } | { tags: ShortTagData[] }) {
     const boxes = [];
 
     const newLength = Math.min(12, tags.length);
@@ -13,11 +15,7 @@ export default function Taglist({ tags }: { tags: TagData[]} | { tags: ShortTagD
                 <Tagbox id={tags[i + 1].id} />
                 <Tagbox id={tags[i + 2].id} />
             </div>
-        )
+        );
     }
-    return (
-        <div className="h-auto">
-            {boxes}
-        </div>
-    );
+    return <div className="h-auto">{boxes}</div>;
 }

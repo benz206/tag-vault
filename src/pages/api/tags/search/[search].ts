@@ -19,29 +19,31 @@ export default async function handler(
         return res.status(400).json({ error: "Search query too long for now" });
     }
 
-    const queries = await collection.aggregate([
-        {
-            $search: {
-                index: "default",
-                text: {
-                    query: search,
-                    path: {
-                        wildcard: "*",
+    const queries = await collection
+        .aggregate([
+            {
+                $search: {
+                    index: "default",
+                    text: {
+                        query: search,
+                        path: {
+                            wildcard: "*",
+                        },
                     },
                 },
             },
-        },
-        {
-            $match: {
-                $and: [
-                    { shared: true },
-                    { deleted: false },
-                    { nsfw: false },
-                    { safe: { $in: ["safe", "unrated"] } },
-                ],
+            {
+                $match: {
+                    $and: [
+                        { shared: true },
+                        { deleted: false },
+                        { nsfw: false },
+                        { safe: { $in: ["safe", "unrated"] } },
+                    ],
+                },
             },
-        },
-    ]).toArray();
+        ])
+        .toArray();
 
     const tagData: TagData[] = queries.map((query) => ({
         id: query.id,

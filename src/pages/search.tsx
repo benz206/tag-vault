@@ -16,7 +16,7 @@ export default function Home() {
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
-    };
+    }
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -35,20 +35,35 @@ export default function Home() {
                         Search Tags
                     </h1>
                     <div className="rounded-xl mb-10 bg-slate-600 p-2 flex flex-col">
-                        <form className="flex justify-evenly" onSubmit={handleSubmit}>
+                        <form
+                            className="flex justify-evenly"
+                            onSubmit={handleSubmit}
+                        >
                             <input
                                 className="text-left text-white text-xl lg:text-4xl bg-slate-400 rounded-lg p-4 flex-1 text-bold placeholder:text-slate-200"
                                 type="text"
                                 placeholder="Search..."
                                 value={query}
-                               onChange={handleInputChange}
+                                onChange={handleInputChange}
                             />
-                            <button 
+                            <button
                                 className="w-4/12 bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-lg text-xl lg:text-4xl flex justify-center items-center"
                                 type="submit"
                             >
-                                <svg className="w-8 h-8 text-white mr-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                <svg
+                                    className="w-8 h-8 text-white mr-4"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
                                 </svg>
                                 Search
                             </button>
@@ -56,12 +71,7 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="flex justify-center content-center flex-wrap">
-                    {searchData ? (
-                        <Taglist tags={searchData.search}/>
-                    ) : (
-                        <>
-                        </>
-                    )}
+                    {searchData ? <Taglist tags={searchData.search} /> : <></>}
                 </div>
             </div>
         </>

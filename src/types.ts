@@ -43,8 +43,8 @@ export type Error = {
 
 export type SearchQuery = {
     search: TagData[];
-}
+};
 
 export type ShortTagData = {
     id: number;
-}
+};

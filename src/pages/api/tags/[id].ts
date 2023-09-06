@@ -36,7 +36,9 @@ export default async function handler(
     }
 
     if (rawTagData.safe === "not_safe") {
-        return res.status(404).json({ error: "This tag is currently under review" });
+        return res
+            .status(404)
+            .json({ error: "This tag is currently under review" });
     }
 
     const convertedTagData: TagData = {

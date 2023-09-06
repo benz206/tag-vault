@@ -12,23 +12,23 @@ function getTimeSince(startDate: Date): number {
 
 const featuredTags: ShortTagData[] = [
     {
-        id: 1157946
+        id: 1157946,
     },
     {
-        id: 1111722
+        id: 1111722,
     },
     {
-        id: 1217391
+        id: 1217391,
     },
     {
-        id: 825576
+        id: 825576,
     },
     {
-        id: 962280
+        id: 962280,
     },
     {
-        id: 865606
-    }
+        id: 865606,
+    },
 ];
 
 export default function Home() {
@@ -65,7 +65,9 @@ export default function Home() {
                             database with{" "}
                             <span className="font-bold text-cyan-300 animate-pulse">
                                 {statsData?.public_tag_count ? (
-                                    <>{statsData.public_tag_count.toLocaleString()}</>
+                                    <>
+                                        {statsData.public_tag_count.toLocaleString()}
+                                    </>
                                 ) : (
                                     "loading..."
                                 )}
@@ -94,9 +96,10 @@ export default function Home() {
                             Help Us Grow
                         </h2>
                         <p>
-                            There are still {" "}
+                            There are still{" "}
                             <span className="font-bold text-rose-400 animate-pulse">
-                                {statsData?.all_tag_count && statsData?.public_tag_count ? (
+                                {statsData?.all_tag_count &&
+                                statsData?.public_tag_count ? (
                                     <>
                                         {(
                                             statsData.all_tag_count -
@@ -107,8 +110,7 @@ export default function Home() {
                                     "loading..."
                                 )}
                             </span>{" "}
-                            tags to be shared.
-                            The last update was only{" "}
+                            tags to be shared. The last update was only{" "}
                             <span className="font-bold text-rose-400 animate-pulse">
                                 {statsData?.latest_last_fetched ? (
                                     <>
