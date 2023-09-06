@@ -12,7 +12,7 @@ const NavBar = () => {
             <div className="flex-none relative right-8">
                 <ul className="menu menu-horizontal px-1 flex justify-end">
                     <li>
-                        <Link href="/">Search</Link>
+                        <Link href="/search">Search</Link>
                     </li>
                 </ul>
             </div>

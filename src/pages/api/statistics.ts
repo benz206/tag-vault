@@ -27,11 +27,13 @@ export default async function handler(
     const db = client.db("TagDB");
     const collection = db.collection("Tags");
 
-    const tagCount = await collection.countDocuments();
+    const allTagCount = await collection.countDocuments();
+    const publicTagCount = await collection.countDocuments({shared: true});
     const lastFetched = await getLatestLastFetched(collection);
 
     res.status(200).json({
-        tag_count: tagCount,
+        all_tag_count: allTagCount,
+        public_tag_count: publicTagCount,
         latest_last_fetched: lastFetched,
     });
 }

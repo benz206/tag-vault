@@ -18,7 +18,8 @@ export type TagData = {
 };
 
 export type Statistics = {
-    tag_count: number;
+    all_tag_count: number;
+    public_tag_count: number;
     latest_last_fetched: Date;
 };
 
@@ -35,3 +36,15 @@ export type DiscordUser = {
     avatar_decoration_data: null;
     banner_color: string;
 };
+
+export type Error = {
+    error: string;
+};
+
+export type SearchQuery = {
+    search: TagData[];
+}
+
+export type ShortTagData = {
+    id: number;
+}

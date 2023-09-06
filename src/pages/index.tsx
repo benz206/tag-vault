@@ -1,7 +1,7 @@
-import Tagbox from "@/components/Tagbox";
+import Taglist from "@/components/Taglist";
 import { useState, useEffect } from "react";
 import { getStats } from "@/utils";
-import { Statistics } from "@/types";
+import { ShortTagData, Statistics } from "@/types";
 
 function getTimeSince(startDate: Date): number {
     const currentDate = new Date();
@@ -9,6 +9,27 @@ function getTimeSince(startDate: Date): number {
         Math.abs(currentDate.getTime() - startDate.getTime()) / 1000
     );
 }
+
+const featuredTags: ShortTagData[] = [
+    {
+        id: 1157946
+    },
+    {
+        id: 1111722
+    },
+    {
+        id: 1217391
+    },
+    {
+        id: 825576
+    },
+    {
+        id: 962280
+    },
+    {
+        id: 865606
+    }
+];
 
 export default function Home() {
     const [statsData, setStatsData] = useState<Statistics | null>(null);
@@ -43,8 +64,8 @@ export default function Home() {
                             </span>{" "}
                             database with{" "}
                             <span className="font-bold text-cyan-300 animate-pulse">
-                                {statsData?.tag_count ? (
-                                    <>{statsData.tag_count.toLocaleString()}</>
+                                {statsData?.public_tag_count ? (
+                                    <>{statsData.public_tag_count.toLocaleString()}</>
                                 ) : (
                                     "loading..."
                                 )}
@@ -70,13 +91,23 @@ export default function Home() {
                     </div>
                     <div className="rounded-xl lg:m-0 bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-rose-400 shadow-xl border-t-8 border-rose-400 w-80 lg:w-128 hover:scale-110 transform transition-transform duration-440">
                         <h2 className="text-center text-rose-400 text-2xl lg:text-5xl mb-4">
-                            Endless Discovery
+                            Help Us Grow
                         </h2>
                         <p>
-                            Tags are updated{" "}
+                            There are still {" "}
                             <span className="font-bold text-rose-400 animate-pulse">
-                                constantly!
+                                {statsData?.all_tag_count && statsData?.public_tag_count ? (
+                                    <>
+                                        {(
+                                            statsData.all_tag_count -
+                                            statsData.public_tag_count
+                                        ).toLocaleString()}
+                                    </>
+                                ) : (
+                                    "loading..."
+                                )}
                             </span>{" "}
+                            tags to be shared.
                             The last update was only{" "}
                             <span className="font-bold text-rose-400 animate-pulse">
                                 {statsData?.latest_last_fetched ? (
@@ -101,7 +132,8 @@ export default function Home() {
                         Featured Tags
                     </h1>
                 </div>
-                <div className="flex flex-row justify-center lg:h-96 w-full content-center flex-wrap relative lg:-mb-12">
+                <Taglist tags={featuredTags} />
+                {/* <div className="flex flex-row justify-center lg:h-96 w-full content-center flex-wrap relative lg:-mb-12">
                     <Tagbox id={1157946} />
                     <Tagbox id={1111722} />
                     <Tagbox id={1217391} />
@@ -110,7 +142,7 @@ export default function Home() {
                     <Tagbox id={825576} />
                     <Tagbox id={962280} />
                     <Tagbox id={865606} />
-                </div>
+                </div> */}
             </div>
         </>
     );
