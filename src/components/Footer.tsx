@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <div className="flex flex-row w-full h-16 bg-slate-900 top-28 relative content-center flex-wrap p-8">
+        <div className="flex flex-row w-full h-16 bg-slate-900 bottom-0 absolute content-center flex-wrap p-8">
             <p className="text-slate-700 text-xs lg:text-md font-semibold">
                 Copyright ©{" "}
                 <a
