@@ -16,7 +16,7 @@ export default function Taglist({
       const row = (
         <div
           key={`row-${i}`}
-          className="flex flex-row justify-center lg:h-96 w-full content-center flex-wrap relative lg:-mb-6"
+          className="relative flex flex-row flex-wrap content-center justify-center w-full lg:h-96 lg:-mb-6"
         >
           {tags.slice(i, i + 3).map((tag, index) => (
             <Tagbox key={`tag-${tag.id}`} id={tag.id} />

@@ -46,15 +46,15 @@ export default function Home() {
 
     return (
         <>
-            <div className="flex justify-center h-full w-full flex-col">
-                <div className="flex justify-center h-72 lg:h-128 w-full bg-gradient-to-r from-pink-500 to-rose-500 content-center flex-wrap">
-                    <h1 className="-top-8 relative text-center text-6xl lg:text-9xl">
+            <div className="flex flex-col justify-center w-full h-full">
+                <div className="flex flex-wrap content-center justify-center w-full h-72 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
+                    <h1 className="relative text-6xl text-center -top-8 lg:text-9xl">
                         Tag Vault
                     </h1>
                 </div>
-                <div className="flex flex-row justify-center w-full content-center flex-wrap -mt-20 lg:space-x-18 relative lg:h-48">
-                    <div className="rounded-xl mb-10 lg:m-0 bg-slate-600 p-8 flex flex-col border-cyan-400 shadow-cyan-400 shadow-xl border-t-8 border-cyan-400 w-80 lg:w-128 hover:scale-110 transform transition-transform duration-440">
-                        <h2 className="text-center text-cyan-300 text-2xl lg:text-5xl mb-4">
+                <div className="relative flex flex-row flex-wrap content-center justify-center w-full -mt-20 lg:space-x-18 lg:h-48">
+                    <div className="flex flex-col p-8 mb-10 transition-transform transform border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-cyan-400 border-cyan-400 w-80 lg:w-128 hover:scale-110 duration-440">
+                        <h2 className="mb-4 text-2xl text-center text-cyan-300 lg:text-5xl">
                             Explore TagScript
                         </h2>
                         <p>
@@ -75,8 +75,8 @@ export default function Home() {
                             tags.
                         </p>
                     </div>
-                    <div className="rounded-xl mb-10 lg:m-0 bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-green-500 shadow-xl border-t-8 border-green-500 w-80 lg:w-128 hover:scale-110 transform transition-transform duration-440">
-                        <h2 className="text-center text-green-400 text-2xl lg:text-5xl mb-4">
+                    <div className="flex flex-col justify-center p-8 mb-10 transition-transform transform border-t-8 border-green-500 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 lg:w-128 hover:scale-110 duration-440">
+                        <h2 className="mb-4 text-2xl text-center text-green-400 lg:text-5xl">
                             Find PreBuilt Tags
                         </h2>
                         <p>
@@ -91,15 +91,15 @@ export default function Home() {
                             commands, find what you need with ease.
                         </p>
                     </div>
-                    <div className="rounded-xl lg:m-0 bg-slate-600 p-8 flex justify-center flex-col border-cyan-400 shadow-rose-400 shadow-xl border-t-8 border-rose-400 w-80 lg:w-128 hover:scale-110 transform transition-transform duration-440">
-                        <h2 className="text-center text-rose-400 text-2xl lg:text-5xl mb-4">
+                    <div className="flex flex-col justify-center p-8 transition-transform transform border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 lg:w-128 hover:scale-110 duration-440">
+                        <h2 className="mb-4 text-2xl text-center text-rose-400 lg:text-5xl">
                             Help Us Grow
                         </h2>
                         <p>
                             There are still{" "}
                             <span className="font-bold text-rose-400 animate-pulse">
                                 {statsData?.all_tag_count &&
-                                statsData?.public_tag_count ? (
+                                    statsData?.public_tag_count ? (
                                     <>
                                         {(
                                             statsData.all_tag_count -
@@ -129,18 +129,18 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="flex justify-center w-full content-center pt-12 relative">
-                    <h1 className="text-center text-5xl lg:text-7xl">
+                <div className="relative flex content-center justify-center w-full pt-12">
+                    <h1 className="text-5xl text-center lg:text-7xl">
                         Featured Tags
                     </h1>
                 </div>
                 <Taglist tags={featuredTags} />
-                {/* <div className="flex flex-row justify-center lg:h-96 w-full content-center flex-wrap relative lg:-mb-12">
+                {/* <div className="relative flex flex-row flex-wrap content-center justify-center w-full lg:h-96 lg:-mb-12">
                     <Tagbox id={1157946} />
                     <Tagbox id={1111722} />
                     <Tagbox id={1217391} />
                 </div>
-                <div className="flex flex-row justify-center lg:h-96 w-full content-center flex-wrap relative lg:-mb-18 -mb-24">
+                <div className="relative flex flex-row flex-wrap content-center justify-center w-full -mb-24 lg:h-96 lg:-mb-18">
                     <Tagbox id={825576} />
                     <Tagbox id={962280} />
                     <Tagbox id={865606} />

@@ -29,29 +29,29 @@ export default function Home() {
 
     return (
         <>
-            <div className="flex h-full w-full flex-col">
-                <div className="flex justify-center h-72 lg:h-128 w-full bg-gradient-to-r from-pink-500 to-rose-500 content-center flex-wrap flex-col">
-                    <h1 className=" relative text-center text-3xl lg:text-9xl p-12 mt-8">
+            <div className="flex flex-col w-full h-full">
+                <div className="flex flex-col flex-wrap content-center justify-center w-full h-72 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
+                    <h1 className="relative p-12 mt-8 text-3xl text-center  lg:text-9xl">
                         Search Tags
                     </h1>
-                    <div className="rounded-xl mb-10 bg-slate-600 p-2 flex flex-col">
+                    <div className="flex flex-col p-2 mb-10 rounded-xl bg-slate-600">
                         <form
                             className="flex justify-evenly"
                             onSubmit={handleSubmit}
                         >
                             <input
-                                className="text-left text-white text-xl lg:text-4xl bg-slate-400 rounded-lg p-4 flex-1 text-bold placeholder:text-slate-200"
+                                className="flex-1 p-4 text-xl text-left text-white rounded-lg lg:text-4xl bg-slate-400 text-bold placeholder:text-slate-200"
                                 type="text"
                                 placeholder="Search..."
                                 value={query}
                                 onChange={handleInputChange}
                             />
                             <button
-                                className="w-4/12 bg-cyan-400 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-lg text-xl lg:text-4xl flex justify-center items-center"
+                                className="flex items-center justify-center w-4/12 px-4 py-2 text-xl font-bold text-white rounded-lg bg-cyan-400 hover:bg-cyan-500 lg:text-4xl"
                                 type="submit"
                             >
                                 <svg
-                                    className="w-8 h-8 text-white mr-4"
+                                    className="w-8 h-8 mr-4 text-white"
                                     aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -70,7 +70,7 @@ export default function Home() {
                         </form>
                     </div>
                 </div>
-                <div className="flex justify-center content-center flex-wrap">
+                <div className="flex flex-wrap content-center justify-center">
                     {searchData ? <Taglist tags={searchData.search} /> : <></>}
                 </div>
             </div>
