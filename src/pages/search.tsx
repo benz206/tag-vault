@@ -31,7 +31,7 @@ export default function Home() {
         <>
             <div className="flex flex-col w-full h-full">
                 <div className="flex flex-col flex-wrap content-center justify-center w-full h-72 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
-                    <h1 className="relative p-12 mt-8 text-3xl text-center  lg:text-9xl">
+                    <h1 className="relative p-12 mt-8 text-3xl text-center lg:text-9xl">
                         Search Tags
                     </h1>
                     <div className="flex flex-col p-2 mb-10 rounded-xl bg-slate-600">
@@ -70,7 +70,7 @@ export default function Home() {
                         </form>
                     </div>
                 </div>
-                <div className="flex flex-wrap content-center justify-center">
+                <div className="relative flex flex-wrap content-center justify-center h-auto">
                     {searchData ? <Taglist tags={searchData.search} /> : <></>}
                 </div>
             </div>
