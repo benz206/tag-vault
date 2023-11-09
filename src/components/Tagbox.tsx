@@ -82,7 +82,7 @@ export default function Tagbox({ id }: { id: number }) {
                                 {formatDate(new Date(tagData.created_at))}
                             </p>
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 mr-4">
                             <p className="ml-4 text-sm text-right text-slate-400">
                                 ID: {tagData.id}
                             </p>

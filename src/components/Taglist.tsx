@@ -17,7 +17,7 @@ export default function Taglist({
             let boxes: JSX.Element[] = [];
 
             for (let i = 0; i < newLength; i++) {
-                await delay(300 * i);
+                await delay(100 * i);
                 boxes.push(<Tagbox key={`tag-${tags[i].id}`} id={tags[i].id} />);
                 setBoxesView(boxes);
             }
@@ -29,10 +29,10 @@ export default function Taglist({
         return () => {
             setBoxesView(null);
         };
-    }, [tags, newLength]);
+    }, []);
 
     return (
-        <div className="grid w-auto h-auto grid-cols-1 gap-2 mx-auto md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-auto h-auto grid-cols-1 gap-2 py-5 mx-auto md:grid-cols-2 lg:grid-cols-3">
             {boxesView}
         </div>
     );
