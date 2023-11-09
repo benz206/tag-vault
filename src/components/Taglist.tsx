@@ -20,7 +20,7 @@ export default function Taglist({
                     key={`tag-${tags[i].id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: i * 0.2 }} // Adjust delay here
+                    transition={{ duration: 1, delay: (i + 1) * 0.4 }}
                 >
                     <Tagbox id={tags[i].id} />
                 </motion.div>
