@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <div className="sticky right-0 z-10 flex flex-row flex-wrap content-center w-full h-16 p-8 b-0 bg-slate-900">
+        <div className="relative bottom-0 flex flex-row flex-wrap content-center w-full h-16 p-8 bg-slate-900">
             <p className="text-xs font-semibold text-slate-700 lg:text-md">
                 Copyright ©{" "}
                 <a

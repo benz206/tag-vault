@@ -39,7 +39,7 @@ export default function Tagbox({ id }: { id: number }) {
 
     return (
         <div
-            className={`rounded-xl p-8 bg-slate-700 w-80 lg:w-96 2xl:w-128 h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:scale-110 hover:cursor-pointer transform transition-transform duration-440 mb-12 lg:m-4 2xl:m-0`}
+            className={`rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:scale-110 hover:cursor-pointer transform transition-transform ease-in-out duration-500 mb-12 lg:m-4 2xl:m-0`}
             onClick={() => router.push("/tags/" + id)}
         >
             {loading ? (
