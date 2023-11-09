@@ -46,14 +46,14 @@ export default function Home() {
 
     return (
         <>
-            <div className="flex flex-col justify-center w-full h-full">
-                <div className="flex flex-wrap content-center justify-center w-full h-72 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
+            <div className="flex flex-col items-center w-full h-full min-h-screen">
+                <div className="flex flex-wrap content-center justify-center w-full h-72 md:h-128 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
                     <h1 className="relative text-6xl text-center -top-8 lg:text-9xl">
                         Tag Vault
                     </h1>
                 </div>
                 <div className="relative flex flex-row flex-wrap content-center justify-center w-full -mt-20 lg:space-x-18 lg:h-48">
-                    <div className="flex flex-col p-8 mb-10 transition-transform transform border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-cyan-400 border-cyan-400 w-80 lg:w-128 hover:scale-110 duration-440">
+                    <div className="flex flex-col p-8 mb-10 transition-transform transform border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-cyan-400 border-cyan-400 w-80 lg:w-96 2xl:w-128 hover:scale-110 duration-440">
                         <h2 className="mb-4 text-2xl text-center text-cyan-300 lg:text-5xl">
                             Explore TagScript
                         </h2>
@@ -75,7 +75,7 @@ export default function Home() {
                             tags.
                         </p>
                     </div>
-                    <div className="flex flex-col justify-center p-8 mb-10 transition-transform transform border-t-8 border-green-500 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 lg:w-128 hover:scale-110 duration-440">
+                    <div className="flex flex-col justify-center p-8 mb-10 transition-transform transform border-t-8 border-green-500 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 lg:w-96 2xl:w-128 hover:scale-110 duration-440">
                         <h2 className="mb-4 text-2xl text-center text-green-400 lg:text-5xl">
                             Find PreBuilt Tags
                         </h2>
@@ -91,7 +91,7 @@ export default function Home() {
                             commands, find what you need with ease.
                         </p>
                     </div>
-                    <div className="flex flex-col justify-center p-8 transition-transform transform border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 lg:w-128 hover:scale-110 duration-440">
+                    <div className="flex flex-col justify-center p-8 transition-transform transform border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 lg:w-96 2xl:w-128 hover:scale-110 duration-440">
                         <h2 className="mb-4 text-2xl text-center text-rose-400 lg:text-5xl">
                             Help Us Grow
                         </h2>
@@ -99,7 +99,7 @@ export default function Home() {
                             There are still{" "}
                             <span className="font-bold text-rose-400 animate-pulse">
                                 {statsData?.all_tag_count &&
-                                    statsData?.public_tag_count ? (
+                                statsData?.public_tag_count ? (
                                     <>
                                         {(
                                             statsData.all_tag_count -
@@ -135,16 +135,6 @@ export default function Home() {
                     </h1>
                 </div>
                 <Taglist tags={featuredTags} />
-                {/* <div className="relative flex flex-row flex-wrap content-center justify-center w-full lg:h-96 lg:-mb-12">
-                    <Tagbox id={1157946} />
-                    <Tagbox id={1111722} />
-                    <Tagbox id={1217391} />
-                </div>
-                <div className="relative flex flex-row flex-wrap content-center justify-center w-full -mb-24 lg:h-96 lg:-mb-18">
-                    <Tagbox id={825576} />
-                    <Tagbox id={962280} />
-                    <Tagbox id={865606} />
-                </div> */}
             </div>
         </>
     );

@@ -4,17 +4,13 @@ import Link from "next/link";
 const NavBar = () => {
     return (
         <div className="absolute flex items-center w-full h-16">
-            <div className="relative flex-1 left-8">
-                <a className="font-bold" href="/">
+            <div className="relative ml-6 mr-auto">
+                <Link className="font-bold" href="/">
                     Tag Vault
-                </a>
+                </Link>
             </div>
-            <div className="relative flex-none right-8">
-                <ul className="flex justify-end px-1 menu menu-horizontal">
-                    <li>
-                        <Link href="/search">Search</Link>
-                    </li>
-                </ul>
+            <div className="relative ml-auto mr-8">
+                <Link href="/search">Search</Link>
             </div>
         </div>
     );

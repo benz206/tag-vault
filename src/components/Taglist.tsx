@@ -12,28 +12,15 @@ export default function Taglist({
     useEffect(() => {
         let boxes: JSX.Element[] = [];
 
-        for (let i = 0; i < newLength; i += 3) {
-            const row = (
-                <div
-                    key={`row-${i}`}
-                    className="relative flex flex-row flex-wrap content-center justify-center w-full h-auto lg:h-96 lg:-mb-6"
-                >
-                    {tags.slice(i, i + 3).map((tag, index) => (
-                        <Tagbox key={`tag-${tag.id}`} id={tag.id} />
-                    ))}
-                </div>
-            );
-            
-            // boxes.push(row);
-            // sleep for 100ms to allow for animation
+        for (let i = 0; i < newLength; i++) {
+            let tag = tags[i];
             setTimeout(() => {
-                boxes.push(row);
-            }
-            , 100);
+                boxes.push(<Tagbox key={`tag-${tag.id}`} id={tag.id} />);
+            }, 100);
         }
 
         setBoxesView(boxes);
     }, [tags, newLength]);
 
-    return <div className="h-auto">{boxesView}</div>;
+    return <div className="grid w-auto grid-cols-1 gap-2 mx-auto md:grid-cols-2 lg:grid-cols-3">{boxesView}</div>;
 }

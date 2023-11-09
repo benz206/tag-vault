@@ -39,7 +39,7 @@ export default function Tagbox({ id }: { id: number }) {
 
     return (
         <div
-            className={`rounded-xl p-8 bg-slate-700 w-80 lg:w-128 h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:scale-110 hover:cursor-pointer transform transition-transform duration-440 mb-12 lg:m-0`}
+            className={`rounded-xl p-8 bg-slate-700 w-80 lg:w-96 2xl:w-128 h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:scale-110 hover:cursor-pointer transform transition-transform duration-440 mb-12 lg:m-4 2xl:m-0`}
             onClick={() => router.push("/tags/" + id)}
         >
             {loading ? (
@@ -51,7 +51,7 @@ export default function Tagbox({ id }: { id: number }) {
                     <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
                     <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
                     <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="absolute flex flex-row w-10/12 space-x-4 bottom-4 left-6 lg:w-11/12 bottom-2">
+                    <div className="absolute flex flex-row w-10/12 space-x-4 bottom-4 left-6 lg:w-11/12">
                         <div className="w-4/12 h-4 mb-2 animate-pulse lg:w-5/12 rounded-xl bg-slate-500" />
                         <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500" />
                         <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500 justify-self-end" />
