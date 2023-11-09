@@ -29,7 +29,7 @@ export default function () {
                 key="1"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.4 }}
+                transition={{ duration: 1, delay: 1 }}
             >
                 <div className="group flex flex-col p-6 mb-10 transition-transform duration-500 border-t-8 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-cyan-400 border-cyan-400 w-80 lg:w-[270px] xl:w-[430px] hover:scale-110">
                     <h2 className="mb-4 text-2xl text-center text-white transition-colors duration-500 ease-in-out lg:text-5xl group-hover:text-cyan-300">
@@ -55,10 +55,10 @@ export default function () {
                 </div>
             </motion.div>
             <motion.div
-                key="1"
+                key="2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.8 }}
+                transition={{ duration: 1, delay: 1.5 }}
             >
                 <div className="group flex flex-col justify-center p-6 mb-10 transition-transform duration-500 border-t-8 border-green-500 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 lg:w-[270px] xl:w-[430px] hover:scale-110">
                     <h2 className="mb-4 text-2xl text-center text-white duration-500 ease-in-out group-hover:text-green-400 lg:text-5xl">
@@ -78,10 +78,10 @@ export default function () {
                 </div>
             </motion.div>
             <motion.div
-                key="1"
+                key="3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 1.2 }}
+                transition={{ duration: 1, delay: 2 }}
             >
                 <div className="group flex flex-col justify-center p-6 transition-transform duration-500 border-t-8 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 lg:w-[270px] xl:w-[430px] hover:scale-110">
                     <h2 className="mb-4 text-2xl text-center text-white duration-500 ease-in-out group-hover:text-rose-400 lg:text-5xl">

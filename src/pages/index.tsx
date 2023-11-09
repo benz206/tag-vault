@@ -1,6 +1,6 @@
 import Taglist from "@/components/Taglist";
 import StatsList from "@/components/StatsList";
-
+import { motion } from "framer-motion";
 import { ShortTagData } from "@/types";
 
 const featuredTags: ShortTagData[] = [
@@ -33,13 +33,19 @@ export default function Home() {
                 </h1>
             </div>
             <StatsList />
-            <div className="relative flex content-center justify-center w-full p-2 pt-20">
+            <motion.div
+                className="relative flex content-center justify-center w-full p-2 pt-20"
+                key="0"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 2.5 }}
+            >
                 <h1 className="text-5xl text-center lg:text-7xl">
                     Featured Tags
                 </h1>
-            </div>
+            </motion.div>
             <div className="relative h-auto w-max">
-                <Taglist tags={featuredTags} />
+                <Taglist tags={featuredTags} animDelay={5}/>
             </div>
         </div>
     );
