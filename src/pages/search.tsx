@@ -29,7 +29,7 @@ export default function Home() {
 
     return (
         <>
-            <div className="flex flex-col w-full h-full">
+            <div className="flex flex-col w-full h-full min-h-[calc(100vh-4rem)]">
                 <div className="flex flex-col flex-wrap content-center justify-center w-full h-72 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
                     <h1 className="relative p-12 mt-8 text-3xl text-center lg:text-9xl">
                         Search Tags

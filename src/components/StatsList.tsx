@@ -24,7 +24,7 @@ export default function () {
 
     return (
         <div className="relative flex flex-row flex-wrap content-center justify-center w-full -mt-20 lg:space-x-18 lg:h-64">
-            <div className="group flex flex-col p-6 mb-10 transition-transform duration-500 border-t-8 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-cyan-400 border-cyan-400 w-80 lg:w-[430px] hover:scale-110">
+            <div className="group flex flex-col p-6 mb-10 transition-transform duration-500 border-t-8 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-cyan-400 border-cyan-400 w-80 lg:w-[270px] xl:w-[430px] hover:scale-110">
                 <h2 className="mb-4 text-2xl text-center text-white transition-colors duration-500 ease-in-out lg:text-5xl group-hover:text-cyan-300">
                     Explore TagScript
                 </h2>
@@ -44,7 +44,7 @@ export default function () {
                     tags.
                 </p>
             </div>
-            <div className="group flex flex-col justify-center p-6 mb-10 transition-transform duration-500 border-t-8 border-green-500 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 lg:w-[430px] hover:scale-110">
+            <div className="group flex flex-col justify-center p-6 mb-10 transition-transform duration-500 border-t-8 border-green-500 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 lg:w-[270px] xl:w-[430px] hover:scale-110">
                 <h2 className="mb-4 text-2xl text-center text-white duration-500 ease-in-out group-hover:text-green-400 lg:text-5xl">
                     Find PreBuilt Tags
                 </h2>
@@ -60,7 +60,7 @@ export default function () {
                     commands, find what you need with ease.
                 </p>
             </div>
-            <div className="group flex flex-col justify-center p-6 transition-transform duration-500 border-t-8 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 lg:w-[430px] hover:scale-110">
+            <div className="group flex flex-col justify-center p-6 transition-transform duration-500 border-t-8 shadow-xl ease-in-out transform rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 lg:w-[270px] xl:w-[430px] hover:scale-110">
                 <h2 className="mb-4 text-2xl text-center text-white duration-500 ease-in-out group-hover:text-rose-400 lg:text-5xl">
                     Help Us Grow
                 </h2>
