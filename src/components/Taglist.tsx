@@ -5,8 +5,11 @@ import Tagbox from "@/components/Tagbox";
 import { useState, useEffect } from "react";
 
 export default function Taglist({
-    tags, animDelay
-}: { tags: TagData[], animDelay: number} | { tags: ShortTagData[], animDelay: number }) {
+    tags,
+    animDelay,
+}:
+    | { tags: TagData[]; animDelay: number }
+    | { tags: ShortTagData[]; animDelay: number }) {
     const [boxesView, setBoxesView] = useState<JSX.Element[] | null>(null);
 
     const newLength = Math.min(20, tags.length);

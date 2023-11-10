@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { TagData, DiscordUser } from "@/types";
 import { getTagColor, formatDate, getDiscordUser } from "@/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 async function getData(id: number) {
     const res = await fetch("/api/tags/" + id);
@@ -64,7 +65,12 @@ export default function TagPage() {
                     {data?.tag_name}
                 </h1>
             </div>
-            <div className="flex justify-center">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="flex justify-center"
+            >
                 <div
                     className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${
                         color ? color : "slate-500"
@@ -112,18 +118,24 @@ export default function TagPage() {
                             <h2 className="pb-2 truncate text-1xl lg:text-2xl">
                                 Tag Content
                             </h2>
-                            {hideTagContent ? (
-                                <></>
-                            ) : (
-                                <textarea className="w-full h-64 p-2 my-2 whitespace-pre-line resize-y bg-slate-400 rounded-2xl">
-                                    {data.content}
-                                </textarea>
-                            )}
+                            <AnimatePresence>
+                                {hideTagContent && (
+                                    <motion.textarea
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        disabled
+                                        className="w-full p-2 my-2 whitespace-pre-line resize-y h-80 bg-slate-400 rounded-2xl"
+                                    >
+                                        {data.content}
+                                    </motion.textarea>
+                                )}
+                            </AnimatePresence>
                             <button
-                                className="py-2 mx-auto text-3xl font-semibold transition duration-500 ease-in-out w-96 rounded-xl bg-cyan-400 hover:bg-cyan-500"
+                                className="py-2 mx-auto mt-2 text-3xl font-semibold transition duration-500 ease-in-out w-96 rounded-xl bg-cyan-400 hover:bg-cyan-500"
                                 onClick={onToggleTagContent}
                             >
-                                {hideTagContent ? "Show" : "Hide"}
+                                {hideTagContent ? "Hide" : "Show"}
                             </button>
                             <div className="relative flex flex-col w-full mt-auto -bottom-4">
                                 <div className="w-full h-0.5 mb-1.5 bg-slate-600 rounded-2xl" />
@@ -131,7 +143,7 @@ export default function TagPage() {
                                     <p className="text-sm text-left text-slate-400">
                                         {userData?.global_name || "Unknown"}
                                     </p>
-                                    <p className="text-sm text-center text-slate-400 lg:text-righ">
+                                    <p className="text-sm text-center text-slate-400 lg:text-right">
                                         {formatDate(new Date(data.created_at))}
                                     </p>
                                     <p className="ml-4 text-sm text-right text-slate-400">
@@ -151,8 +163,7 @@ export default function TagPage() {
                         </>
                     )}
                 </div>
-            </div>
-
+            </motion.div>
             <div className="flex justify-center">
                 <div
                     className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${

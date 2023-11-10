@@ -45,7 +45,7 @@ export default function Home() {
                 </h1>
             </motion.div>
             <div className="relative h-auto w-max">
-                <Taglist tags={featuredTags} animDelay={5}/>
+                <Taglist tags={featuredTags} animDelay={5} />
             </div>
         </div>
     );
