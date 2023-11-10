@@ -31,7 +31,7 @@ export default function Taglist({
     }, [tags, newLength]);
 
     return (
-        <div className="grid w-auto h-auto grid-cols-1 gap-2 py-5 mx-auto md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid w-auto h-auto grid-cols-1 gap-2 py-5 mx-auto md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
             {boxesView}
         </div>
     );

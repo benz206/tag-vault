@@ -10,9 +10,11 @@ const NavBar = () => {
                 </Link>
             </div>
             <div className="relative ml-auto mr-2">
-                <div className="px-4 py-1 transition-colors duration-500 ease-in-out lg:px-10 lg:py-2 hover:bg-cyan-400 rounded-3xl">
-                    <Link href="/search">Search</Link>
-                </div>
+                <Link href="/search">
+                    <div className="px-4 py-1 transition-colors duration-500 ease-in-out lg:px-6 lg:py-2 hover:bg-cyan-400 rounded-3xl">
+                        Search
+                    </div>
+                </Link>
             </div>
         </div>
     );

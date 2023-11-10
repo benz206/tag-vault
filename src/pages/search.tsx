@@ -121,7 +121,12 @@ export default function Home() {
                 </div>
                 <div className="relative flex justify-center h-auto">
                     {searchData && searchData.search.length > 0 ? (
-                        <Taglist tags={searchData.search} animDelay={0} />
+                        <div className="flex flex-col items-center">
+                            <h2 className="pt-12">
+                                {searchData.search.length} results were found.
+                            </h2>
+                            <Taglist tags={searchData.search} animDelay={0} />
+                        </div>
                     ) : (
                         <h2 className="p-12">
                             {searchData && searchData.search.length === 0

@@ -39,7 +39,7 @@ export default function Tagbox({ id }: { id: number }) {
 
     return (
         <div
-            className={`rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:scale-110 hover:cursor-pointer transform transition-transform ease-in-out duration-500 mb-12 lg:m-4 2xl:m-0`}
+            className={`group rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:scale-110 hover:cursor-pointer transform transition-transform ease-in-out duration-500 mb-12 lg:m-4 2xl:m-0`}
             onClick={() => router.push("/tags/" + id)}
         >
             {loading ? (
@@ -61,41 +61,35 @@ export default function Tagbox({ id }: { id: number }) {
                     </div>
                 </>
             ) : tagData ? (
-                <>
+                <div className="flex flex-col h-full">
                     <div className="relative flex flex-row mb-2 -top-2">
                         <h2 className="text-2xl truncate lg:text-4xl">
                             {tagData.tag_name}
                         </h2>
                         <img
-                            className="w-8 h-8 ml-auto rounded-full lg:h-12 lg:w-12"
+                            className="w-8 h-8 ml-auto -mt-1 rounded-full lg:h-12 lg:w-12"
                             src={`https://cdn.discordapp.com/avatars/${tagData.owner_id}/${userData?.avatar}`}
                         />
                     </div>
+                    <div className="w-full h-0.5 mb-1.5 -mt-2 bg-slate-600 rounded-2xl" />
                     <p className="text-base line-clamp-3 lg:line-clamp-5 lg:text-lg">
                         {tagData.description}
                     </p>
-
-                    <div className="absolute flex flex-col w-10/12 bottom-4 left-6 lg:w-11/12">
-                        <div className="w-full h-0.5 mb-1.5 mt-auto bg-slate-600 rounded-2xl" />
-                        <div className="flex">
-                            <div className="flex-2">
-                                <p className="text-sm text-left text-slate-400">
-                                    {userData?.global_name}
-                                </p>
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm text-center text-slate-400 lg:text-right">
-                                    {formatDate(new Date(tagData.created_at))}
-                                </p>
-                            </div>
-                            <div className="flex-1 mr-4">
-                                <p className="ml-4 text-sm text-right text-slate-400">
-                                    ID: {tagData.id}
-                                </p>
-                            </div>
+                    <div className="relative flex flex-col w-full mt-auto -bottom-4">
+                        <div className="w-full h-0.5 mb-1.5 bg-slate-600 rounded-2xl" />
+                        <div className="flex place-content-between">
+                            <p className="text-sm text-left text-slate-400">
+                                {userData?.global_name || "Unknown"}
+                            </p>
+                            <p className="text-sm text-center text-slate-400 lg:text-righ">
+                                {formatDate(new Date(tagData.created_at))}
+                            </p>
+                            <p className="ml-4 text-sm text-right text-slate-400">
+                                ID: {tagData.id}
+                            </p>
                         </div>
                     </div>
-                </>
+                </div>
             ) : (
                 <>
                     <h2 className="mb-4 text-2xl truncate lg:text-5xl">
