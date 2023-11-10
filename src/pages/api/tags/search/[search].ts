@@ -15,7 +15,7 @@ export default async function handler(
         return res.status(400).json({ error: "Invalid Search Query" });
     }
 
-    if (search.length > 25) {
+    if (search.length > 30) {
         return res.status(400).json({ error: "Search query too long for now" });
     }
 

@@ -51,10 +51,13 @@ export default function Tagbox({ id }: { id: number }) {
                     <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
                     <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
                     <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="absolute flex flex-row w-10/12 space-x-4 bottom-4 left-6 lg:w-11/12">
-                        <div className="w-4/12 h-4 mb-2 animate-pulse lg:w-5/12 rounded-xl bg-slate-500" />
-                        <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500" />
-                        <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500 justify-self-end" />
+                    <div className="absolute flex flex-col w-10/12 bottom-2 left-6 lg:w-11/12">
+                        <div className="w-full h-0.5 mb-4 mt-auto bg-slate-600 rounded-2xl" />
+                        <div className="flex space-x-4">
+                            <div className="w-4/12 h-4 mb-2 animate-pulse lg:w-5/12 rounded-xl bg-slate-500" />
+                            <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500" />
+                            <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500 justify-self-end" />
+                        </div>
                     </div>
                 </>
             ) : tagData ? (
@@ -71,21 +74,25 @@ export default function Tagbox({ id }: { id: number }) {
                     <p className="text-base line-clamp-3 lg:line-clamp-5 lg:text-lg">
                         {tagData.description}
                     </p>
-                    <div className="absolute flex w-10/12 bottom-4 left-6 lg:w-11/12">
-                        <div className="flex-2">
-                            <p className="text-sm text-left text-slate-400">
-                                {userData?.global_name}
-                            </p>
-                        </div>
-                        <div className="flex-1">
-                            <p className="text-sm text-center text-slate-400 lg:text-right">
-                                {formatDate(new Date(tagData.created_at))}
-                            </p>
-                        </div>
-                        <div className="flex-1 mr-4">
-                            <p className="ml-4 text-sm text-right text-slate-400">
-                                ID: {tagData.id}
-                            </p>
+
+                    <div className="absolute flex flex-col w-10/12 bottom-4 left-6 lg:w-11/12">
+                        <div className="w-full h-0.5 mb-1.5 mt-auto bg-slate-600 rounded-2xl" />
+                        <div className="flex">
+                            <div className="flex-2">
+                                <p className="text-sm text-left text-slate-400">
+                                    {userData?.global_name}
+                                </p>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm text-center text-slate-400 lg:text-right">
+                                    {formatDate(new Date(tagData.created_at))}
+                                </p>
+                            </div>
+                            <div className="flex-1 mr-4">
+                                <p className="ml-4 text-sm text-right text-slate-400">
+                                    ID: {tagData.id}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </>

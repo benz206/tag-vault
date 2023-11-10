@@ -9,7 +9,7 @@ export default function Taglist({
 }: { tags: TagData[], animDelay: number} | { tags: ShortTagData[], animDelay: number }) {
     const [boxesView, setBoxesView] = useState<JSX.Element[] | null>(null);
 
-    const newLength = Math.min(12, tags.length);
+    const newLength = Math.min(20, tags.length);
 
     useEffect(() => {
         let boxes: JSX.Element[] = [];
@@ -31,7 +31,7 @@ export default function Taglist({
     }, [tags, newLength]);
 
     return (
-        <div className="grid w-auto h-auto grid-cols-1 gap-2 py-5 mx-auto md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid w-auto h-auto grid-cols-1 gap-2 py-5 mx-auto md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {boxesView}
         </div>
     );
