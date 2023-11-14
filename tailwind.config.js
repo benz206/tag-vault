@@ -16,6 +16,9 @@ module.exports = {
                 0: "2.00rem",
                 128: "32rem",
             },
+            colors: {
+                darkbg: "#000311",
+            },
         },
         backgroundSize: {
             auto: "auto",

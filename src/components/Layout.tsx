@@ -3,7 +3,7 @@ import Header from "@/components/Head";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
-const Layout = ({ children }: PropsWithChildren) => {
+export default function Layout({ children }: { children: PropsWithChildren }) {
     return (
         <>
             <Header />
@@ -12,5 +12,4 @@ const Layout = ({ children }: PropsWithChildren) => {
             <Footer />
         </>
     );
-};
-export default Layout;
+}

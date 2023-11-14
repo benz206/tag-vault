@@ -15,11 +15,11 @@ export default function App({
 }: AppProps) {
     return (
         <main className={firaSans.className}>
-            <Layout>
-                <SessionProvider session={session}>
+            <SessionProvider session={session}>
+                <Layout>
                     <Component {...pageProps} />
-                </SessionProvider>
-            </Layout>
+                </Layout>
+            </SessionProvider>
         </main>
     );
 }
