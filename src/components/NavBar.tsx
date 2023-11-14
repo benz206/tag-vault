@@ -32,11 +32,15 @@ export default function NavBar() {
 
     return (
         <div className="absolute flex items-center w-full h-16">
-            <div className="relative ml-6 mr-auto">
+            <motion.div className="relative ml-6 mr-auto"
+                whileHover={{ scale: 1.05}}
+                whileTap={{ scale: 0.95}}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}    
+            >
                 <Link className="font-bold" href="/">
                     Tag Vault
                 </Link>
-            </div>
+            </motion.div>
             <div className="relative flex ml-auto mr-2">
                 <Link href="/search">
                     <div className="px-4 py-1 mx-4 transition-colors duration-500 ease-in-out border-2 lg:px-6 lg:py-1 border-cyan-400 hover:bg-cyan-400 rounded-3xl">

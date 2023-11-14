@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { DiscordUser, TagData } from "@/types";
 import { getTagData, getTagColor, formatDate, getDiscordUser } from "@/utils";
+import { motion } from "framer-motion";
 
 export default function Tagbox({ id }: { id: number }) {
     const router = useRouter();
@@ -38,9 +39,12 @@ export default function Tagbox({ id }: { id: number }) {
     }, [id]);
 
     return (
-        <div
-            className={`group rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:scale-110 hover:cursor-pointer transform transition-transform ease-in-out duration-500 mb-12 lg:m-4 2xl:m-0`}
+        <motion.div
+            className={`group rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:cursor-pointer ease-in-out mb-12 lg:m-4 2xl:m-0`}
             onClick={() => router.push("/tags/" + id)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
             {loading ? (
                 <>
@@ -100,6 +104,6 @@ export default function Tagbox({ id }: { id: number }) {
                     </p>
                 </>
             )}
-        </div>
+        </motion.div>
     );
 }
