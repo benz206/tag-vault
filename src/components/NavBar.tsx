@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 
 function DiscordLogo() {
@@ -30,12 +30,29 @@ export default function NavBar() {
     const [profileOpen, setProfileOpen] = useState(false);
     const router = useRouter();
 
+    const navRef = useRef<HTMLDivElement>(null);
+
+    function handleClickOutside(event: MouseEvent) {
+        if (navRef.current && !navRef.current.contains(event.target as Node)) {
+            setProfileOpen(false);
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className="absolute flex items-center w-full h-16">
-            <motion.div className="relative ml-6 mr-auto"
-                whileHover={{ scale: 1.05}}
-                whileTap={{ scale: 0.95}}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}    
+            <motion.div
+                className="relative ml-6 mr-auto"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
                 <Link className="font-bold" href="/">
                     Tag Vault
@@ -50,7 +67,7 @@ export default function NavBar() {
                 {data ? (
                     <>
                         <div
-                            onClick={() => setProfileOpen(!profileOpen)}
+                            onClick={() => setProfileOpen(true)}
                             className="hover:cursor-pointer group flex px-2 text-xl transition-colors duration-500 ease-in-out border-2 border-[#738ADB] lg:pl-2 lg:pr-4 lg:py-1 hover:bg-[#738ADB] rounded-3xl items-center text-white"
                         >
                             <img
@@ -59,43 +76,56 @@ export default function NavBar() {
                                         ? data.user?.image
                                         : "https://cdn.discordapp.com/embed/avatars/0.png"
                                 }
-                                className="w-8 h-8 mr-2 rounded-full"
+                                className="mr-2 rounded-full h-7 w-7"
                                 alt="Profile Picture"
                             />{" "}
                             <span className="">{data.user?.name}</span>
                         </div>
-                        {profileOpen && (
-                            <motion.div className="absolute w-40 border-4 rounded-md right-1 top-12 bg-darkbg border-darkbg">
-                                <Link
-                                    href="/dashboard"
-                                    className="block px-4 py-2 text-center text-white transition-colors duration-500 border-2 border-transparent rounded-md hover:text-cyan-500 hover:border-cyan-500"
-                                    onClick={() => {
-                                        router.push("/dashboard");
-                                        setProfileOpen(false);
-                                    }}
+                        <AnimatePresence>
+                            {profileOpen && (
+                                <motion.div
+                                    className="absolute w-40 border-4 rounded-md right-1 top-12 bg-darkbg border-darkbg"
+                                    initial={{ opacity: 0, y: -5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -5 }}
+                                    transition={{ duration: 0.5 }}
+                                    ref={navRef}
                                 >
-                                    Dashboard
-                                </Link>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 text-center text-red-500 transition-colors duration-500 border-2 border-transparent rounded-md hover:border-red-500 "
-                                    onClick={() => signOut()}
-                                >
-                                    Sign out
-                                </a>
-                            </motion.div>
-                        )}
+                                    <Link
+                                        href="/dashboard"
+                                        className="block px-4 py-2 text-center transition-colors duration-500 border-2 border-transparent rounded-md text-cyan-500 hover:border-cyan-500"
+                                        onClick={() => {
+                                            router.push("/dashboard");
+                                            setProfileOpen(false);
+                                        }}
+                                    >
+                                        Dashboard
+                                    </Link>
+                                    <a
+                                        href="#"
+                                        className="block px-4 py-2 text-center text-red-500 transition-colors duration-500 border-2 border-transparent rounded-md hover:border-red-500 "
+                                        onClick={() => signOut()}
+                                    >
+                                        Sign out
+                                    </a>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </>
                 ) : (
                     <div
-                        onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
+                        onClick={() =>
+                            signIn("discord", { callbackUrl: "/dashboard" })
+                        }
                         className="hover:cursor-pointer group flex px-1 py-1 text-xl transition-colors duration-500 ease-in-out border-2 border-[#738ADB] lg:px-6 lg:py-1 hover:bg-[#738ADB] rounded-3xl items-center text-white"
                     >
-                        <DiscordLogo /><span className="hidden -mr-4 lg:mr-auto lg:block">Login with Discord</span>
+                        <DiscordLogo />
+                        <span className="hidden -mr-4 lg:mr-auto lg:block">
+                            Login with Discord
+                        </span>
                     </div>
                 )}
             </div>
         </div>
     );
-};
-
+}

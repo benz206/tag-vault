@@ -29,6 +29,19 @@ export default function Tagbox({ id }: { id: number }) {
                     })
                     .catch((discord_error) => {
                         console.error("Error fetching data:", discord_error);
+                        // Sleep 3 seconds then retry
+                        setTimeout(() => {
+                            getDiscordUser(result.owner_id)
+                                .then((discord_result) => {
+                                    setUserData(discord_result);
+                                })
+                                .catch((discord_error) => {
+                                    console.error(
+                                        "Error fetching data:",
+                                        discord_error
+                                    );
+                                });
+                        }, 3000);
                     });
                 setLoading(false);
             })

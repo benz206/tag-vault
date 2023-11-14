@@ -2,6 +2,8 @@ import Taglist from "@/components/Taglist";
 import StatsList from "@/components/StatsList";
 import { motion } from "framer-motion";
 import { ShortTagData } from "@/types";
+import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const featuredTags: ShortTagData[] = [
     {
@@ -25,6 +27,14 @@ const featuredTags: ShortTagData[] = [
 ];
 
 export default function Home() {
+    const router = useRouter();
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn("discord");
+        },
+    });
+
     return (
         <div className="flex flex-col items-center w-full h-full min-h-[calc(100vh-4rem)]">
             <div className="flex items-center justify-center w-full h-72 lg:h-[400px] bg-gradient-to-r from-cyan-500 to-blue-500">
