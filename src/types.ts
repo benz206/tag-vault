@@ -48,3 +48,7 @@ export type SearchQuery = {
 export type ShortTagData = {
     id: number;
 };
+
+export type StaticFeaturedTag = {
+    discord: DiscordUser;
+};

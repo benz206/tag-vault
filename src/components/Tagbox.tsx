@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { DiscordUser, TagData } from "@/types";
+import { DiscordUser, StaticFeaturedTag, TagData } from "@/types";
 import { getTagData, getTagColor, formatDate, getDiscordUser } from "@/utils";
 import { motion } from "framer-motion";
 
-export default function Tagbox({ id }: { id: number }) {
+export default function Tagbox({
+    id,
+    staticData,
+}: {
+    id: number;
+    staticData?: StaticFeaturedTag;
+}) {
     const router = useRouter();
     const [tagData, setTagData] = useState<TagData | null>(null);
     const [userData, setUserData] = useState<DiscordUser | null>(null);
@@ -12,43 +18,58 @@ export default function Tagbox({ id }: { id: number }) {
     const [color, setColor] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!id || isNaN(Number(id))) {
+        if (staticData) {
+            setTagData(staticData.tag);
+            setUserData(staticData.discord);
+            setColor(
+                getTagColor(
+                    Number(staticData.tag.id),
+                    Number(staticData.tag.owner_id)
+                )
+            );
             setLoading(false);
-            return;
-        }
+        } else {
+            if (!id || isNaN(Number(id))) {
+                setLoading(false);
+                return;
+            }
 
-        getTagData(Number(id))
-            .then((result) => {
-                setTagData(result);
-                setColor(
-                    getTagColor(Number(result.id), Number(result.owner_id))
-                );
-                getDiscordUser(result.owner_id)
-                    .then((discord_result) => {
-                        setUserData(discord_result);
-                    })
-                    .catch((discord_error) => {
-                        console.error("Error fetching data:", discord_error);
-                        // Sleep 3 seconds then retry
-                        setTimeout(() => {
-                            getDiscordUser(result.owner_id)
-                                .then((discord_result) => {
-                                    setUserData(discord_result);
-                                })
-                                .catch((discord_error) => {
-                                    console.error(
-                                        "Error fetching data:",
-                                        discord_error
-                                    );
-                                });
-                        }, 3000);
-                    });
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-                setLoading(false);
-            });
+            getTagData(Number(id))
+                .then((result) => {
+                    setTagData(result);
+                    setColor(
+                        getTagColor(Number(result.id), Number(result.owner_id))
+                    );
+                    getDiscordUser(result.owner_id)
+                        .then((discord_result) => {
+                            setUserData(discord_result);
+                        })
+                        .catch((discord_error) => {
+                            console.error(
+                                "Error fetching data:",
+                                discord_error
+                            );
+                            // Sleep 3 seconds then retry
+                            setTimeout(() => {
+                                getDiscordUser(result.owner_id)
+                                    .then((discord_result) => {
+                                        setUserData(discord_result);
+                                    })
+                                    .catch((discord_error) => {
+                                        console.error(
+                                            "Error fetching data:",
+                                            discord_error
+                                        );
+                                    });
+                            }, 3000);
+                        });
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                    setLoading(false);
+                });
+        }
     }, [id]);
 
     return (

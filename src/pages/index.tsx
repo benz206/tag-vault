@@ -1,7 +1,8 @@
 import Taglist from "@/components/Taglist";
 import StatsList from "@/components/StatsList";
 import { motion } from "framer-motion";
-import { ShortTagData } from "@/types";
+import { ShortTagData, StaticFeaturedTag } from "@/types";
+import { getTagData, getDiscordUser } from "@/utils";
 
 const featuredTags: ShortTagData[] = [
     {
