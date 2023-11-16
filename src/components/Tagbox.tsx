@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { DiscordUser, StaticFeaturedTag, TagData } from "@/types";
+import { DiscordUser, TagData } from "@/types";
 import { getTagData, getTagColor, formatDate, getDiscordUser } from "@/utils";
 import { motion } from "framer-motion";
 
@@ -9,7 +9,7 @@ export default function Tagbox({
     staticData,
 }: {
     id: number;
-    staticData?: StaticFeaturedTag;
+    staticData?: TagData;
 }) {
     const router = useRouter();
     const [tagData, setTagData] = useState<TagData | null>(null);
@@ -19,15 +19,15 @@ export default function Tagbox({
 
     useEffect(() => {
         if (staticData) {
-            setTagData(staticData.tag);
-            setUserData(staticData.discord);
-            setColor(
-                getTagColor(
-                    Number(staticData.tag.id),
-                    Number(staticData.tag.owner_id)
-                )
-            );
-            setLoading(false);
+            // setTagData(staticData.tag);
+            // setUserData(staticData.discord);
+            // setColor(
+            //     getTagColor(
+            //         Number(staticData.tag.id),
+            //         Number(staticData.tag.owner_id)
+            //     )
+            // );
+            // setLoading(false);
         } else {
             if (!id || isNaN(Number(id))) {
                 setLoading(false);

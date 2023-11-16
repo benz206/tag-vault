@@ -39,14 +39,14 @@ export default function Home() {
                 key="0"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 2 }}
+                transition={{ duration: 1, delay: 0.9 }}
             >
                 <h1 className="text-5xl text-center lg:text-7xl">
                     Featured Tags
                 </h1>
             </motion.div>
             <div className="relative h-auto w-max">
-                <Taglist tags={featuredTags} animDelay={5} />
+                <Taglist tags={featuredTags} animDelay={2} />
             </div>
         </div>
     );

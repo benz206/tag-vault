@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import client from "@/utils/mongodb/mongo";
 import { TagData } from "@/types";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
 
 type Error = {
     error: string;
@@ -14,6 +16,7 @@ export default async function handler(
     res: NextApiResponse<TagData | Error>
 ) {
     const { id } = req.query;
+    const session = await getServerSession(req, res, authOptions);
 
     if (!id || isNaN(Number(id))) {
         return res.status(400).json({ error: "Invalid Tag ID" });
@@ -27,12 +30,14 @@ export default async function handler(
         return res.status(404).json({ error: "Tag ID Non Existent" });
     }
 
-    if (rawTagData.deleted || !rawTagData.shared) {
-        return res.status(404).json({ error: "Tag is Private" });
-    }
+    if (session?.user.id != rawTagData.owner_id) {
+        if (rawTagData.deleted || !rawTagData.shared) {
+            return res.status(404).json({ error: "Tag is Private" });
+        }
 
-    if (rawTagData.nsfw) {
-        return res.status(404).json({ error: "Tag is NSFW" });
+        if (rawTagData.nsfw) {
+            return res.status(404).json({ error: "Tag is NSFW" });
+        }
     }
 
     if (rawTagData.safe === "not_safe") {

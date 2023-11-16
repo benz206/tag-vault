@@ -20,7 +20,6 @@ export default function TagPage() {
     const [data, setData] = useState<TagData | null>(null);
     const [userData, setUserData] = useState<DiscordUser | null>(null);
     const [loading, setLoading] = useState(true);
-    const [hideTagContent, setHideTagContent] = useState<boolean>(true);
     const [color, setColor] = useState<string | null>(null);
 
     useEffect(() => {
@@ -49,10 +48,6 @@ export default function TagPage() {
                 setLoading(false);
             });
     }, [id]);
-
-    function onToggleTagContent() {
-        setHideTagContent(!hideTagContent);
-    }
 
     return (
         <>
@@ -118,25 +113,16 @@ export default function TagPage() {
                             <h2 className="pb-2 truncate text-1xl lg:text-2xl">
                                 Tag Content
                             </h2>
-                            <AnimatePresence>
-                                {hideTagContent && (
-                                    <motion.textarea
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        disabled
-                                        className="w-full p-2 my-2 whitespace-pre-line resize-y h-80 bg-slate-400 rounded-2xl"
-                                    >
-                                        {data.content}
-                                    </motion.textarea>
-                                )}
-                            </AnimatePresence>
-                            <button
-                                className="py-2 mx-auto mt-2 text-3xl font-semibold transition duration-500 ease-in-out w-96 rounded-xl bg-cyan-400 hover:bg-cyan-500"
-                                onClick={onToggleTagContent}
+                            <textarea
+                                disabled
+                                className="w-full p-2 my-2 whitespace-pre-line resize-y h-80 bg-slate-400 rounded-2xl"
                             >
-                                {hideTagContent ? "Hide" : "Show"}
-                            </button>
+                                {data.content}
+                            </textarea>
+                            <div className="w-full h-0.5 mb-4 mt-3 bg-slate-600 rounded-2xl" />
+                            <h2 className="pb-2 truncate text-1xl lg:text-2xl">
+                                Tag Content
+                            </h2>
                             <div className="relative flex flex-col w-full mt-auto -bottom-4">
                                 <div className="w-full h-0.5 mb-1.5 bg-slate-600 rounded-2xl" />
                                 <div className="flex place-content-between">
@@ -176,7 +162,9 @@ export default function TagPage() {
                         <p>Loading data...</p>
                     ) : data ? (
                         <>
-                            <pre>{JSON.stringify(data, null, 2)}</pre>
+                            <pre className="whitespace-pre-wrap">
+                                {JSON.stringify(data, null, 2)}
+                            </pre>
                             <p>{data.tag_name}</p>
                         </>
                     ) : (

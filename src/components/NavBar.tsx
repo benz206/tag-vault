@@ -7,9 +7,10 @@ import { useRouter } from "next/router";
 function DiscordLogo() {
     return (
         <svg
-            className="transition-colors duration-500 ease-in-out lg:mr-3 fill-white"
+            className="transition-colors duration-500 ease-in-out lg:mr-3"
             width={28}
             height={28}
+            fill="white"
             viewBox="0 -28.5 256 256"
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +105,9 @@ export default function NavBar() {
                                     <a
                                         href="#"
                                         className="block px-4 py-2 text-center text-red-500 transition-colors duration-500 border-2 border-transparent rounded-md hover:border-red-500 "
-                                        onClick={() => signOut()}
+                                        onClick={() =>
+                                            signOut({ callbackUrl: "/" })
+                                        }
                                     >
                                         Sign out
                                     </a>

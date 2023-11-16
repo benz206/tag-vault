@@ -3,37 +3,35 @@ import StatsList from "@/components/StatsList";
 import { motion } from "framer-motion";
 import { ShortTagData } from "@/types";
 import { useSession, signIn } from "next-auth/react";
-import { useRouter } from "next/router";
-
-const featuredTags: ShortTagData[] = [
-    {
-        id: 1157946,
-    },
-    {
-        id: 1111722,
-    },
-    {
-        id: 1217391,
-    },
-    {
-        id: 825576,
-    },
-    {
-        id: 962280,
-    },
-    {
-        id: 865606,
-    },
-];
+import { useEffect, useState } from "react";
+import { getOwnerTagData } from "@/utils";
 
 export default function Home() {
-    const router = useRouter();
     const { data: session, status } = useSession({
         required: true,
         onUnauthenticated() {
-            signIn("discord");
+            signIn("discord", { callbackUrl: "/dashboard" });
         },
     });
+    const [ownerTags, setOwnerTags] = useState<ShortTagData[]>([]);
+
+    useEffect(() => {
+        console.log(session?.user);
+        if (session?.user.id) {
+            getOwnerTagData(session.user.id).then((result) => {
+                console.log(result);
+                if (result) {
+                    const converted: ShortTagData[] = [];
+                    result.tags.forEach((tag) => {
+                        converted.push({
+                            id: tag,
+                        });
+                    });
+                    setOwnerTags(converted);
+                }
+            });
+        }
+    }, [session]);
 
     return (
         <div className="flex flex-col items-center w-full h-full min-h-[calc(100vh-4rem)]">
@@ -50,12 +48,10 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 2 }}
             >
-                <h1 className="text-5xl text-center lg:text-7xl">
-                    Featured Tags
-                </h1>
+                <h1 className="text-5xl text-center lg:text-7xl">Tags</h1>
             </motion.div>
             <div className="relative h-auto w-max">
-                <Taglist tags={featuredTags} animDelay={5} />
+                <Taglist tags={ownerTags} animDelay={5} />
             </div>
         </div>
     );
