@@ -63,3 +63,14 @@ export type StaticFeaturedTag = {
 export type OwnerTagsQuery = {
     tags: number[];
 };
+
+export type DashStats = {
+    tags: {
+        public: number;
+        private: number;
+        nsfw: number;
+        total: number;
+    };
+    uses: number;
+    favorites: number;
+};

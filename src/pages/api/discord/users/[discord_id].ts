@@ -26,7 +26,13 @@ export default async function handler(
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(
+                `HTTP error! Status: ${
+                    response.status
+                } Rate limit header reset: ${response.headers.get(
+                    "X-RateLimit-Reset-After"
+                )}`
+            );
         }
 
         const userData = await response.json();

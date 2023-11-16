@@ -68,8 +68,9 @@ export default function NavBar() {
                 {data ? (
                     <>
                         <div
-                            onClick={() => setProfileOpen(true)}
+                            onClick={() => setProfileOpen(!profileOpen)}
                             className="hover:cursor-pointer group flex px-2 text-xl transition-colors duration-500 ease-in-out border-2 border-[#738ADB] lg:pl-2 lg:pr-4 lg:py-1 hover:bg-[#738ADB] rounded-3xl items-center text-white"
+                            ref={navRef}
                         >
                             <img
                                 src={
@@ -90,7 +91,6 @@ export default function NavBar() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -5 }}
                                     transition={{ duration: 0.5 }}
-                                    ref={navRef}
                                 >
                                     <Link
                                         href="/dashboard"

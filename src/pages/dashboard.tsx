@@ -1,5 +1,5 @@
 import Taglist from "@/components/Taglist";
-import StatsList from "@/components/StatsList";
+import DashStatsList from "@/components/DashStatsList";
 import { motion } from "framer-motion";
 import { ShortTagData } from "@/types";
 import { useSession, signIn } from "next-auth/react";
@@ -40,7 +40,7 @@ export default function Home() {
                     Dashboard
                 </h1>
             </div>
-            <StatsList />
+            <DashStatsList />
             <motion.div
                 className="relative flex content-center justify-center w-full p-2 pt-20"
                 key="0"
