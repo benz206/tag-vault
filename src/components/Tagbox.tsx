@@ -105,7 +105,11 @@ export default function Tagbox({
                         </h2>
                         <img
                             className="w-8 h-8 ml-auto -mt-1 rounded-full lg:h-12 lg:w-12"
-                            src={`https://cdn.discordapp.com/avatars/${tagData.owner_id}/${userData?.avatar}`}
+                            src={
+                                userData?.avatar
+                                    ? `https://cdn.discordapp.com/avatars/${tagData.owner_id}/${userData?.avatar}`
+                                    : "https://cdn.discordapp.com/embed/avatars/0.png"
+                            }
                         />
                     </div>
                     <div className="w-full h-0.5 mb-1.5 -mt-2 bg-slate-600 rounded-2xl" />
