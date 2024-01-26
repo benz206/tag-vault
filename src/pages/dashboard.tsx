@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { getOwnerTagData } from "@/utils";
 
 export default function Home() {
-    const { data: session, status } = useSession({
+    const { data: session } = useSession({
         required: true,
         onUnauthenticated() {
             signIn("discord", { callbackUrl: "/dashboard" });
@@ -16,10 +16,8 @@ export default function Home() {
     const [ownerTags, setOwnerTags] = useState<ShortTagData[]>([]);
 
     useEffect(() => {
-        console.log(session?.user);
         if (session?.user.id) {
             getOwnerTagData(session.user.id).then((result) => {
-                console.log(result);
                 if (result) {
                     const converted: ShortTagData[] = [];
                     result.tags.forEach((tag) => {
@@ -46,12 +44,12 @@ export default function Home() {
                 key="0"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 2 }}
+                transition={{ duration: 1, delay: 0.9 }}
             >
                 <h1 className="text-5xl text-center lg:text-7xl">Tags</h1>
             </motion.div>
             <div className="relative h-auto w-max">
-                <Taglist tags={ownerTags} animDelay={5} />
+                <Taglist tags={ownerTags} animDelay={1} />
             </div>
         </div>
     );

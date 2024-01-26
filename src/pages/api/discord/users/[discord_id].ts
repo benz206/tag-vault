@@ -23,8 +23,6 @@ export default async function handler(
         const cachedData = await collection.findOne({ id: String(discord_id) });
 
         if (cachedData) {
-            // Check if the data was fetched more than a day ago
-            console.log("Cacheing new data.");
             const now = new Date();
             const lastFetched = new Date(cachedData.lastFetched);
             const diffInMs = now.getTime() - lastFetched.getTime();
@@ -45,8 +43,6 @@ export default async function handler(
             };
 
             if (diffInMs > oneDayInMs) {
-                console.log("Refreshing old data.");
-                // Data is older than a day, refetch
                 const userData = await fetchUserData(discord_id);
                 await collection.updateOne(
                     { discord_id: String(discord_id) },
@@ -57,8 +53,6 @@ export default async function handler(
 
             return res.status(200).json(discordUserData);
         } else {
-            // Data not found in cache, fetch from API
-            console.log("New Fetch of Data.");
             const userData = await fetchUserData(discord_id);
             await collection.insertOne({
                 ...userData,

@@ -53,7 +53,7 @@ export default function Taglist({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{
                             duration: 1,
-                            delay: (i + animDelay) * 0.5,
+                            delay: (i + animDelay) * 0.2,
                         }}
                     >
                         <Tagbox id={tags[i].id} />

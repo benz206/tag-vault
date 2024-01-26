@@ -62,7 +62,7 @@ export default function StatsList() {
                 key="2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.3 }}
+                transition={{ duration: 1, delay: 0.2 }}
             >
                 <motion.div
                     className="group flex flex-col justify-center p-6 mb-10 border-t-8 border-green-500 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 md:m-2 md:w-[200px] lg:w-[270px] 2xl:w-[430px]"
@@ -89,7 +89,7 @@ export default function StatsList() {
                 key="3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.6 }}
+                transition={{ duration: 1, delay: 0.4 }}
             >
                 <motion.div
                     className="group flex flex-col justify-center p-6 border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 md:m-2 md:w-[200px] lg:w-[270px] 2xl:w-[430px]"

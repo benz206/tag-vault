@@ -24,7 +24,7 @@ function DiscordLogo() {
 }
 
 export default function NavBar() {
-    const { data, status } = useSession();
+    const { data } = useSession();
     const [profileOpen, setProfileOpen] = useState(false);
     const router = useRouter();
 
@@ -75,15 +75,15 @@ export default function NavBar() {
                                         ? data.user?.image
                                         : "https://cdn.discordapp.com/embed/avatars/0.png"
                                 }
-                                className="mr-2 rounded-full h-7 w-7"
+                                className="rounded-full md:mr-2 h-7 w-7"
                                 alt="Profile Picture"
                             />{" "}
-                            <span className="">{data.user?.name}</span>
+                            <span className="hidden md:block">{data.user?.name}</span>
                         </div>
                         <AnimatePresence>
                             {profileOpen && (
                                 <motion.div
-                                    className="absolute w-40 border-4 rounded-md right-1 top-12 bg-darkbg border-darkbg"
+                                    className="absolute z-10 w-40 border-4 rounded-md right-1 top-12 bg-darkbg border-darkbg"
                                     initial={{ opacity: 0, y: -5 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -5 }}

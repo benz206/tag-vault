@@ -80,23 +80,24 @@ export default function Tagbox({
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
             {loading ? (
-                <>
-                    <div className="flex flex-row mb-2 -top-4">
-                        <div className="w-3/4 h-12 mb-6 animate-pulse rounded-xl bg-slate-500" />
-                        <div className="w-12 h-12 ml-auto rounded-full animate-pulse bg-slate-500" />
+                <div className="flex flex-col">
+                    <div className="flex flex-row mb-2 -mt-3 lg:mb-2">
+                        <div className="w-3/4 h-6 lg:h-12 animate-pulse rounded-xl bg-slate-500" />
+                        <div className="w-6 h-6 ml-auto rounded-full lg:w-12 lg:h-12 animate-pulse bg-slate-500" />
                     </div>
-                    <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="absolute flex flex-col w-10/12 bottom-2 left-6 lg:w-11/12">
-                        <div className="w-full h-0.5 mb-4 mt-auto bg-slate-600 rounded-2xl" />
+                    <div className="w-full h-0.5 mt-auto bg-slate-600 rounded-2xl mb-4" />
+                    <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
+                    <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
+                    <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
+                    <div className="relative flex flex-col w-full mt-auto -bottom-4">
+                        <div className="w-full h-0.5 mb-2 lg:mb-4 mt-auto bg-slate-600 rounded-2xl" />
                         <div className="flex space-x-4">
                             <div className="w-4/12 h-4 mb-2 animate-pulse lg:w-5/12 rounded-xl bg-slate-500" />
                             <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500" />
                             <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500 justify-self-end" />
                         </div>
                     </div>
-                </>
+                </div>
             ) : tagData ? (
                 <div className="flex flex-col h-full">
                     <div className="relative flex flex-row mb-2 -top-2">
