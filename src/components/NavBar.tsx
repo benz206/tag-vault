@@ -78,7 +78,9 @@ export default function NavBar() {
                                 className="rounded-full md:mr-2 h-7 w-7"
                                 alt="Profile Picture"
                             />{" "}
-                            <span className="hidden md:block">{data.user?.name}</span>
+                            <span className="hidden md:block">
+                                {data.user?.name}
+                            </span>
                         </div>
                         <AnimatePresence>
                             {profileOpen && (

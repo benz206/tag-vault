@@ -1,3 +1,1 @@
-export default function Tags() {
-
-}
+export default function Tags() {}
