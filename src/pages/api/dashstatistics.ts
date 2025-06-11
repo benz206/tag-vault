@@ -14,7 +14,7 @@ export default async function handler(
 
     const publicTags = await collection.countDocuments({
         owner_id: session?.user.id,
-        shared: true,
+        // shared: true,
     });
     const nsfwTags = await collection.countDocuments({
         owner_id: session?.user.id,

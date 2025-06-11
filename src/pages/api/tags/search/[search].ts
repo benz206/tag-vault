@@ -35,7 +35,7 @@ export default async function handler(
             {
                 $match: {
                     $and: [
-                        { shared: true },
+                        // { shared: true },
                         { deleted: false },
                         { nsfw: false },
                         { safe: { $in: ["safe", "unrated"] } },
