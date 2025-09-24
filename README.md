@@ -1,5 +1,7 @@
 # tag-vault
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a9a7a5be-a58a-41c3-beae-432431bf5160/deploy-status)](https://app.netlify.com/projects/tagvault/deploys)
+
 This is not affiliated or endorsed by BotLabs, Carl-bots parent company.
 
 ## Running the project
