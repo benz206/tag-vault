@@ -71,9 +71,11 @@ export default function Tagbox({
         }
     }, [id]);
 
+    const resolvedColor = color || "slate-500";
+
     return (
         <motion.div
-            className={`group rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${color} shadow-${color} shadow-xl hover:cursor-pointer ease-in-out mb-12 lg:m-4 2xl:m-0`}
+            className={`group rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${resolvedColor} shadow-${resolvedColor} shadow-xl hover:cursor-pointer ease-in-out mb-12 lg:m-4 2xl:m-0`}
             onClick={() => router.push("/tags/" + id)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -100,18 +102,35 @@ export default function Tagbox({
                 </div>
             ) : tagData ? (
                 <div className="flex flex-col h-full">
-                    <div className="relative flex flex-row mb-2 -top-2">
+                    <div className="relative flex flex-row items-start mb-2 -top-2">
                         <h2 className="text-2xl truncate lg:text-4xl">
                             {tagData.tag_name}
                         </h2>
-                        <img
-                            className="w-8 h-8 ml-auto -mt-1 rounded-full lg:h-12 lg:w-12"
-                            src={
-                                userData?.avatar
-                                    ? `https://cdn.discordapp.com/avatars/${tagData.owner_id}/${userData?.avatar}`
-                                    : "https://cdn.discordapp.com/embed/avatars/0.png"
-                            }
-                        />
+                        <div className="flex items-center ml-auto space-x-2">
+                            {typeof tagData.uses === "number" && (
+                                <span className="px-2 py-0.5 text-xs rounded-md bg-slate-600">
+                                    {tagData.uses} uses
+                                </span>
+                            )}
+                            {tagData.shared === false && (
+                                <span className="px-2 py-0.5 text-xs rounded-md bg-amber-700">
+                                    Private
+                                </span>
+                            )}
+                            {tagData.nsfw && (
+                                <span className="px-2 py-0.5 text-xs rounded-md bg-rose-700">
+                                    NSFW
+                                </span>
+                            )}
+                            <img
+                                className="w-8 h-8 rounded-full lg:h-12 lg:w-12"
+                                src={
+                                    userData?.avatar
+                                        ? `https://cdn.discordapp.com/avatars/${tagData.owner_id}/${userData?.avatar}`
+                                        : "https://cdn.discordapp.com/embed/avatars/0.png"
+                                }
+                            />
+                        </div>
                     </div>
                     <div className="w-full h-0.5 mb-1.5 -mt-2 bg-slate-600 rounded-2xl" />
                     <p className="text-base line-clamp-3 lg:line-clamp-5 lg:text-lg">

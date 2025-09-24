@@ -35,8 +35,8 @@ export default async function handler(
     }
 
     if (session?.user.id != rawTagData.owner_id) {
-        if (rawTagData.deleted || !rawTagData.shared) {
-            return res.status(404).json({ error: "Tag is Private" });
+        if (rawTagData.deleted) {
+            return res.status(404).json({ error: "Tag has been deleted" });
         }
 
         if (rawTagData.nsfw) {
