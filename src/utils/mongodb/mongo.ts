@@ -1,11 +1,21 @@
 import { MongoClient, Db } from "mongodb";
 
-const MONGODB_URI =
-    process.env.MONGODB_URI ||
-    `mongodb+srv://${process.env.Mongo_User}:${process.env.Mongo_Pass}@carltagscluster.nyxt2.mongodb.net/TagDB?retryWrites=true&w=majority`;
-const MONGODB_DB = process.env.MONGODB_DB || "TagDB";
+const MONGO_DB_URL = process.env.MONGO_DB_URL;
+if (!MONGO_DB_URL) {
+    throw new Error("MONGO_DB_URL is not set");
+}
 
-const client = new MongoClient(MONGODB_URI);
+const DEFAULT_DB_NAME = (() => {
+    try {
+        const url = new URL(MONGO_DB_URL);
+        const name = url.pathname.replace(/^\//, "");
+        return name || undefined;
+    } catch {
+        return undefined;
+    }
+})();
+
+const client = new MongoClient(MONGO_DB_URL);
 
 let connectPromise: Promise<MongoClient> | null = null;
 
@@ -22,7 +32,7 @@ export async function connectToMongo(): Promise<MongoClient> {
 
 export async function getDb(): Promise<Db> {
     await connectToMongo();
-    return client.db(MONGODB_DB);
+    return client.db(DEFAULT_DB_NAME);
 }
 
 export default client;
