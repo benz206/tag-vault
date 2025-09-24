@@ -5,13 +5,8 @@ import { getTagColor, formatDate, getDiscordUser } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 async function getData(id: number) {
-    const res = await fetch("/api/tags/" + id);
-
-    if (!res.ok) {
-        throw new Error("Failed to fetch data");
-    }
-
-    return res.json();
+    const { apiFetch } = await import("@/utils/api");
+    return apiFetch("/api/tags/" + id);
 }
 
 export default function TagPage() {

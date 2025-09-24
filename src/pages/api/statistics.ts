@@ -24,12 +24,15 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Statistics>
 ) {
+    if (req.method !== "GET") {
+        res.setHeader("Allow", "GET");
+        return res.status(405).end("Method Not Allowed");
+    }
     const db = client.db("TagDB");
     const collection = db.collection("Tags");
 
     const allTagCount = await collection.countDocuments();
-    // const publicTagCount = await collection.countDocuments({ shared: true });
-    const publicTagCount = await collection.countDocuments();
+    const publicTagCount = await collection.countDocuments({ shared: true });
     const lastFetched = await getLatestLastFetched(collection);
 
     res.status(200).json({

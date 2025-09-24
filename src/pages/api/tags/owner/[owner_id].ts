@@ -9,13 +9,14 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<OwnerTagsQuery | Error>
 ) {
-    const { owner_id } = req.query;
-
-    if (!owner_id) {
-        return res.status(400).json({ error: "Invalid Owner ID" });
+    if (req.method !== "GET") {
+        res.setHeader("Allow", "GET");
+        return res.status(405).json({ error: "Method Not Allowed" });
     }
 
-    if (!owner_id || isNaN(Number(owner_id))) {
+    const { owner_id } = req.query;
+
+    if (!owner_id || Array.isArray(owner_id)) {
         return res.status(400).json({ error: "Invalid Owner ID" });
     }
 

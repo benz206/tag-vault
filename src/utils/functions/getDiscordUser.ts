@@ -1,17 +1,23 @@
-export async function getDiscordUser(discord_id: number) {
-    const user = sessionStorage.getItem("d-" + discord_id);
+import { apiFetch } from "@/utils/api";
+import { DiscordUser } from "@/types";
 
-    if (user) {
-        return JSON.parse(user);
+export async function getDiscordUser(discord_id: string) {
+    if (typeof window !== "undefined") {
+        const cached = sessionStorage.getItem("d-" + discord_id);
+        if (cached) {
+            try {
+                return JSON.parse(cached) as DiscordUser;
+            } catch {}
+        }
     }
-    console.log("user: " + user);
-    const res = await fetch("/api/discord/users/" + discord_id);
 
-    if (!res.ok) {
-        throw new Error("Failed to fetch data");
+    const user = await apiFetch<DiscordUser>("/api/discord/users/" + discord_id);
+
+    if (typeof window !== "undefined") {
+        try {
+            sessionStorage.setItem("d-" + discord_id, JSON.stringify(user));
+        } catch {}
     }
 
-    const json = res.json();
-
-    return json;
+    return user;
 }

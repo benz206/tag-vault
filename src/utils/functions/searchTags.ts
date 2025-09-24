@@ -3,11 +3,6 @@ export async function searchTags(query: string) {
         return [];
     }
 
-    const res = await fetch("/api/tags/search/" + query);
-
-    if (!res.ok) {
-        throw new Error("Failed to fetch data");
-    }
-
-    return res.json();
+    const { apiFetch } = await import("@/utils/api");
+    return apiFetch("/api/tags/search/" + encodeURIComponent(query));
 }

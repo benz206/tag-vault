@@ -8,9 +8,17 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<DashStats>
 ) {
+    if (req.method !== "GET") {
+        res.setHeader("Allow", "GET");
+        return res.status(405).end("Method Not Allowed");
+    }
     const db = client.db("TagDB");
     const collection = db.collection("Tags");
     const session = await getServerSession(req, res, authOptions);
+
+    if (!session?.user?.id) {
+        return res.status(401).end("Unauthorized");
+    }
 
     const publicTags = await collection.countDocuments({
         owner_id: session?.user.id,
@@ -26,7 +34,7 @@ export default async function handler(
 
     const totalUses = await collection
         .aggregate([
-            { $match: { owner_id: session?.user.id } },
+            { $match: { owner_id: session.user.id } },
             { $group: { _id: null, total: { $sum: "$uses" } } },
         ])
         .toArray();
@@ -38,7 +46,7 @@ export default async function handler(
             nsfw: nsfwTags,
             total: totalTags,
         },
-        uses: totalUses[0].total ? totalUses[0].total : 0,
+        uses: totalUses[0]?.total ? totalUses[0].total : 0,
         favorites: 0, // TODO: Implement favorites
     });
 }

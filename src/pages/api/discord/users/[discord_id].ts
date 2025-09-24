@@ -13,9 +13,13 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<DiscordUser | Error>
 ) {
+    if (req.method !== "GET") {
+        res.setHeader("Allow", "GET");
+        return res.status(405).json({ error: "Method Not Allowed" });
+    }
     const { discord_id } = req.query;
 
-    if (!discord_id || isNaN(Number(discord_id)) || Array.isArray(discord_id)) {
+    if (!discord_id || Array.isArray(discord_id)) {
         return res.status(400).json({ error: "Invalid discord_id" });
     }
 
@@ -43,9 +47,9 @@ export default async function handler(
             };
 
             if (diffInMs > oneDayInMs) {
-                const userData = await fetchUserData(discord_id);
+                const userData = await fetchUserData(String(discord_id));
                 await collection.updateOne(
-                    { discord_id: String(discord_id) },
+                    { id: String(discord_id) },
                     { $set: { ...userData, lastFetched: now } }
                 );
                 return res.status(200).json(userData);
@@ -53,7 +57,7 @@ export default async function handler(
 
             return res.status(200).json(discordUserData);
         } else {
-            const userData = await fetchUserData(discord_id);
+            const userData = await fetchUserData(String(discord_id));
             await collection.insertOne({
                 ...userData,
                 lastFetched: new Date(),
