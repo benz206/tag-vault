@@ -19,15 +19,16 @@ export default function Tagbox({
 
     useEffect(() => {
         if (staticData) {
-            // setTagData(staticData.tag);
-            // setUserData(staticData.discord);
-            // setColor(
-            //     getTagColor(
-            //         Number(staticData.tag.id),
-            //         Number(staticData.tag.owner_id)
-            //     )
-            // );
-            // setLoading(false);
+            setTagData(staticData);
+            setColor(
+                getTagColor(Number(staticData.id), Number(staticData.owner_id))
+            );
+            getDiscordUser(staticData.owner_id)
+                .then((discord_result) => {
+                    setUserData(discord_result);
+                })
+                .catch(() => {});
+            setLoading(false);
         } else {
             if (!id || isNaN(Number(id))) {
                 setLoading(false);

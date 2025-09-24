@@ -74,3 +74,10 @@ export type DashStats = {
     uses: number;
     favorites: number;
 };
+
+export type BrowseQuery = {
+    results: TagData[];
+    total: number;
+    page: number;
+    pageSize: number;
+};

@@ -1,6 +1,8 @@
 import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { TagData, Error, SearchQuery } from "@/types";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const db = client.db("TagDB");
 const collection = db.collection("Tags");
@@ -12,6 +14,11 @@ export default async function handler(
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
         return res.status(405).json({ error: "Method Not Allowed" });
+    }
+
+    const session = await getServerSession(req, res, authOptions);
+    if (!session?.user?.id) {
+        return res.status(401).json({ error: "Unauthorized" });
     }
 
     const { search } = req.query;

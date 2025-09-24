@@ -2,11 +2,28 @@ import { useState, FormEvent } from "react";
 import { searchTags } from "@/utils";
 import { SearchQuery } from "@/types";
 import Taglist from "@/components/Taglist";
+import { useSession, signIn } from "next-auth/react";
 
 export default function Home() {
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn("discord", { callbackUrl: "/search" });
+        },
+    });
     const [searchData, setSearchData] = useState<SearchQuery | null>(null);
     const [query, setQuery] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        if (!query) return;
+        getQueries();
+    }
+
+    function handleInputChange(event: FormEvent<HTMLInputElement>) {
+        setQuery(event.currentTarget.value);
+    }
 
     function getQueries() {
         setIsLoading(true);
@@ -22,14 +39,12 @@ export default function Home() {
             });
     }
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        if (!query) return;
-        getQueries();
-    }
-
-    function handleInputChange(event: FormEvent<HTMLInputElement>) {
-        setQuery(event.currentTarget.value);
+    if (status === "loading") {
+        return (
+            <div className="flex items-center justify-center w-full h-[60vh]">
+                <p>Loading...</p>
+            </div>
+        );
     }
 
     return (

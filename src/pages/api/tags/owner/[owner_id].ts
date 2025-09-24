@@ -1,6 +1,8 @@
 import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { TagData, Error, OwnerTagsQuery } from "@/types";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const db = client.db("TagDB");
 const collection = db.collection("Tags");
@@ -18,6 +20,11 @@ export default async function handler(
 
     if (!owner_id || Array.isArray(owner_id)) {
         return res.status(400).json({ error: "Invalid Owner ID" });
+    }
+
+    const session = await getServerSession(req, res, authOptions);
+    if (!session?.user?.id || session.user.id !== String(owner_id)) {
+        return res.status(401).json({ error: "Unauthorized" });
     }
 
     const queries = await collection
