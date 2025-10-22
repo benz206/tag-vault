@@ -3,11 +3,36 @@ import { getStats } from "@/utils";
 import { Statistics } from "@/types";
 import { motion } from "framer-motion";
 
-function getTimeSince(startDate: Date): number {
+function getTimeSince(startDate: Date): string {
     const currentDate = new Date();
-    return Math.round(
+    const seconds = Math.round(
         Math.abs(currentDate.getTime() - startDate.getTime()) / 1000
     );
+    if (seconds < 60) {
+        return `${seconds} second${seconds === 1 ? "" : "s"}`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+        return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+    }
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+        return `${hours} hour${hours === 1 ? "" : "s"}`;
+    }
+    const days = Math.floor(hours / 24);
+    if (days < 7) {
+        return `${days} day${days === 1 ? "" : "s"}`;
+    }
+    const weeks = Math.floor(days / 7);
+    if (weeks < 5) {
+        return `${weeks} week${weeks === 1 ? "" : "s"}`;
+    }
+    const months = Math.floor(days / 30);
+    if (months < 12) {
+        return `${months} month${months === 1 ? "" : "s"}`;
+    }
+    const years = Math.floor(days / 365);
+    return `${years} year${years === 1 ? "" : "s"}`;
 }
 
 export default function StatsList() {
@@ -24,7 +49,7 @@ export default function StatsList() {
     }, []);
 
     return (
-        <div className="relative flex flex-col flex-wrap content-center justify-center w-full -mt-20 md:flex-row lg:space-x-18 lg:h-64">
+        <div className="flex relative flex-col flex-wrap justify-center content-center -mt-20 w-full md:flex-row lg:space-x-18 lg:h-64">
             <motion.div
                 key="1"
                 initial={{ opacity: 0, y: 20 }}
@@ -46,9 +71,9 @@ export default function StatsList() {
                         </span>{" "}
                         database with{" "}
                         <span className="font-bold text-cyan-300 animate-pulse">
-                            {statsData?.public_tag_count ? (
+                            {statsData?.all_tag_count ? (
                                 <>
-                                    {statsData.public_tag_count.toLocaleString()}
+                                    {statsData.all_tag_count.toLocaleString()}
                                 </>
                             ) : (
                                 "loading..."
@@ -100,28 +125,13 @@ export default function StatsList() {
                         Help Us Grow
                     </h2>
                     <p>
-                        There are still{" "}
-                        <span className="font-bold text-rose-400 animate-pulse">
-                            {statsData?.all_tag_count &&
-                            statsData?.public_tag_count ? (
-                                <>
-                                    {(
-                                        statsData.all_tag_count -
-                                        statsData.public_tag_count
-                                    ).toLocaleString()}
-                                </>
-                            ) : (
-                                "loading..."
-                            )}
-                        </span>{" "}
-                        tags to be shared. The last update was only{" "}
+                        Every tag in the vault is ready to use. The last update was only{" "}
                         <span className="font-bold text-rose-400 animate-pulse">
                             {statsData?.latest_last_fetched ? (
                                 <>
                                     {getTimeSince(
                                         new Date(statsData.latest_last_fetched)
-                                    )}{" "}
-                                    seconds
+                                    )}
                                 </>
                             ) : (
                                 "loading..."
