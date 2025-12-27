@@ -1,4 +1,7 @@
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+export async function apiFetch<T = unknown>(
+    path: string,
+    init?: RequestInit
+): Promise<T> {
     const res = await fetch(path, {
         ...init,
         headers: {
@@ -17,5 +20,3 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
 
     return res.json() as Promise<T>;
 }
-
-
