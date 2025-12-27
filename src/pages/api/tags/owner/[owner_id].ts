@@ -1,11 +1,8 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { TagData, Error, OwnerTagsQuery } from "@/types";
+import { Error, OwnerTagsQuery } from "@/types";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-
-const db = client.db("TagDB");
-const collection = db.collection("Tags");
+import { getDb } from "@/utils/mongodb/mongo";
 
 export default async function handler(
     req: NextApiRequest,
@@ -27,28 +24,13 @@ export default async function handler(
         return res.status(401).json({ error: "Unauthorized" });
     }
 
+    const db = await getDb();
+    const collection = db.collection("Tags");
+
     const queries = await collection
         .find({ owner_id: String(owner_id) })
+        .project({ _id: 0, id: 1 })
         .toArray();
-
-    // const tagData: TagData[] = queries.map((query) => ({
-    //     id: query.id,
-    //     created_at: query.created_at,
-    //     guild_id: query.guild_id,
-    //     tag_name: query.tag_name,
-    //     nsfw: query.nsfw,
-    //     owner_id: query.owner_id,
-    //     sharer: query.sharer,
-    //     uses: query.uses,
-    //     content: query.content,
-    //     embed: query.embed,
-    //     last_fetched: query.last_fetched,
-    //     deleted: query.deleted,
-    //     description: query.description,
-    //     restricted: query.restricted,
-    //     shared: query.shared,
-    //     safe: query.safe,
-    // }));
 
     const tagIDs: number[] = queries.map((query) => query.id);
 

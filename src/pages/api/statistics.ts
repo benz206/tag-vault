@@ -1,7 +1,14 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Statistics } from "@/types";
 import { Collection } from "mongodb";
+import { getDb } from "@/utils/mongodb/mongo";
+
+function toIso(value: any): string | null {
+    if (!value) return null;
+    if (value instanceof Date) return value.toISOString();
+    if (typeof value === "string") return value;
+    return String(value);
+}
 
 async function getLatestLastFetched(collection: Collection) {
     try {
@@ -28,7 +35,7 @@ export default async function handler(
         res.setHeader("Allow", "GET");
         return res.status(405).end("Method Not Allowed");
     }
-    const db = client.db("TagDB");
+    const db = await getDb();
     const collection = db.collection("Tags");
 
     const allTagCount = await collection.countDocuments();
@@ -38,6 +45,6 @@ export default async function handler(
     res.status(200).json({
         all_tag_count: allTagCount,
         public_tag_count: publicTagCount,
-        latest_last_fetched: lastFetched,
+        latest_last_fetched: toIso(lastFetched),
     });
 }

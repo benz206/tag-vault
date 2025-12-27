@@ -1,13 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { DiscordUser } from "@/types";
-import client from "@/utils/mongodb/mongo";
+import { getDb } from "@/utils/mongodb/mongo";
 
 type Error = {
     error: string;
 };
-
-const db = client.db("TagDB");
-const collection = db.collection("Users");
 
 export default async function handler(
     req: NextApiRequest,
@@ -24,6 +21,9 @@ export default async function handler(
     }
 
     try {
+        const db = await getDb();
+        const collection = db.collection("Users");
+
         const cachedData = await collection.findOne({ id: String(discord_id) });
 
         if (cachedData) {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 function DiscordLogo() {
     return (
@@ -69,7 +70,7 @@ export default function NavBar() {
                             className="hover:cursor-pointer group flex px-2 text-xl transition-colors duration-500 ease-in-out border-2 border-[#738ADB] lg:pl-2 lg:pr-4 lg:py-1 hover:bg-[#738ADB] rounded-3xl items-center text-white"
                             ref={navRef}
                         >
-                            <img
+                            <Image
                                 src={
                                     data.user?.image
                                         ? data.user?.image
@@ -77,6 +78,8 @@ export default function NavBar() {
                                 }
                                 className="rounded-full md:mr-2 h-7 w-7"
                                 alt="Profile Picture"
+                                width={28}
+                                height={28}
                             />{" "}
                             <span className="hidden md:block">
                                 {data.user?.name}

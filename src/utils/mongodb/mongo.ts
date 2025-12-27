@@ -18,21 +18,20 @@ const DEFAULT_DB_NAME = (() => {
 const DB_NAME = process.env.MONGO_DB_NAME || DEFAULT_DB_NAME || "TagDB";
 
 declare global {
-    // eslint-disable-next-line no-var
     var __tagVaultMongoClientPromise: Promise<MongoClient> | undefined;
 }
 
 const client = new MongoClient(MONGO_DB_URL);
 
 const mongoClientPromise =
-    global.__tagVaultMongoClientPromise ||
+    globalThis.__tagVaultMongoClientPromise ||
     client.connect().catch((error) => {
-        global.__tagVaultMongoClientPromise = undefined;
+        globalThis.__tagVaultMongoClientPromise = undefined;
         throw error;
     });
 
 if (process.env.NODE_ENV !== "production") {
-    global.__tagVaultMongoClientPromise = mongoClientPromise;
+    globalThis.__tagVaultMongoClientPromise = mongoClientPromise;
 }
 
 export async function connectToMongo(): Promise<MongoClient> {

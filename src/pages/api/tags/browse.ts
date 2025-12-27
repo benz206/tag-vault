@@ -1,11 +1,31 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { BrowseQuery, TagData } from "@/types";
+import type { BrowseQuery, TagSummary } from "@/types";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getDb } from "@/utils/mongodb/mongo";
 
-const db = client.db("TagDB");
-const collection = db.collection("Tags");
+function toIso(value: any): string {
+    if (!value) return "";
+    if (value instanceof Date) return value.toISOString();
+    if (typeof value === "string") return value;
+    return String(value);
+}
+
+function toSummary(query: any): TagSummary {
+    return {
+        id: Number(query.id),
+        created_at: toIso(query.created_at),
+        tag_name: String(query.tag_name ?? ""),
+        nsfw: Boolean(query.nsfw),
+        owner_id: String(query.owner_id ?? ""),
+        uses: Number(query.uses ?? 0),
+        description: query.description ?? null,
+        restricted: Boolean(query.restricted),
+        shared: Boolean(query.shared),
+        deleted: Boolean(query.deleted),
+        safe: String(query.safe ?? ""),
+    };
+}
 
 function parseBool(value: string | string[] | undefined): boolean | undefined {
     if (value === undefined) return undefined;
@@ -55,6 +75,9 @@ export default async function handler(
 
     const searchText = q && !Array.isArray(q) ? q.trim() : "";
 
+    const db = await getDb();
+    const collection = db.collection("Tags");
+
     const pipeline: any[] = [];
     if (searchText) {
         pipeline.push({
@@ -72,30 +95,29 @@ export default async function handler(
     pipeline.push({ $sort: { last_fetched: -1 } });
     pipeline.push({ $skip: p * ps });
     pipeline.push({ $limit: ps });
+    pipeline.push({
+        $project: {
+            _id: 0,
+            id: 1,
+            created_at: 1,
+            tag_name: 1,
+            nsfw: 1,
+            owner_id: 1,
+            uses: 1,
+            description: 1,
+            restricted: 1,
+            shared: 1,
+            deleted: 1,
+            safe: 1,
+        },
+    });
 
     const [items, totalAgg] = await Promise.all([
         collection.aggregate(pipeline).toArray(),
         collection.aggregate(countPipeline).toArray(),
     ]);
 
-    const tagData: TagData[] = items.map((query) => ({
-        id: query.id,
-        created_at: query.created_at,
-        guild_id: query.guild_id,
-        tag_name: query.tag_name,
-        nsfw: query.nsfw,
-        owner_id: query.owner_id,
-        sharer: query.sharer,
-        uses: query.uses,
-        content: query.content,
-        embed: query.embed,
-        last_fetched: query.last_fetched,
-        deleted: query.deleted,
-        description: query.description,
-        restricted: query.restricted,
-        shared: query.shared,
-        safe: query.safe,
-    }));
+    const tagData = items.map(toSummary);
 
     const total = totalAgg[0]?.total ? Number(totalAgg[0].total) : 0;
 

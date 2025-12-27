@@ -1,8 +1,8 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { DashStats } from "@/types";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getDb } from "@/utils/mongodb/mongo";
 
 export default async function handler(
     req: NextApiRequest,
@@ -12,7 +12,7 @@ export default async function handler(
         res.setHeader("Allow", "GET");
         return res.status(405).end("Method Not Allowed");
     }
-    const db = client.db("TagDB");
+    const db = await getDb();
     const collection = db.collection("Tags");
     const session = await getServerSession(req, res, authOptions);
 
@@ -47,6 +47,6 @@ export default async function handler(
             total: totalTags,
         },
         uses: totalUses[0]?.total ? totalUses[0].total : 0,
-        favorites: 0, // TODO: Implement favorites
+        favorites: 0,
     });
 }

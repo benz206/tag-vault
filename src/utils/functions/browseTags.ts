@@ -1,4 +1,5 @@
 import type { BrowseQuery } from "@/types";
+import { apiFetch } from "@/utils/api";
 
 type BrowseParams = {
     q?: string;
@@ -20,7 +21,6 @@ export async function browseTags(params: BrowseParams = {}): Promise<BrowseQuery
     if (params.safe !== undefined) query.set("safe", params.safe);
     if (params.owner_id) query.set("owner_id", params.owner_id);
 
-    const { apiFetch } = await import("@/utils/api");
     return apiFetch<BrowseQuery>("/api/tags/browse" + (query.toString() ? `?${query.toString()}` : ""));
 }
 

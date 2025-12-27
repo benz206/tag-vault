@@ -1,15 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import client from "@/utils/mongodb/mongo";
 import { TagData } from "@/types";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth/next";
+import { getDb } from "@/utils/mongodb/mongo";
 
 type Error = {
     error: string;
 };
 
-const db = client.db("TagDB");
-const collection = db.collection("Tags");
+function toIso(value: any): string {
+    if (!value) return "";
+    if (value instanceof Date) return value.toISOString();
+    if (typeof value === "string") return value;
+    return String(value);
+}
 
 export default async function handler(
     req: NextApiRequest,
@@ -26,9 +30,13 @@ export default async function handler(
         return res.status(400).json({ error: "Invalid Tag ID" });
     }
 
-    const rawTagData = await collection.findOne({
-        id: Number(id),
-    });
+    const db = await getDb();
+    const collection = db.collection("Tags");
+
+    const rawTagData = await collection.findOne(
+        { id: Number(id) },
+        { projection: { _id: 0 } }
+    );
 
     if (!rawTagData) {
         return res.status(404).json({ error: "Tag ID Non Existent" });
@@ -51,22 +59,22 @@ export default async function handler(
     }
 
     const convertedTagData: TagData = {
-        id: rawTagData.id,
-        created_at: new Date(rawTagData.created_at),
-        guild_id: rawTagData.guild_id,
-        tag_name: rawTagData.tag_name,
-        nsfw: rawTagData.nsfw,
-        owner_id: rawTagData.owner_id,
-        sharer: rawTagData.sharer,
-        uses: rawTagData.uses,
-        content: rawTagData.content,
-        embed: rawTagData.embed,
-        last_fetched: new Date(rawTagData.last_fetched),
-        deleted: rawTagData.deleted,
-        description: rawTagData.description,
-        restricted: rawTagData.restricted,
-        shared: rawTagData.shared,
-        safe: rawTagData.safe,
+        id: Number(rawTagData.id),
+        created_at: toIso(rawTagData.created_at),
+        guild_id: String(rawTagData.guild_id ?? ""),
+        tag_name: String(rawTagData.tag_name ?? ""),
+        nsfw: Boolean(rawTagData.nsfw),
+        owner_id: String(rawTagData.owner_id ?? ""),
+        sharer: String(rawTagData.sharer ?? ""),
+        uses: Number(rawTagData.uses ?? 0),
+        content: String(rawTagData.content ?? ""),
+        embed: String(rawTagData.embed ?? ""),
+        last_fetched: toIso(rawTagData.last_fetched),
+        deleted: Boolean(rawTagData.deleted),
+        description: rawTagData.description ?? null,
+        restricted: Boolean(rawTagData.restricted),
+        shared: Boolean(rawTagData.shared),
+        safe: String(rawTagData.safe ?? ""),
     };
 
     res.status(200).json(convertedTagData);

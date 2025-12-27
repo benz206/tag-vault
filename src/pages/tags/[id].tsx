@@ -1,14 +1,10 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { TagData, DiscordUser } from "@/types";
-import { getTagColor, formatDate, getDiscordUser } from "@/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { getTagColor, formatDate, getDiscordUser, getTagData } from "@/utils";
+import { motion } from "framer-motion";
 import CopyButton from "@/components/CopyButton";
-
-async function getData(id: number): Promise<TagData> {
-    const { apiFetch } = await import("@/utils/api");
-    return apiFetch<TagData>("/api/tags/" + id);
-}
+import Image from "next/image";
 
 export default function TagPage() {
     const router = useRouter();
@@ -24,7 +20,7 @@ export default function TagPage() {
             return;
         }
 
-        getData(Number(id))
+        getTagData(Number(id))
             .then((result) => {
                 setData(result);
                 setColor(
@@ -119,9 +115,20 @@ export default function TagPage() {
                                             {data.safe}
                                         </span>
                                     )}
-                                    <img
+                                    <Image
                                         className="w-8 h-8 rounded-full lg:h-12 lg:w-12"
-                                        src={`https://cdn.discordapp.com/avatars/${data.owner_id}/${userData?.avatar}`}
+                                        src={
+                                            userData?.avatar
+                                                ? `https://cdn.discordapp.com/avatars/${data.owner_id}/${userData.avatar}`
+                                                : "https://cdn.discordapp.com/embed/avatars/0.png"
+                                        }
+                                        alt={
+                                            userData?.global_name
+                                                ? `${userData.global_name} avatar`
+                                                : "User avatar"
+                                        }
+                                        width={48}
+                                        height={48}
                                     />
                                 </div>
                             </div>
@@ -303,7 +310,7 @@ export default function TagPage() {
                                 Well well well...
                             </h2>
                             <p className="text-base lg:text-lg">
-                                Sorry! Seem's like this tag failed to load...
+                                Sorry! Seems like this tag failed to load...
                             </p>
                         </>
                     )}
