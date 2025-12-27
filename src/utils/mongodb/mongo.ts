@@ -15,24 +15,32 @@ const DEFAULT_DB_NAME = (() => {
     }
 })();
 
+const DB_NAME = process.env.MONGO_DB_NAME || DEFAULT_DB_NAME || "TagDB";
+
+declare global {
+    var __tagVaultMongoClientPromise: Promise<MongoClient> | undefined;
+}
+
 const client = new MongoClient(MONGO_DB_URL);
 
-let connectPromise: Promise<MongoClient> | null = null;
+const mongoClientPromise =
+    globalThis.__tagVaultMongoClientPromise ||
+    client.connect().catch((error) => {
+        globalThis.__tagVaultMongoClientPromise = undefined;
+        throw error;
+    });
+
+if (process.env.NODE_ENV !== "production") {
+    globalThis.__tagVaultMongoClientPromise = mongoClientPromise;
+}
 
 export async function connectToMongo(): Promise<MongoClient> {
-    if (!connectPromise) {
-        connectPromise = client.connect().catch((error) => {
-            connectPromise = null;
-            console.error("Error connecting to MongoDB: ", error);
-            throw error;
-        });
-    }
-    return connectPromise;
+    return mongoClientPromise;
 }
 
 export async function getDb(): Promise<Db> {
-    await connectToMongo();
-    return client.db(DEFAULT_DB_NAME);
+    const connected = await mongoClientPromise;
+    return connected.db(DB_NAME);
 }
 
 export default client;

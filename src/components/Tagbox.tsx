@@ -1,34 +1,36 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { DiscordUser, TagData } from "@/types";
+import type { DiscordUser, TagData, TagSummary } from "@/types";
 import { getTagData, getTagColor, formatDate, getDiscordUser } from "@/utils";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Tagbox({
     id,
     staticData,
 }: {
     id: number;
-    staticData?: TagData;
+    staticData?: TagSummary | TagData;
 }) {
     const router = useRouter();
-    const [tagData, setTagData] = useState<TagData | null>(null);
+    const [tagData, setTagData] = useState<TagSummary | TagData | null>(null);
     const [userData, setUserData] = useState<DiscordUser | null>(null);
     const [loading, setLoading] = useState(true);
     const [color, setColor] = useState<string | null>(null);
 
     useEffect(() => {
+        let cancelled = false;
         if (staticData) {
             setTagData(staticData);
             setColor(
                 getTagColor(Number(staticData.id), Number(staticData.owner_id))
             );
+            setLoading(false);
             getDiscordUser(staticData.owner_id)
                 .then((discord_result) => {
-                    setUserData(discord_result);
+                    if (!cancelled) setUserData(discord_result);
                 })
                 .catch(() => {});
-            setLoading(false);
         } else {
             if (!id || isNaN(Number(id))) {
                 setLoading(false);
@@ -37,40 +39,24 @@ export default function Tagbox({
 
             getTagData(Number(id))
                 .then((result) => {
+                    if (cancelled) return;
                     setTagData(result);
                     setColor(
                         getTagColor(Number(result.id), Number(result.owner_id))
                     );
+                    setLoading(false);
                     getDiscordUser(result.owner_id)
                         .then((discord_result) => {
-                            setUserData(discord_result);
+                            if (!cancelled) setUserData(discord_result);
                         })
-                        .catch((discord_error) => {
-                            console.error(
-                                "Error fetching data:",
-                                discord_error
-                            );
-                            // Sleep 3 seconds then retry
-                            setTimeout(() => {
-                                getDiscordUser(result.owner_id)
-                                    .then((discord_result) => {
-                                        setUserData(discord_result);
-                                    })
-                                    .catch((discord_error) => {
-                                        console.error(
-                                            "Error fetching data:",
-                                            discord_error
-                                        );
-                                    });
-                            }, 3000);
-                        });
-                    setLoading(false);
+                        .catch(() => {});
                 })
-                .catch((error) => {
-                    setLoading(false);
-                });
+                .catch(() => setLoading(false));
         }
-    }, [id]);
+        return () => {
+            cancelled = true;
+        };
+    }, [id, staticData]);
 
     const resolvedColor = color || "slate-500";
 
@@ -123,13 +109,20 @@ export default function Tagbox({
                                     NSFW
                                 </span>
                             )}
-                            <img
+                            <Image
                                 className="w-8 h-8 rounded-full lg:h-12 lg:w-12"
                                 src={
                                     userData?.avatar
                                         ? `https://cdn.discordapp.com/avatars/${tagData.owner_id}/${userData?.avatar}`
                                         : "https://cdn.discordapp.com/embed/avatars/0.png"
                                 }
+                                alt={
+                                    userData?.global_name
+                                        ? `${userData.global_name} avatar`
+                                        : "User avatar"
+                                }
+                                width={48}
+                                height={48}
                             />
                         </div>
                     </div>
@@ -158,7 +151,7 @@ export default function Tagbox({
                         Well well well...
                     </h2>
                     <p className="text-base lg:text-lg">
-                        Sorry! Seem's like this tag failed to load...
+                        Sorry! Seems like this tag failed to load...
                     </p>
                 </>
             )}

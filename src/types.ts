@@ -1,6 +1,6 @@
 export type TagData = {
     id: number;
-    created_at: Date;
+    created_at: string;
     guild_id: string;
     tag_name: string;
     nsfw: boolean;
@@ -9,7 +9,7 @@ export type TagData = {
     uses: number;
     content: string;
     embed: string;
-    last_fetched: Date;
+    last_fetched: string;
     deleted: boolean;
     description: string | null;
     restricted: boolean;
@@ -17,10 +17,24 @@ export type TagData = {
     safe: string;
 };
 
+export type TagSummary = {
+    id: number;
+    created_at: string;
+    tag_name: string;
+    nsfw: boolean;
+    owner_id: string;
+    uses: number;
+    description: string | null;
+    restricted: boolean;
+    shared: boolean;
+    deleted: boolean;
+    safe: string;
+};
+
 export type Statistics = {
     all_tag_count: number;
     public_tag_count: number;
-    latest_last_fetched: Date;
+    latest_last_fetched: string | null;
 };
 
 export type DiscordUser = {
@@ -42,7 +56,7 @@ export type Error = {
 };
 
 export type SearchQuery = {
-    search: TagData[];
+    search: TagSummary[];
 };
 
 export type ShortTagData = {
@@ -76,8 +90,12 @@ export type DashStats = {
 };
 
 export type BrowseQuery = {
-    results: TagData[];
+    results: TagSummary[];
     total: number;
     page: number;
     pageSize: number;
+};
+
+export type TagBatchQuery = {
+    tags: TagSummary[];
 };

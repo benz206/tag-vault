@@ -1,3 +1,5 @@
+import { apiFetch } from "@/utils/api";
+
 type OwnerTagsResult = {
     tags: number[];
 };
@@ -5,6 +7,5 @@ type OwnerTagsResult = {
 export async function getOwnerTagData(
     owner_id: string
 ): Promise<OwnerTagsResult> {
-    const { apiFetch } = await import("@/utils/api");
     return apiFetch<OwnerTagsResult>("/api/tags/owner/" + owner_id);
 }

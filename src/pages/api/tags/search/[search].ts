@@ -1,11 +1,31 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { TagData, Error, SearchQuery } from "@/types";
+import type { Error, SearchQuery, TagSummary } from "@/types";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getDb } from "@/utils/mongodb/mongo";
 
-const db = client.db("TagDB");
-const collection = db.collection("Tags");
+function toIso(value: any): string {
+    if (!value) return "";
+    if (value instanceof Date) return value.toISOString();
+    if (typeof value === "string") return value;
+    return String(value);
+}
+
+function toSummary(doc: any): TagSummary {
+    return {
+        id: Number(doc.id),
+        created_at: toIso(doc.created_at),
+        tag_name: String(doc.tag_name ?? ""),
+        nsfw: Boolean(doc.nsfw),
+        owner_id: String(doc.owner_id ?? ""),
+        uses: Number(doc.uses ?? 0),
+        description: doc.description ?? null,
+        restricted: Boolean(doc.restricted),
+        shared: Boolean(doc.shared),
+        deleted: Boolean(doc.deleted),
+        safe: String(doc.safe ?? ""),
+    };
+}
 
 export default async function handler(
     req: NextApiRequest,
@@ -31,6 +51,9 @@ export default async function handler(
         return res.status(400).json({ error: "Search query too long for now" });
     }
 
+    const db = await getDb();
+    const collection = db.collection("Tags");
+
     const queries = await collection
         .aggregate([
             {
@@ -54,27 +77,26 @@ export default async function handler(
                     ],
                 },
             },
+            {
+                $project: {
+                    _id: 0,
+                    id: 1,
+                    created_at: 1,
+                    tag_name: 1,
+                    nsfw: 1,
+                    owner_id: 1,
+                    uses: 1,
+                    description: 1,
+                    restricted: 1,
+                    shared: 1,
+                    deleted: 1,
+                    safe: 1,
+                },
+            },
         ])
         .toArray();
 
-    const tagData: TagData[] = queries.map((query) => ({
-        id: query.id,
-        created_at: query.created_at,
-        guild_id: query.guild_id,
-        tag_name: query.tag_name,
-        nsfw: query.nsfw,
-        owner_id: query.owner_id,
-        sharer: query.sharer,
-        uses: query.uses,
-        content: query.content,
-        embed: query.embed,
-        last_fetched: query.last_fetched,
-        deleted: query.deleted,
-        description: query.description,
-        restricted: query.restricted,
-        shared: query.shared,
-        safe: query.safe,
-    }));
+    const tagData = queries.map(toSummary);
 
     res.status(200).json({ search: tagData });
 }
