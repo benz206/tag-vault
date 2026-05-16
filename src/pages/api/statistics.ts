@@ -1,43 +1,43 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Collection } from "mongodb";
 import type { Statistics } from "@/types";
-import { Collection } from "mongodb";
+import { getDb } from "@/utils/mongodb/mongo";
 
-async function getLatestLastFetched(collection: Collection) {
-    try {
-        const result = await collection
-            .aggregate([
-                { $sort: { last_fetched: -1 } },
-                { $limit: 1 },
-                { $project: { _id: 0, last_fetched: 1 } },
-            ])
-            .toArray();
-
-        return result[0].last_fetched;
-    } catch (error) {
-        console.error("Error finding latest last_fetched: ", error);
-    }
-    return null;
+async function getLatestLastFetched(collection: Collection): Promise<Date | null> {
+    const doc = await collection.findOne(
+        {},
+        { sort: { last_fetched: -1 }, projection: { _id: 0, last_fetched: 1 } }
+    );
+    return (doc?.last_fetched as Date | undefined) ?? null;
 }
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<Statistics>
+    res: NextApiResponse<Statistics | { error: string }>
 ) {
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
-        return res.status(405).end("Method Not Allowed");
+        return res.status(405).json({ error: "Method Not Allowed" });
     }
-    const db = client.db("TagDB");
-    const collection = db.collection("Tags");
 
-    const allTagCount = await collection.countDocuments();
-    const publicTagCount = await collection.countDocuments({ shared: true });
-    const lastFetched = await getLatestLastFetched(collection);
+    try {
+        const db = await getDb();
+        const collection = db.collection("Tags");
 
-    res.status(200).json({
-        all_tag_count: allTagCount,
-        public_tag_count: publicTagCount,
-        latest_last_fetched: lastFetched,
-    });
+        const [allTagCount, publicTagCount, lastFetched] = await Promise.all([
+            collection.estimatedDocumentCount(),
+            collection.countDocuments({ shared: true }),
+            getLatestLastFetched(collection),
+        ]);
+
+        res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+        return res.status(200).json({
+            all_tag_count: allTagCount,
+            public_tag_count: publicTagCount,
+            latest_last_fetched: lastFetched as Date,
+        });
+    } catch (error) {
+        console.error("statistics error:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
 }

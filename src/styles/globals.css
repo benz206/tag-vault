@@ -1,6 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@source inline("{bg,border,shadow}-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose}-{500,600,700}");
+
+@theme {
+    --color-darkbg: #000311;
+
+    --spacing-128: 32rem;
+
+    --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+    --background-image-gradient-conic: conic-gradient(
+        from 180deg at 50% 50%,
+        var(--tw-gradient-stops)
+    );
+
+    --background-size-400: 400%;
+}
 
 :root {
     --background: #000311;
@@ -9,16 +23,7 @@
     --pink: #ec368d;
     --yellow-green: #bbcd4c;
     --green: #768041;
-    --something: #0000004a;
 }
-
-/* @media (prefers-color-scheme: dark) {
-    :root {
-        --foreground-rgb: 255, 255, 255;
-        --background-start-rgb: 0, 0, 0;
-        --background-end-rgb: 0, 0, 0;
-    }
-} */
 
 body {
     color: white;
@@ -35,16 +40,8 @@ h2 {
     font-weight: 700;
 }
 
-p {
-    font-size: 1.25rem;
-    font-weight: 500;
-}
-
-span {
-    font-size: 1.25rem;
-    font-weight: 500;
-}
-
+p,
+span,
 a {
     font-size: 1.25rem;
     font-weight: 500;

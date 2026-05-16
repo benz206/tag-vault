@@ -1,1 +1,0 @@
-export { getDiscordUser } from "./getDiscordUser";

@@ -1,13 +1,9 @@
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Header from "@/components/Head";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
-interface LayoutProps {
-    children: ReactNode;
-}
-
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: { children: ReactNode }) {
     return (
         <>
             <Header />

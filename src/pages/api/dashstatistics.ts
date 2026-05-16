@@ -1,52 +1,49 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { DashStats } from "@/types";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { requireSession } from "@/lib/auth";
+import { getDb } from "@/utils/mongodb/mongo";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<DashStats>
+    res: NextApiResponse<DashStats | { error: string }>
 ) {
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
-        return res.status(405).end("Method Not Allowed");
-    }
-    const db = client.db("TagDB");
-    const collection = db.collection("Tags");
-    const session = await getServerSession(req, res, authOptions);
-
-    if (!session?.user?.id) {
-        return res.status(401).end("Unauthorized");
+        return res.status(405).json({ error: "Method Not Allowed" });
     }
 
-    const publicTags = await collection.countDocuments({
-        owner_id: session?.user.id,
-        // shared: true,
-    });
-    const nsfwTags = await collection.countDocuments({
-        owner_id: session?.user.id,
-        nsfw: true,
-    });
-    const totalTags = await collection.countDocuments({
-        owner_id: session?.user.id,
-    });
+    const session = await requireSession(req, res);
+    if (!session) return;
 
-    const totalUses = await collection
-        .aggregate([
-            { $match: { owner_id: session.user.id } },
-            { $group: { _id: null, total: { $sum: "$uses" } } },
-        ])
-        .toArray();
+    try {
+        const db = await getDb();
+        const collection = db.collection("Tags");
+        const ownerId = session.user.id;
 
-    res.status(200).json({
-        tags: {
-            public: publicTags,
-            private: totalTags - publicTags,
-            nsfw: nsfwTags,
-            total: totalTags,
-        },
-        uses: totalUses[0]?.total ? totalUses[0].total : 0,
-        favorites: 0, // TODO: Implement favorites
-    });
+        const [totalTags, sharedTags, nsfwTags, usesAgg] = await Promise.all([
+            collection.countDocuments({ owner_id: ownerId }),
+            collection.countDocuments({ owner_id: ownerId, shared: true }),
+            collection.countDocuments({ owner_id: ownerId, nsfw: true }),
+            collection
+                .aggregate([
+                    { $match: { owner_id: ownerId } },
+                    { $group: { _id: null, total: { $sum: "$uses" } } },
+                ])
+                .toArray(),
+        ]);
+
+        return res.status(200).json({
+            tags: {
+                public: sharedTags,
+                private: totalTags - sharedTags,
+                nsfw: nsfwTags,
+                total: totalTags,
+            },
+            uses: usesAgg[0]?.total ?? 0,
+            favorites: 0,
+        });
+    } catch (error) {
+        console.error("dashstatistics error:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
 }

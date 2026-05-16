@@ -1,42 +1,30 @@
 import { useState, FormEvent } from "react";
-import { searchTags } from "@/utils";
+import Head from "next/head";
+import useSWR from "swr";
 import { SearchQuery } from "@/types";
 import Taglist from "@/components/Taglist";
 import { useSession, signIn } from "next-auth/react";
 
-export default function Home() {
-    const { data: session, status } = useSession({
+export default function SearchPage() {
+    const { status } = useSession({
         required: true,
         onUnauthenticated() {
             signIn("discord", { callbackUrl: "/search" });
         },
     });
-    const [searchData, setSearchData] = useState<SearchQuery | null>(null);
-    const [query, setQuery] = useState<string>("");
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const [query, setQuery] = useState("");
+    const [submitted, setSubmitted] = useState<string | null>(null);
+
+    const { data: searchData, isLoading } = useSWR<SearchQuery>(
+        submitted ? `/api/tags/search/${encodeURIComponent(submitted)}` : null
+    );
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        if (!query) return;
-        getQueries();
-    }
-
-    function handleInputChange(event: FormEvent<HTMLInputElement>) {
-        setQuery(event.currentTarget.value);
-    }
-
-    function getQueries() {
-        setIsLoading(true);
-        searchTags(query)
-            .then((result) => {
-                setSearchData(result);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+        const trimmed = query.trim();
+        if (!trimmed) return;
+        setSubmitted(trimmed);
     }
 
     if (status === "loading") {
@@ -49,6 +37,9 @@ export default function Home() {
 
     return (
         <>
+            <Head>
+                <title>Search | TagVault</title>
+            </Head>
             <div className="flex flex-col w-full h-full min-h-[calc(100vh-4rem)]">
                 <div className="flex flex-col flex-wrap content-center justify-center w-full h-72 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
                     <h1 className="relative p-12 mt-8 text-3xl text-center lg:text-9xl">
@@ -58,13 +49,19 @@ export default function Home() {
                         <form
                             className="flex justify-evenly"
                             onSubmit={handleSubmit}
+                            role="search"
                         >
+                            <label htmlFor="tag-search" className="sr-only">
+                                Search tags
+                            </label>
                             <input
+                                id="tag-search"
                                 className="flex-1 p-4 mr-2 text-xl text-left text-white rounded-lg lg:text-4xl bg-slate-400 text-bold placeholder:text-slate-200"
-                                type="text"
+                                type="search"
                                 placeholder="Search..."
                                 value={query}
-                                onChange={handleInputChange}
+                                onChange={(e) => setQuery(e.currentTarget.value)}
+                                maxLength={30}
                             />
                             <button
                                 className={`flex items-center justify-center w-4/12 px-4 py-2 text-xl font-bold text-white rounded-lg ${
@@ -73,6 +70,8 @@ export default function Home() {
                                         : "bg-cyan-400 hover:bg-cyan-500"
                                 } lg:text-4xl`}
                                 type="submit"
+                                aria-label="Submit search"
+                                disabled={isLoading || !query.trim()}
                             >
                                 {isLoading ? (
                                     <svg
@@ -80,27 +79,21 @@ export default function Home() {
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
                                         viewBox="0 0 24 24"
+                                        aria-hidden="true"
                                     >
-                                        <svg
-                                            className="w-10 h-10 text-white animate-spin"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <circle
-                                                className="opacity-25"
-                                                cx="12"
-                                                cy="12"
-                                                r="10"
-                                                stroke="currentColor"
-                                                strokeWidth="4"
-                                            ></circle>
-                                            <path
-                                                className="opacity-100"
-                                                fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            ></path>
-                                        </svg>
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        />
+                                        <path
+                                            className="opacity-100"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        />
                                     </svg>
                                 ) : (
                                     <svg
@@ -110,21 +103,13 @@ export default function Home() {
                                         fill="none"
                                         viewBox="0 0 20 20"
                                     >
-                                        <svg
-                                            className="w-8 h-8 mr-4 text-white"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                            />
-                                        </svg>
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                        />
                                     </svg>
                                 )}
                                 <span className="hidden text-4xl font-semibold lg:block">

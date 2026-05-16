@@ -1,106 +1,53 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import useSWR from "swr";
 import { DiscordUser, TagData } from "@/types";
-import { getTagData, getTagColor, formatDate, getDiscordUser } from "@/utils";
-import { motion } from "framer-motion";
+import { getTagColor, formatDate } from "@/utils";
+import { motion } from "motion/react";
 
-export default function Tagbox({
-    id,
-    staticData,
-}: {
+const DEFAULT_AVATAR = "https://cdn.discordapp.com/embed/avatars/0.png";
+
+type TagboxProps = {
     id: number;
     staticData?: TagData;
-}) {
+};
+
+export default function Tagbox({ id, staticData }: TagboxProps) {
     const router = useRouter();
-    const [tagData, setTagData] = useState<TagData | null>(null);
-    const [userData, setUserData] = useState<DiscordUser | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [color, setColor] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (staticData) {
-            setTagData(staticData);
-            setColor(
-                getTagColor(Number(staticData.id), Number(staticData.owner_id))
-            );
-            getDiscordUser(staticData.owner_id)
-                .then((discord_result) => {
-                    setUserData(discord_result);
-                })
-                .catch(() => {});
-            setLoading(false);
-        } else {
-            if (!id || isNaN(Number(id))) {
-                setLoading(false);
-                return;
-            }
+    const { data: fetchedTag } = useSWR<TagData>(
+        staticData || !id || isNaN(Number(id))
+            ? null
+            : `/api/tags/${Number(id)}`
+    );
 
-            getTagData(Number(id))
-                .then((result) => {
-                    setTagData(result);
-                    setColor(
-                        getTagColor(Number(result.id), Number(result.owner_id))
-                    );
-                    getDiscordUser(result.owner_id)
-                        .then((discord_result) => {
-                            setUserData(discord_result);
-                        })
-                        .catch((discord_error) => {
-                            console.error(
-                                "Error fetching data:",
-                                discord_error
-                            );
-                            // Sleep 3 seconds then retry
-                            setTimeout(() => {
-                                getDiscordUser(result.owner_id)
-                                    .then((discord_result) => {
-                                        setUserData(discord_result);
-                                    })
-                                    .catch((discord_error) => {
-                                        console.error(
-                                            "Error fetching data:",
-                                            discord_error
-                                        );
-                                    });
-                            }, 3000);
-                        });
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    setLoading(false);
-                });
-        }
-    }, [id]);
+    const tagData = staticData ?? fetchedTag ?? null;
+    const loading = !tagData;
 
-    const resolvedColor = color || "slate-500";
+    const { data: userData } = useSWR<DiscordUser>(
+        tagData?.owner_id ? `/api/discord/users/${tagData.owner_id}` : null
+    );
+
+    const resolvedColor = useMemo(() => {
+        if (!tagData) return "slate-500";
+        return getTagColor(Number(tagData.id), Number(tagData.owner_id));
+    }, [tagData]);
+
+    const avatarUrl = userData?.avatar
+        ? `https://cdn.discordapp.com/avatars/${tagData?.owner_id}/${userData.avatar}.webp?size=64`
+        : DEFAULT_AVATAR;
 
     return (
         <motion.div
             className={`group rounded-xl p-8 bg-slate-700 w-80 lg:w-[430px] h-52 lg:h-72 border-t-8 border-${resolvedColor} shadow-${resolvedColor} shadow-xl hover:cursor-pointer ease-in-out mb-12 lg:m-4 2xl:m-0`}
-            onClick={() => router.push("/tags/" + id)}
+            onClick={() => router.push(`/tags/${id}`)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
             {loading ? (
-                <div className="flex flex-col">
-                    <div className="flex flex-row mb-2 -mt-3 lg:mb-2">
-                        <div className="w-3/4 h-6 lg:h-12 animate-pulse rounded-xl bg-slate-500" />
-                        <div className="w-6 h-6 ml-auto rounded-full lg:w-12 lg:h-12 animate-pulse bg-slate-500" />
-                    </div>
-                    <div className="w-full h-0.5 mt-auto bg-slate-600 rounded-2xl mb-4" />
-                    <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
-                    <div className="relative flex flex-col w-full mt-auto -bottom-4">
-                        <div className="w-full h-0.5 mb-2 lg:mb-4 mt-auto bg-slate-600 rounded-2xl" />
-                        <div className="flex space-x-4">
-                            <div className="w-4/12 h-4 mb-2 animate-pulse lg:w-5/12 rounded-xl bg-slate-500" />
-                            <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500" />
-                            <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500 justify-self-end" />
-                        </div>
-                    </div>
-                </div>
+                <TagboxSkeleton />
             ) : tagData ? (
                 <div className="flex flex-col h-full">
                     <div className="relative flex flex-row items-start mb-2 -top-2">
@@ -123,13 +70,17 @@ export default function Tagbox({
                                     NSFW
                                 </span>
                             )}
-                            <img
-                                className="w-8 h-8 rounded-full lg:h-12 lg:w-12"
-                                src={
-                                    userData?.avatar
-                                        ? `https://cdn.discordapp.com/avatars/${tagData.owner_id}/${userData?.avatar}`
-                                        : "https://cdn.discordapp.com/embed/avatars/0.png"
+                            <Image
+                                className="rounded-full"
+                                src={avatarUrl}
+                                alt={
+                                    userData?.global_name ||
+                                    userData?.username ||
+                                    "Tag owner"
                                 }
+                                width={48}
+                                height={48}
+                                unoptimized
                             />
                         </div>
                     </div>
@@ -143,7 +94,7 @@ export default function Tagbox({
                             <p className="text-sm text-left text-slate-400">
                                 {userData?.global_name || "Unknown"}
                             </p>
-                            <p className="text-sm text-center text-slate-400 lg:text-righ">
+                            <p className="text-sm text-center text-slate-400 lg:text-right">
                                 {formatDate(new Date(tagData.created_at))}
                             </p>
                             <p className="ml-4 text-sm text-right text-slate-400">
@@ -158,10 +109,33 @@ export default function Tagbox({
                         Well well well...
                     </h2>
                     <p className="text-base lg:text-lg">
-                        Sorry! Seem's like this tag failed to load...
+                        Sorry! Looks like this tag failed to load.
                     </p>
                 </>
             )}
         </motion.div>
+    );
+}
+
+function TagboxSkeleton() {
+    return (
+        <div className="flex flex-col">
+            <div className="flex flex-row mb-2 -mt-3 lg:mb-2">
+                <div className="w-3/4 h-6 lg:h-12 animate-pulse rounded-xl bg-slate-500" />
+                <div className="w-6 h-6 ml-auto rounded-full lg:w-12 lg:h-12 animate-pulse bg-slate-500" />
+            </div>
+            <div className="w-full h-0.5 mt-auto bg-slate-600 rounded-2xl mb-4" />
+            <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
+            <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
+            <div className="w-full h-4 mb-2 lg:h-6 lg:mb-4 animate-pulse rounded-xl bg-slate-400" />
+            <div className="relative flex flex-col w-full mt-auto -bottom-4">
+                <div className="w-full h-0.5 mb-2 lg:mb-4 mt-auto bg-slate-600 rounded-2xl" />
+                <div className="flex space-x-4">
+                    <div className="w-4/12 h-4 mb-2 animate-pulse lg:w-5/12 rounded-xl bg-slate-500" />
+                    <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500" />
+                    <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500 justify-self-end" />
+                </div>
+            </div>
+        </div>
     );
 }

@@ -1,11 +1,7 @@
-import { connectToMongo } from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { connectToMongo } from "@/utils/mongodb/mongo";
 
-type Alive = {
-    alive: boolean;
-};
-
-connectToMongo();
+type Alive = { alive: boolean };
 
 export default async function handler(
     req: NextApiRequest,
@@ -15,5 +11,10 @@ export default async function handler(
         res.setHeader("Allow", "GET");
         return res.status(405).json({ alive: false });
     }
-    res.status(200).json({ alive: true });
+    try {
+        await connectToMongo();
+        return res.status(200).json({ alive: true });
+    } catch {
+        return res.status(503).json({ alive: false });
+    }
 }

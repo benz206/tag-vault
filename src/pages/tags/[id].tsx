@@ -1,56 +1,51 @@
+import { useMemo } from "react";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import Head from "next/head";
+import Image from "next/image";
+import useSWR from "swr";
 import { TagData, DiscordUser } from "@/types";
-import { getTagColor, formatDate, getDiscordUser } from "@/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { getTagColor, formatDate } from "@/utils";
+import { motion } from "motion/react";
 import CopyButton from "@/components/CopyButton";
-
-async function getData(id: number): Promise<TagData> {
-    const { apiFetch } = await import("@/utils/api");
-    return apiFetch<TagData>("/api/tags/" + id);
-}
 
 export default function TagPage() {
     const router = useRouter();
     const { id } = router.query;
-    const [data, setData] = useState<TagData | null>(null);
-    const [userData, setUserData] = useState<DiscordUser | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [color, setColor] = useState<string | null>(null);
+    const numericId = typeof id === "string" ? Number(id) : NaN;
+    const hasValidId = !!id && !isNaN(numericId);
 
-    useEffect(() => {
-        if (!id || isNaN(Number(id))) {
-            setLoading(false);
-            return;
-        }
+    const { data, error, isLoading } = useSWR<TagData>(
+        hasValidId ? `/api/tags/${numericId}` : null
+    );
 
-        getData(Number(id))
-            .then((result) => {
-                setData(result);
-                setColor(
-                    getTagColor(Number(result.id), Number(result.owner_id))
-                );
-                getDiscordUser(result.owner_id)
-                    .then((discord_result) => {
-                        setUserData(discord_result);
-                    })
-                    .catch((discord_error) => {
-                        console.error("Error fetching data:", discord_error);
-                    });
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-                setLoading(false);
-            });
-    }, [id]);
+    const { data: userData } = useSWR<DiscordUser>(
+        data?.owner_id ? `/api/discord/users/${data.owner_id}` : null
+    );
+
+    const color = useMemo(() => {
+        if (!data) return null;
+        return getTagColor(Number(data.id), Number(data.owner_id));
+    }, [data]);
+    const resolvedColor = color ?? "slate-500";
+
+    const loading = isLoading || (!data && !error);
+
+    const avatarSrc = userData?.avatar
+        ? `https://cdn.discordapp.com/avatars/${data?.owner_id}/${userData.avatar}.webp?size=128`
+        : "https://cdn.discordapp.com/embed/avatars/0.png";
 
     return (
         <>
+            <Head>
+                <title>
+                    {data ? `${data.tag_name} | TagVault` : "Tag | TagVault"}
+                </title>
+                {data?.description && (
+                    <meta name="description" content={data.description} />
+                )}
+            </Head>
             <div
-                className={`flex justify-center h-36 lg:h-80 w-full bg-${
-                    color ? color : "slate-500"
-                } items-center`}
+                className={`flex justify-center h-36 lg:h-80 w-full bg-${resolvedColor} items-center`}
             >
                 <h1 className="relative text-3xl top-2 lg:-top-4 lg:text-9xl">
                     {data?.tag_name}
@@ -63,11 +58,7 @@ export default function TagPage() {
                 className="flex justify-center"
             >
                 <div
-                    className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${
-                        color ? color : "slate-500"
-                    } shadow-${
-                        color ? color : "slate-500"
-                    } shadow-xl transform transition-transform duration-440 mt-4 lg:my-12`}
+                    className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${resolvedColor} shadow-${resolvedColor} shadow-xl transform transition-transform duration-440 mt-4 lg:my-12`}
                 >
                     {loading ? (
                         <>
@@ -78,14 +69,6 @@ export default function TagPage() {
                             <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
                             <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
                             <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                            <div className="absolute flex flex-col w-10/12 bottom-2 left-6 lg:w-11/12">
-                                <div className="w-full h-0.5 mb-4 mt-auto bg-slate-600 rounded-2xl" />
-                                <div className="flex space-x-4">
-                                    <div className="w-4/12 h-4 mb-2 animate-pulse lg:w-5/12 rounded-xl bg-slate-500" />
-                                    <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500" />
-                                    <div className="w-3/12 h-4 mb-2 animate-pulse rounded-xl bg-slate-500 justify-self-end" />
-                                </div>
-                            </div>
                         </>
                     ) : data ? (
                         <div className="flex flex-col h-full">
@@ -119,9 +102,17 @@ export default function TagPage() {
                                             {data.safe}
                                         </span>
                                     )}
-                                    <img
-                                        className="w-8 h-8 rounded-full lg:h-12 lg:w-12"
-                                        src={`https://cdn.discordapp.com/avatars/${data.owner_id}/${userData?.avatar}`}
+                                    <Image
+                                        className="rounded-full"
+                                        src={avatarSrc}
+                                        alt={
+                                            userData?.global_name ||
+                                            userData?.username ||
+                                            "Tag owner"
+                                        }
+                                        width={48}
+                                        height={48}
+                                        unoptimized
                                     />
                                 </div>
                             </div>
@@ -162,69 +153,46 @@ export default function TagPage() {
                             </div>
                             <textarea
                                 disabled
+                                value={data.content}
+                                onChange={() => {}}
                                 className="w-full p-2 my-2 whitespace-pre-line resize-y h-80 bg-slate-400 rounded-2xl"
-                            >
-                                {data.content}
-                            </textarea>
+                            />
                             <div className="w-full h-0.5 mb-4 mt-3 bg-slate-600 rounded-2xl" />
                             <h2 className="pb-2 truncate text-1xl lg:text-2xl">
                                 Meta
                             </h2>
                             <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-                                <div className="p-3 rounded-lg bg-slate-600">
-                                    <p className="text-xs text-slate-300">ID</p>
-                                    <p className="text-sm break-all">
-                                        {data.id}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-slate-600">
-                                    <p className="text-xs text-slate-300">
-                                        Owner
-                                    </p>
-                                    <p className="text-sm break-all">
-                                        {userData?.global_name || data.owner_id}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-slate-600">
-                                    <p className="text-xs text-slate-300">
-                                        Guild
-                                    </p>
-                                    <p className="text-sm break-all">
-                                        {data.guild_id || "N/A"}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-slate-600">
-                                    <p className="text-xs text-slate-300">
-                                        Sharer
-                                    </p>
-                                    <p className="text-sm break-all">
-                                        {data.sharer || "N/A"}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-slate-600">
-                                    <p className="text-xs text-slate-300">
-                                        Uses
-                                    </p>
-                                    <p className="text-sm">{data.uses}</p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-slate-600">
-                                    <p className="text-xs text-slate-300">
-                                        Created
-                                    </p>
-                                    <p className="text-sm">
-                                        {formatDate(new Date(data.created_at))}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-lg bg-slate-600">
-                                    <p className="text-xs text-slate-300">
-                                        Last Fetched
-                                    </p>
-                                    <p className="text-sm">
-                                        {formatDate(
-                                            new Date(data.last_fetched)
-                                        )}
-                                    </p>
-                                </div>
+                                <MetaCell label="ID" value={String(data.id)} />
+                                <MetaCell
+                                    label="Owner"
+                                    value={
+                                        userData?.global_name || data.owner_id
+                                    }
+                                />
+                                <MetaCell
+                                    label="Guild"
+                                    value={data.guild_id || "N/A"}
+                                />
+                                <MetaCell
+                                    label="Sharer"
+                                    value={data.sharer || "N/A"}
+                                />
+                                <MetaCell
+                                    label="Uses"
+                                    value={String(data.uses)}
+                                />
+                                <MetaCell
+                                    label="Created"
+                                    value={formatDate(
+                                        new Date(data.created_at)
+                                    )}
+                                />
+                                <MetaCell
+                                    label="Last Fetched"
+                                    value={formatDate(
+                                        new Date(data.last_fetched)
+                                    )}
+                                />
                                 <div className="p-3 rounded-lg bg-slate-600">
                                     <p className="text-xs text-slate-300">
                                         Flags
@@ -276,10 +244,10 @@ export default function TagPage() {
                                     </div>
                                     <textarea
                                         disabled
+                                        value={data.embed}
+                                        onChange={() => {}}
                                         className="w-full p-2 my-2 whitespace-pre-line resize-y h-60 bg-slate-400 rounded-2xl"
-                                    >
-                                        {data.embed}
-                                    </textarea>
+                                    />
                                 </>
                             )}
                             <div className="relative flex flex-col w-full mt-auto -bottom-4">
@@ -303,23 +271,17 @@ export default function TagPage() {
                                 Well well well...
                             </h2>
                             <p className="text-base lg:text-lg">
-                                Sorry! Seem's like this tag failed to load...
+                                Sorry! Looks like this tag failed to load.
                             </p>
                         </>
                     )}
                 </div>
             </motion.div>
-            <div className="flex justify-center">
-                <div
-                    className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${
-                        color ? color : "slate-500"
-                    } shadow-${
-                        color ? color : "slate-500"
-                    } shadow-xl transform transition-transform duration-440 mt-4 lg:my-12`}
-                >
-                    {loading ? (
-                        <p>Loading data...</p>
-                    ) : data ? (
+            {data && (
+                <div className="flex justify-center">
+                    <div
+                        className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${resolvedColor} shadow-${resolvedColor} shadow-xl transform transition-transform duration-440 mt-4 lg:my-12`}
+                    >
                         <details>
                             <summary className="cursor-pointer select-none">
                                 Raw data
@@ -328,11 +290,18 @@ export default function TagPage() {
                                 {JSON.stringify(data, null, 2)}
                             </pre>
                         </details>
-                    ) : (
-                        <p>Sorry, but there was an error loading data.</p>
-                    )}
+                    </div>
                 </div>
-            </div>
+            )}
         </>
+    );
+}
+
+function MetaCell({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="p-3 rounded-lg bg-slate-600">
+            <p className="text-xs text-slate-300">{label}</p>
+            <p className="text-sm break-all">{value}</p>
+        </div>
     );
 }

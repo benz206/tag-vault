@@ -1,15 +1,11 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { TagData, Error, OwnerTagsQuery } from "@/types";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-
-const db = client.db("TagDB");
-const collection = db.collection("Tags");
+import { requireSession } from "@/lib/auth";
+import { getDb } from "@/utils/mongodb/mongo";
+import { Error as ErrorType, OwnerTagsQuery } from "@/types";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<OwnerTagsQuery | Error>
+    res: NextApiResponse<OwnerTagsQuery | ErrorType>
 ) {
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
@@ -17,40 +13,30 @@ export default async function handler(
     }
 
     const { owner_id } = req.query;
-
-    if (!owner_id || Array.isArray(owner_id)) {
+    if (!owner_id || Array.isArray(owner_id) || !/^\d+$/.test(owner_id)) {
         return res.status(400).json({ error: "Invalid Owner ID" });
     }
 
-    const session = await getServerSession(req, res, authOptions);
-    if (!session?.user?.id || session.user.id !== String(owner_id)) {
-        return res.status(401).json({ error: "Unauthorized" });
+    const session = await requireSession(req, res);
+    if (!session) return;
+    if (session.user.id !== owner_id) {
+        return res.status(403).json({ error: "Forbidden" });
     }
 
-    const queries = await collection
-        .find({ owner_id: String(owner_id) })
-        .toArray();
+    try {
+        const db = await getDb();
+        const collection = db.collection("Tags");
+        const queries = await collection
+            .find(
+                { owner_id: String(owner_id) },
+                { projection: { id: 1, _id: 0 } }
+            )
+            .toArray();
 
-    // const tagData: TagData[] = queries.map((query) => ({
-    //     id: query.id,
-    //     created_at: query.created_at,
-    //     guild_id: query.guild_id,
-    //     tag_name: query.tag_name,
-    //     nsfw: query.nsfw,
-    //     owner_id: query.owner_id,
-    //     sharer: query.sharer,
-    //     uses: query.uses,
-    //     content: query.content,
-    //     embed: query.embed,
-    //     last_fetched: query.last_fetched,
-    //     deleted: query.deleted,
-    //     description: query.description,
-    //     restricted: query.restricted,
-    //     shared: query.shared,
-    //     safe: query.safe,
-    // }));
-
-    const tagIDs: number[] = queries.map((query) => query.id);
-
-    res.status(200).json({ tags: tagIDs });
+        const tagIDs = queries.map((q) => q.id as number);
+        return res.status(200).json({ tags: tagIDs });
+    } catch (error) {
+        console.error("owner tags error:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
 }

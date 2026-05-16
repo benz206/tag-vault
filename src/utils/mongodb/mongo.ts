@@ -1,4 +1,4 @@
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, ServerApiVersion } from "mongodb";
 
 const MONGO_DB_URL = process.env.MONGO_DB_URL;
 if (!MONGO_DB_URL) {
@@ -9,25 +9,41 @@ const DEFAULT_DB_NAME = (() => {
     try {
         const url = new URL(MONGO_DB_URL);
         const name = url.pathname.replace(/^\//, "");
-        return name || undefined;
+        return name || "TagDB";
     } catch {
-        return undefined;
+        return "TagDB";
     }
 })();
 
-const client = new MongoClient(MONGO_DB_URL);
+declare global {
+    var _mongoClient: MongoClient | undefined;
+    var _mongoConnectPromise: Promise<MongoClient> | undefined;
+}
 
-let connectPromise: Promise<MongoClient> | null = null;
+const client =
+    global._mongoClient ??
+    new MongoClient(MONGO_DB_URL, {
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: false,
+            deprecationErrors: true,
+        },
+        maxPoolSize: 10,
+    });
+
+if (process.env.NODE_ENV !== "production") {
+    global._mongoClient = client;
+}
 
 export async function connectToMongo(): Promise<MongoClient> {
-    if (!connectPromise) {
-        connectPromise = client.connect().catch((error) => {
-            connectPromise = null;
+    if (!global._mongoConnectPromise) {
+        global._mongoConnectPromise = client.connect().catch((error) => {
+            global._mongoConnectPromise = undefined;
             console.error("Error connecting to MongoDB: ", error);
             throw error;
         });
     }
-    return connectPromise;
+    return global._mongoConnectPromise;
 }
 
 export async function getDb(): Promise<Db> {

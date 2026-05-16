@@ -1,22 +1,20 @@
 import Head from "next/head";
 
-function Header() {
+export default function PageHead() {
     return (
-        <div>
-            <Head>
-                <title>TagVault</title>
-                <meta
-                    name="description"
-                    content="The best place to find TagScript tags."
-                    key="desc"
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1, minimum-scale=1"
-                />
-            </Head>
-        </div>
+        <Head>
+            <title>TagVault</title>
+            <meta
+                name="description"
+                content="The best place to find TagScript tags."
+                key="desc"
+            />
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1, minimum-scale=1"
+            />
+            <meta name="theme-color" content="#000311" />
+            <link rel="icon" href="/favicon.ico" />
+        </Head>
     );
 }
-
-export default Header;

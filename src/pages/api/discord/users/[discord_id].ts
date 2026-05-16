@@ -1,99 +1,113 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { DiscordUser } from "@/types";
-import client from "@/utils/mongodb/mongo";
+import { getDb } from "@/utils/mongodb/mongo";
 
-type Error = {
-    error: string;
-};
-
-const db = client.db("TagDB");
-const collection = db.collection("Users");
+type ErrorRes = { error: string };
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const DISCORD_FETCH_TIMEOUT_MS = 5000;
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<DiscordUser | Error>
+    res: NextApiResponse<DiscordUser | ErrorRes>
 ) {
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
         return res.status(405).json({ error: "Method Not Allowed" });
     }
-    const { discord_id } = req.query;
 
-    if (!discord_id || Array.isArray(discord_id)) {
+    const { discord_id } = req.query;
+    if (
+        !discord_id ||
+        Array.isArray(discord_id) ||
+        !/^\d{15,20}$/.test(discord_id)
+    ) {
         return res.status(400).json({ error: "Invalid discord_id" });
     }
 
     try {
-        const cachedData = await collection.findOne({ id: String(discord_id) });
+        const db = await getDb();
+        const collection = db.collection("Users");
+        const cached = await collection.findOne({ id: String(discord_id) });
 
-        if (cachedData) {
-            const now = new Date();
-            const lastFetched = new Date(cachedData.lastFetched);
-            const diffInMs = now.getTime() - lastFetched.getTime();
-            const oneDayInMs = 24 * 60 * 60 * 1000;
+        if (cached) {
+            const stale =
+                Date.now() - new Date(cached.lastFetched).getTime() > ONE_DAY_MS;
 
-            const discordUserData: DiscordUser = {
-                id: cachedData.id,
-                username: cachedData.username,
-                avatar: cachedData.avatar,
-                discriminator: cachedData.discriminator,
-                public_flags: cachedData.public_flags,
-                flags: cachedData.flags,
-                banner: cachedData.banner,
-                accent_color: cachedData.accent_color,
-                global_name: cachedData.global_name,
-                avatar_decoration_data: cachedData.avatar_decoration_data,
-                banner_color: cachedData.banner_color,
-            };
-
-            if (diffInMs > oneDayInMs) {
-                const userData = await fetchUserData(String(discord_id));
-                await collection.updateOne(
-                    { id: String(discord_id) },
-                    { $set: { ...userData, lastFetched: now } }
-                );
-                return res.status(200).json(userData);
+            if (!stale) {
+                res.setHeader("Cache-Control", "public, max-age=3600");
+                return res.status(200).json(toDiscordUser(cached));
             }
 
-            return res.status(200).json(discordUserData);
-        } else {
-            const userData = await fetchUserData(String(discord_id));
-            await collection.insertOne({
-                ...userData,
-                lastFetched: new Date(),
-            });
-            return res.status(200).json(userData);
+            try {
+                const userData = await fetchUserData(discord_id);
+                await collection.updateOne(
+                    { id: discord_id },
+                    { $set: { ...userData, lastFetched: new Date() } }
+                );
+                res.setHeader("Cache-Control", "public, max-age=3600");
+                return res.status(200).json(userData);
+            } catch {
+                // Fall back to stale cached data on Discord fetch failure
+                return res.status(200).json(toDiscordUser(cached));
+            }
         }
+
+        const userData = await fetchUserData(discord_id);
+        await collection.insertOne({ ...userData, lastFetched: new Date() });
+        res.setHeader("Cache-Control", "public, max-age=3600");
+        return res.status(200).json(userData);
     } catch (error) {
-        console.error("Error accessing database:", error);
+        console.error("discord user error:", error);
         return res.status(500).json({ error: "Internal server error" });
     }
 }
 
-async function fetchUserData(discord_id: string) {
-    const apiUrl = `https://discord.com/api/v10/users/${discord_id}`;
-    try {
-        const response = await fetch(apiUrl, {
-            method: "GET",
-            headers: {
-                Authorization: `Bot ${process.env.Bot_Token}`,
-                "Content-Type": "application/json",
-            },
-        });
+function toDiscordUser(cached: Record<string, unknown>): DiscordUser {
+    return {
+        id: cached.id as string,
+        username: cached.username as string,
+        avatar: cached.avatar as string,
+        discriminator: cached.discriminator as string,
+        public_flags: cached.public_flags as number,
+        flags: cached.flags as number,
+        banner: cached.banner as string | null,
+        accent_color: cached.accent_color as number,
+        global_name: cached.global_name as string,
+        avatar_decoration_data: cached.avatar_decoration_data as null,
+        banner_color: cached.banner_color as string,
+    };
+}
 
+async function fetchUserData(discordId: string): Promise<DiscordUser> {
+    const token = process.env.Bot_Token;
+    if (!token) throw new Error("Bot_Token is not set");
+
+    const controller = new AbortController();
+    const timer = setTimeout(
+        () => controller.abort(),
+        DISCORD_FETCH_TIMEOUT_MS
+    );
+    try {
+        const response = await fetch(
+            `https://discord.com/api/v10/users/${discordId}`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bot ${token}`,
+                    "Content-Type": "application/json",
+                },
+                signal: controller.signal,
+            }
+        );
         if (!response.ok) {
             throw new Error(
-                `HTTP error! Status: ${
-                    response.status
-                } Rate limit header reset: ${response.headers.get(
+                `Discord API ${response.status} (reset-after: ${response.headers.get(
                     "X-RateLimit-Reset-After"
-                )}`
+                )})`
             );
         }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Error fetching user information:", error);
-        throw new Error("Error fetching user information");
+        return (await response.json()) as DiscordUser;
+    } finally {
+        clearTimeout(timer);
     }
 }

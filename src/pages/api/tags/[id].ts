@@ -1,73 +1,70 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import client from "@/utils/mongodb/mongo";
+import { getSession } from "@/lib/auth";
+import { getDb } from "@/utils/mongodb/mongo";
 import { TagData } from "@/types";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { getServerSession } from "next-auth/next";
 
-type Error = {
-    error: string;
-};
-
-const db = client.db("TagDB");
-const collection = db.collection("Tags");
+type ErrorRes = { error: string };
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<TagData | Error>
+    res: NextApiResponse<TagData | ErrorRes>
 ) {
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
         return res.status(405).json({ error: "Method Not Allowed" });
     }
-    const { id } = req.query;
-    const session = await getServerSession(req, res, authOptions);
 
-    if (!id || Array.isArray(id) || isNaN(Number(id))) {
+    const { id } = req.query;
+    if (!id || Array.isArray(id) || !/^\d+$/.test(id)) {
         return res.status(400).json({ error: "Invalid Tag ID" });
     }
 
-    const rawTagData = await collection.findOne({
-        id: Number(id),
-    });
+    try {
+        const session = await getSession(req, res);
+        const db = await getDb();
+        const collection = db.collection("Tags");
 
-    if (!rawTagData) {
-        return res.status(404).json({ error: "Tag ID Non Existent" });
-    }
+        const raw = await collection.findOne({ id: Number(id) });
+        if (!raw) return res.status(404).json({ error: "Tag ID Non Existent" });
 
-    if (session?.user.id != rawTagData.owner_id) {
-        if (rawTagData.deleted) {
-            return res.status(404).json({ error: "Tag has been deleted" });
+        const isOwner = session?.user?.id === raw.owner_id;
+        if (!isOwner) {
+            if (raw.deleted) {
+                return res.status(404).json({ error: "Tag has been deleted" });
+            }
+            if (raw.nsfw) {
+                return res.status(404).json({ error: "Tag is NSFW" });
+            }
+        }
+        if (raw.safe === "not_safe") {
+            return res
+                .status(404)
+                .json({ error: "This tag is currently under review" });
         }
 
-        if (rawTagData.nsfw) {
-            return res.status(404).json({ error: "Tag is NSFW" });
-        }
+        const tag: TagData = {
+            id: raw.id,
+            created_at: raw.created_at,
+            guild_id: raw.guild_id,
+            tag_name: raw.tag_name,
+            nsfw: raw.nsfw,
+            owner_id: raw.owner_id,
+            sharer: raw.sharer,
+            uses: raw.uses,
+            content: raw.content,
+            embed: raw.embed,
+            last_fetched: raw.last_fetched,
+            deleted: raw.deleted,
+            description: raw.description,
+            restricted: raw.restricted,
+            shared: raw.shared,
+            safe: raw.safe,
+        };
+
+        res.setHeader("Cache-Control", "private, max-age=60");
+        return res.status(200).json(tag);
+    } catch (error) {
+        console.error("tag fetch error:", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
-
-    if (rawTagData.safe === "not_safe") {
-        return res
-            .status(404)
-            .json({ error: "This tag is currently under review" });
-    }
-
-    const convertedTagData: TagData = {
-        id: rawTagData.id,
-        created_at: new Date(rawTagData.created_at),
-        guild_id: rawTagData.guild_id,
-        tag_name: rawTagData.tag_name,
-        nsfw: rawTagData.nsfw,
-        owner_id: rawTagData.owner_id,
-        sharer: rawTagData.sharer,
-        uses: rawTagData.uses,
-        content: rawTagData.content,
-        embed: rawTagData.embed,
-        last_fetched: new Date(rawTagData.last_fetched),
-        deleted: rawTagData.deleted,
-        description: rawTagData.description,
-        restricted: rawTagData.restricted,
-        shared: rawTagData.shared,
-        safe: rawTagData.safe,
-    };
-
-    res.status(200).json(convertedTagData);
 }

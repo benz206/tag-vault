@@ -1,11 +1,8 @@
-import client from "@/utils/mongodb/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Document, Filter } from "mongodb";
+import { requireSession } from "@/lib/auth";
+import { getDb } from "@/utils/mongodb/mongo";
 import type { BrowseQuery, TagData } from "@/types";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-
-const db = client.db("TagDB");
-const collection = db.collection("Tags");
 
 function parseBool(value: string | string[] | undefined): boolean | undefined {
     if (value === undefined) return undefined;
@@ -15,96 +12,102 @@ function parseBool(value: string | string[] | undefined): boolean | undefined {
     return undefined;
 }
 
+function singleStr(value: string | string[] | undefined): string | undefined {
+    if (value === undefined) return undefined;
+    return Array.isArray(value) ? value[0] : value;
+}
+
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<BrowseQuery>
+    res: NextApiResponse<BrowseQuery | { error: string }>
 ) {
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
-        return res.status(405).end("Method Not Allowed");
+        return res.status(405).json({ error: "Method Not Allowed" });
     }
 
-    const session = await getServerSession(req, res, authOptions);
-    if (!session?.user?.id) {
-        return res.status(401).end("Unauthorized");
-    }
+    const session = await requireSession(req, res);
+    if (!session) return;
 
-    const { q, owner_id, page = "0", pageSize = "21", shared, nsfw, safe } =
-        req.query;
+    const {
+        q,
+        owner_id,
+        page = "0",
+        pageSize = "21",
+        shared,
+        nsfw,
+        safe,
+    } = req.query;
 
-    const p = Math.max(0, Number(Array.isArray(page) ? page[0] : page) || 0);
-    const ps = Math.min(
-        100,
-        Math.max(1, Number(Array.isArray(pageSize) ? pageSize[0] : pageSize) || 21)
-    );
+    const p = Math.max(0, Number(singleStr(page)) || 0);
+    const ps = Math.min(100, Math.max(1, Number(singleStr(pageSize)) || 21));
 
-    const filters: any = {
-        deleted: false,
-    };
+    const filters: Filter<Document> = { deleted: false };
 
     const sharedBool = parseBool(shared);
     if (sharedBool !== undefined) filters.shared = sharedBool;
     const nsfwBool = parseBool(nsfw);
     if (nsfwBool !== undefined) filters.nsfw = nsfwBool;
-    if (safe && !Array.isArray(safe)) {
-        if (safe === "safe") filters.safe = { $in: ["safe", "unrated"] };
-        else if (safe === "unrated") filters.safe = "unrated";
-        else if (safe === "not_safe") filters.safe = "not_safe";
-    }
-    if (owner_id && !Array.isArray(owner_id)) filters.owner_id = owner_id;
 
-    const searchText = q && !Array.isArray(q) ? q.trim() : "";
+    const safeStr = singleStr(safe);
+    if (safeStr === "safe") filters.safe = { $in: ["safe", "unrated"] };
+    else if (safeStr === "unrated") filters.safe = "unrated";
+    else if (safeStr === "not_safe") filters.safe = "not_safe";
 
-    const pipeline: any[] = [];
-    if (searchText) {
-        pipeline.push({
-            $search: {
-                index: "default",
-                text: {
-                    query: searchText,
-                    path: { wildcard: "*" },
+    const ownerStr = singleStr(owner_id);
+    if (ownerStr) filters.owner_id = ownerStr;
+
+    const searchText = (singleStr(q) ?? "").trim().slice(0, 100);
+
+    try {
+        const db = await getDb();
+        const collection = db.collection("Tags");
+
+        const pipeline: Document[] = [];
+        if (searchText) {
+            pipeline.push({
+                $search: {
+                    index: "default",
+                    text: { query: searchText, path: { wildcard: "*" } },
                 },
-            },
-        });
+            });
+        }
+        pipeline.push({ $match: filters });
+        const countPipeline = [...pipeline, { $count: "total" }];
+        pipeline.push({ $sort: { last_fetched: -1 } });
+        pipeline.push({ $skip: p * ps });
+        pipeline.push({ $limit: ps });
+
+        const [items, totalAgg] = await Promise.all([
+            collection.aggregate(pipeline).toArray(),
+            collection.aggregate(countPipeline).toArray(),
+        ]);
+
+        const tagData: TagData[] = items.map((item) => ({
+            id: item.id,
+            created_at: item.created_at,
+            guild_id: item.guild_id,
+            tag_name: item.tag_name,
+            nsfw: item.nsfw,
+            owner_id: item.owner_id,
+            sharer: item.sharer,
+            uses: item.uses,
+            content: item.content,
+            embed: item.embed,
+            last_fetched: item.last_fetched,
+            deleted: item.deleted,
+            description: item.description,
+            restricted: item.restricted,
+            shared: item.shared,
+            safe: item.safe,
+        }));
+
+        const total = totalAgg[0]?.total ? Number(totalAgg[0].total) : 0;
+        return res
+            .status(200)
+            .json({ results: tagData, total, page: p, pageSize: ps });
+    } catch (error) {
+        console.error("browse error:", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
-    pipeline.push({ $match: filters });
-    const countPipeline = pipeline.concat([{ $count: "total" }]);
-    pipeline.push({ $sort: { last_fetched: -1 } });
-    pipeline.push({ $skip: p * ps });
-    pipeline.push({ $limit: ps });
-
-    const [items, totalAgg] = await Promise.all([
-        collection.aggregate(pipeline).toArray(),
-        collection.aggregate(countPipeline).toArray(),
-    ]);
-
-    const tagData: TagData[] = items.map((query) => ({
-        id: query.id,
-        created_at: query.created_at,
-        guild_id: query.guild_id,
-        tag_name: query.tag_name,
-        nsfw: query.nsfw,
-        owner_id: query.owner_id,
-        sharer: query.sharer,
-        uses: query.uses,
-        content: query.content,
-        embed: query.embed,
-        last_fetched: query.last_fetched,
-        deleted: query.deleted,
-        description: query.description,
-        restricted: query.restricted,
-        shared: query.shared,
-        safe: query.safe,
-    }));
-
-    const total = totalAgg[0]?.total ? Number(totalAgg[0].total) : 0;
-
-    return res.status(200).json({
-        results: tagData,
-        total,
-        page: p,
-        pageSize: ps,
-    });
 }
-
-
