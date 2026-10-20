@@ -22,6 +22,16 @@ const nextConfig = {
     experimental: {
         optimizePackageImports: ["next-auth"],
     },
+    async redirects() {
+        return [
+            { source: "/browse", destination: "/search", permanent: false },
+            {
+                source: "/dashboard/tags",
+                destination: "/dashboard",
+                permanent: false,
+            },
+        ];
+    },
     async headers() {
         const securityHeaders = [
             { key: "X-DNS-Prefetch-Control", value: "on" },
