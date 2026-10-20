@@ -43,7 +43,7 @@ export default async function handler(
     const p = Math.max(0, Number(singleStr(page)) || 0);
     const ps = Math.min(100, Math.max(1, Number(singleStr(pageSize)) || 21));
 
-    const filters: Filter<Document> = { deleted: false };
+    const filters: Filter<Document> = { deleted: { $ne: true } };
 
     const sharedBool = parseBool(shared);
     if (sharedBool !== undefined) filters.shared = sharedBool;

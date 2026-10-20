@@ -38,7 +38,7 @@ export default async function handler(
                 },
                 {
                     $match: {
-                        deleted: false,
+                        deleted: { $ne: true },
                         nsfw: false,
                         safe: { $in: ["safe", "unrated"] },
                     },

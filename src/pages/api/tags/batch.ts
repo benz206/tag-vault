@@ -36,7 +36,7 @@ export default async function handler(
     try {
         const session = await getSession(req, res);
         const viewerId = session?.user?.id;
-        const publicOnly = { deleted: false, nsfw: false };
+        const publicOnly = { deleted: { $ne: true }, nsfw: false };
 
         const db = await getDb();
         const docs = await db
