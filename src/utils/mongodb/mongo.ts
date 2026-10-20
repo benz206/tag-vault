@@ -50,5 +50,3 @@ export async function getDb(): Promise<Db> {
     await connectToMongo();
     return client.db(DEFAULT_DB_NAME);
 }
-
-export default client;

@@ -59,17 +59,6 @@ export type SearchQuery = {
     search: TagSummary[];
 };
 
-export type ShortDiscordUser = {
-    id: number;
-    username: string;
-    image: string;
-};
-
-export type StaticFeaturedTag = {
-    discord: DiscordUser;
-    tag: TagData;
-};
-
 export type OwnerTagsQuery = {
     tags: number[];
 };
