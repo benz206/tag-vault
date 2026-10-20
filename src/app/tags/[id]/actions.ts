@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {
+  EXCLUDED_TAGS_CACHE_TAG,
   canView,
   findTag,
   removeTag,
@@ -27,6 +28,7 @@ async function requireOwnedTag(
 }
 
 function revalidateTag(tagId: number) {
+  updateTag(EXCLUDED_TAGS_CACHE_TAG);
   revalidatePath(`/tags/${tagId}`);
   revalidatePath('/dashboard');
   revalidatePath('/');

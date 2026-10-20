@@ -1,4 +1,5 @@
 import type { Document, Filter } from 'mongodb';
+import { unstable_cache } from 'next/cache';
 import { getDb } from './client';
 import {
   getHiddenTagIds,
@@ -29,13 +30,19 @@ export const TAG_SUMMARY_PROJECTION = {
   safe: 1
 } as const;
 
-async function excludedTagIds(): Promise<ExcludedTagIds> {
-  const [removed, hidden] = await Promise.all([
-    getRemovedTagIds(),
-    getHiddenTagIds()
-  ]);
-  return { removed, hidden };
-}
+export const EXCLUDED_TAGS_CACHE_TAG = 'excluded-tag-ids';
+
+const excludedTagIds = unstable_cache(
+  async (): Promise<ExcludedTagIds> => {
+    const [removed, hidden] = await Promise.all([
+      getRemovedTagIds(),
+      getHiddenTagIds()
+    ]);
+    return { removed, hidden };
+  },
+  [EXCLUDED_TAGS_CACHE_TAG],
+  { tags: [EXCLUDED_TAGS_CACHE_TAG], revalidate: 3600 }
+);
 
 async function publicFilter(): Promise<Filter<Document>> {
   return visibleTagFilter(await excludedTagIds());
@@ -180,18 +187,13 @@ export async function findRandomTagId(): Promise<number | null> {
 }
 
 export async function findOwnerTags(ownerId: string): Promise<TagSummary[]> {
-  const hidden = new Set(await getHiddenTagIds(ownerId));
+  const excluded = await excludedTagIds();
+  const hidden = new Set(excluded.hidden);
   const docs = await (
     await tags()
   )
     .find(
-      {
-        owner_id: ownerId,
-        ...visibleTagFilter(
-          { removed: await getRemovedTagIds(), hidden: [] },
-          ownerId
-        )
-      },
+      { owner_id: ownerId, ...visibleTagFilter(excluded, ownerId) },
       { projection: TAG_SUMMARY_PROJECTION }
     )
     .sort({ created_at: -1 })
