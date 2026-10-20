@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { Error as ErrorType, TagBatchQuery, TagSummary } from '@/types';
+import {
+  findTagSummaries,
+  type Error as ErrorType,
+  type TagBatchQuery
+} from '@tag-vault/db';
 import { getSession } from '@/lib/auth';
-import { TAG_SUMMARY_PROJECTION, toTagSummary } from '@/lib/tags';
-import { getDb } from '@/utils/mongodb/mongo';
 
 const MAX_IDS = 50;
 
@@ -35,28 +37,7 @@ export default async function handler(
 
   try {
     const session = await getSession(req, res);
-    const viewerId = session?.user?.id;
-    const publicOnly = { deleted: { $ne: true }, nsfw: false };
-
-    const db = await getDb();
-    const docs = await db
-      .collection('Tags')
-      .find(
-        {
-          id: { $in: ids },
-          safe: { $ne: 'not_safe' },
-          ...(viewerId
-            ? { $or: [{ owner_id: viewerId }, publicOnly] }
-            : publicOnly)
-        },
-        { projection: TAG_SUMMARY_PROJECTION }
-      )
-      .toArray();
-
-    const byId = new Map<number, TagSummary>();
-    for (const doc of docs) byId.set(Number(doc.id), toTagSummary(doc));
-    const tags = ids.flatMap((id) => byId.get(id) ?? []);
-
+    const tags = await findTagSummaries(ids, session?.user?.id);
     res.setHeader('Cache-Control', 'private, max-age=60');
     return res.status(200).json({ tags });
   } catch (error) {

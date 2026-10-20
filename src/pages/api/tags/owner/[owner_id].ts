@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import {
+  findOwnerTags,
+  type Error as ErrorType,
+  type OwnerTagsQuery
+} from '@tag-vault/db';
 import { requireSession } from '@/lib/auth';
-import { TAG_SUMMARY_PROJECTION, toTagSummary } from '@/lib/tags';
-import { getDb } from '@/utils/mongodb/mongo';
-import { Error as ErrorType, OwnerTagsQuery } from '@/types';
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,17 +27,7 @@ export default async function handler(
   }
 
   try {
-    const db = await getDb();
-    const collection = db.collection('Tags');
-    const docs = await collection
-      .find(
-        { owner_id: String(owner_id), safe: { $ne: 'not_safe' } },
-        { projection: TAG_SUMMARY_PROJECTION }
-      )
-      .sort({ created_at: -1 })
-      .toArray();
-
-    return res.status(200).json({ tags: docs.map(toTagSummary) });
+    return res.status(200).json({ tags: await findOwnerTags(owner_id) });
   } catch (error) {
     console.error('owner tags error:', error);
     return res.status(500).json({ error: 'Internal server error' });

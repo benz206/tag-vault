@@ -2,7 +2,7 @@ import Head from 'next/head';
 import useSWR from 'swr';
 import Taglist from '@/components/Taglist';
 import StatStrip from '@/components/StatStrip';
-import { DashStats, OwnerTagsQuery } from '@/types';
+import type { OwnerStats, OwnerTagsQuery } from '@tag-vault/db';
 import { useSession, signIn } from 'next-auth/react';
 
 export default function Dashboard() {
@@ -16,7 +16,7 @@ export default function Dashboard() {
   const { data: ownerTagsData, error: ownerTagsError } = useSWR<OwnerTagsQuery>(
     session?.user?.id ? `/api/tags/owner/${session.user.id}` : null
   );
-  const { data: stats } = useSWR<DashStats>(
+  const { data: stats } = useSWR<OwnerStats>(
     session ? '/api/dashstatistics' : null
   );
 

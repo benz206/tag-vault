@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { TagSummary } from '@/types';
+import type { TagSummary } from '@tag-vault/db';
 import Taglist from '@/components/Taglist';
 
 export type DiscoverTab = {

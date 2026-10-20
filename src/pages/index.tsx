@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { useSession, signIn } from 'next-auth/react';
-import type { DiscoverQuery, Statistics, TagBatchQuery } from '@/types';
+import type { DiscoverQuery, Statistics, TagBatchQuery } from '@tag-vault/db';
 import DiscoverTabs from '@/components/DiscoverTabs';
 import RandomTagButton from '@/components/RandomTagButton';
 import StatStrip from '@/components/StatStrip';

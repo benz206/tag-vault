@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import useSWR from 'swr';
-import type { DiscordUser, TagSummary } from '@/types';
+import type { DiscordUser, TagSummary } from '@tag-vault/db';
 import { getTagColor, formatDate } from '@/utils';
 import Pill from '@/components/Pill';
 

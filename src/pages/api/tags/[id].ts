@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { findTag, type TagData } from '@tag-vault/db';
 import { getSession } from '@/lib/auth';
-import { toTagData } from '@/lib/tags';
-import { getDb } from '@/utils/mongodb/mongo';
-import { TagData } from '@/types';
 
 type ErrorRes = { error: string };
 
@@ -22,29 +20,26 @@ export default async function handler(
 
   try {
     const session = await getSession(req, res);
-    const db = await getDb();
-    const collection = db.collection('Tags');
+    const tag = await findTag(Number(id));
+    if (!tag) return res.status(404).json({ error: 'Tag ID Non Existent' });
 
-    const raw = await collection.findOne({ id: Number(id) });
-    if (!raw) return res.status(404).json({ error: 'Tag ID Non Existent' });
-
-    const isOwner = session?.user?.id === raw.owner_id;
+    const isOwner = session?.user?.id === tag.owner_id;
     if (!isOwner) {
-      if (raw.deleted) {
+      if (tag.deleted) {
         return res.status(404).json({ error: 'Tag has been deleted' });
       }
-      if (raw.nsfw) {
+      if (tag.nsfw) {
         return res.status(404).json({ error: 'Tag is NSFW' });
       }
     }
-    if (raw.safe === 'not_safe') {
+    if (tag.safe === 'not_safe') {
       return res
         .status(404)
         .json({ error: 'This tag is currently under review' });
     }
 
     res.setHeader('Cache-Control', 'private, max-age=60');
-    return res.status(200).json(toTagData(raw));
+    return res.status(200).json(tag);
   } catch (error) {
     console.error('tag fetch error:', error);
     return res.status(500).json({ error: 'Internal server error' });

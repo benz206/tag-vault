@@ -5,7 +5,7 @@ import {
   useSyncExternalStore,
   type ReactNode
 } from 'react';
-import type { TagSummary } from '@/types';
+import type { TagSummary } from '@tag-vault/db';
 import {
   TagCard,
   TagCardSkeleton,

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, FormEvent } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { DiscoverQuery, SearchQuery } from '@/types';
+import type { DiscoverQuery, SearchQuery } from '@tag-vault/db';
 import Taglist from '@/components/Taglist';
 import DiscoverTabs from '@/components/DiscoverTabs';
 import RandomTagButton from '@/components/RandomTagButton';

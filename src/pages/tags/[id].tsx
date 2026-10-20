@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import useSWR from 'swr';
-import { TagData, DiscordUser } from '@/types';
+import type { TagData, DiscordUser } from '@tag-vault/db';
 import { getTagColor, formatDate } from '@/utils';
 import CopyButton from '@/components/CopyButton';
 import Pill from '@/components/Pill';

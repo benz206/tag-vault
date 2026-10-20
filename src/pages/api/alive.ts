@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { connectToMongo } from '@/utils/mongodb/mongo';
+import { connectToMongo } from '@tag-vault/db';
 
 type Alive = { alive: boolean };
 

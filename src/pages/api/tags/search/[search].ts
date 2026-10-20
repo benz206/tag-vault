@@ -1,12 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { requireSession } from '@/lib/auth';
 import {
-  PUBLIC_TAG_FILTER,
-  TAG_SUMMARY_PROJECTION,
-  toTagSummary
-} from '@/lib/tags';
-import { getDb } from '@/utils/mongodb/mongo';
-import { Error as ErrorType, SearchQuery } from '@/types';
+  searchTags,
+  type Error as ErrorType,
+  type SearchQuery
+} from '@tag-vault/db';
+import { requireSession } from '@/lib/auth';
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,24 +27,7 @@ export default async function handler(
   }
 
   try {
-    const db = await getDb();
-    const collection = db.collection('Tags');
-
-    const queries = await collection
-      .aggregate([
-        {
-          $search: {
-            index: 'default',
-            text: { query: search, path: { wildcard: '*' } }
-          }
-        },
-        { $match: PUBLIC_TAG_FILTER },
-        { $limit: 50 },
-        { $project: TAG_SUMMARY_PROJECTION }
-      ])
-      .toArray();
-
-    return res.status(200).json({ search: queries.map(toTagSummary) });
+    return res.status(200).json({ search: await searchTags(search) });
   } catch (error) {
     console.error('search error:', error);
     return res.status(500).json({ error: 'Internal server error' });

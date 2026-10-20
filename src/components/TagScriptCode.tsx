@@ -1,7 +1,7 @@
 import {
   tokenizeTagScript,
   type TagScriptTokenKind
-} from '@/utils/functions/tokenizeTagScript';
+} from '@tag-vault/tagscript';
 
 const TOKEN_CLASSES: Record<TagScriptTokenKind, string> = {
   text: '',

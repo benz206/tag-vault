@@ -63,7 +63,7 @@ export type OwnerTagsQuery = {
   tags: TagSummary[];
 };
 
-export type DashStats = {
+export type OwnerStats = {
   tags: {
     public: number;
     private: number;
@@ -71,14 +71,6 @@ export type DashStats = {
     total: number;
   };
   uses: number;
-  favorites: number;
-};
-
-export type BrowseQuery = {
-  results: TagSummary[];
-  total: number;
-  page: number;
-  pageSize: number;
 };
 
 export type TagBatchQuery = {

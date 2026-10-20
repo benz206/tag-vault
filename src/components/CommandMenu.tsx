@@ -2,7 +2,7 @@ import { useEffect, useState, type KeyboardEvent } from 'react';
 import { useRouter } from 'next/router';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import useSWR from 'swr';
-import type { SearchQuery } from '@/types';
+import type { SearchQuery } from '@tag-vault/db';
 import { getTagColor } from '@/utils';
 import { openRandomTag } from '@/components/RandomTagButton';
 import { toggleTheme } from '@/components/ThemeToggle';

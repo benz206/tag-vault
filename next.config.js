@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['@tag-vault/db', '@tag-vault/tagscript'],
   poweredByHeader: false,
   compress: true,
   images: {

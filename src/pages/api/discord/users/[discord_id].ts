@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { DiscordUser } from '@/types';
-import { getDb } from '@/utils/mongodb/mongo';
+import type { DiscordUser } from '@tag-vault/db';
+import { getDb } from '@tag-vault/db';
 
 type ErrorRes = { error: string };
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
