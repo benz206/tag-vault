@@ -2,12 +2,7 @@ import { cache, type ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import {
-  countTagFavorites,
-  findTag,
-  isFavorite,
-  type TagData
-} from '@tag-vault/db';
+import { countTagFavorites, findTag, isFavorite } from '@tag-vault/db';
 import CopyButton from '@/components/CopyButton';
 import FavoriteButton from '@/components/FavoriteButton';
 import { buttonClass } from '@/components/buttons';
@@ -17,6 +12,7 @@ import TagScriptCode from '@/components/TagScriptCode';
 import { OwnerLabel } from '@/components/Tagbox';
 import { getSession } from '@/lib/auth';
 import { getOwner } from '@/lib/owners';
+import { isPublic } from '@/lib/tags';
 import { formatDate, getTagColor } from '@/utils';
 
 type Params = Promise<{ id: string }>;
@@ -24,10 +20,6 @@ type Params = Promise<{ id: string }>;
 const loadTag = cache(async (rawId: string) =>
   /^\d+$/.test(rawId) ? findTag(Number(rawId)) : null
 );
-
-function isPublic(tag: TagData): boolean {
-  return !tag.deleted && !tag.nsfw && !tag.hidden && tag.safe !== 'not_safe';
-}
 
 export async function generateMetadata({
   params
@@ -49,8 +41,7 @@ export async function generateMetadata({
       siteName: 'TagVault',
       title: tag.tag_name,
       description,
-      url: `/tags/${tag.id}`,
-      images: '/opengraph-image'
+      url: `/tags/${tag.id}`
     }
   };
 }
