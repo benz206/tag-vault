@@ -1,7 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import type { AuthOptions, Session } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
-import { getServerSession } from 'next-auth/next';
+import { getServerSession } from 'next-auth';
 import DiscordProvider, { DiscordProfile } from 'next-auth/providers/discord';
 
 const {
@@ -87,18 +86,6 @@ export const authOptions: AuthOptions = {
   }
 };
 
-export function getSession(req: NextApiRequest, res: NextApiResponse) {
-  return getServerSession(req, res, authOptions);
-}
-
-export async function requireSession(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<Session | null> {
-  const session = await getSession(req, res);
-  if (!session?.user?.id) {
-    res.status(401).json({ error: 'Unauthorized' });
-    return null;
-  }
-  return session;
+export function getSession(): Promise<Session | null> {
+  return getServerSession(authOptions);
 }

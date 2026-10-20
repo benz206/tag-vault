@@ -1,3 +1,5 @@
+'use client';
+
 export function toggleTheme() {
   const dark = document.documentElement.classList.toggle('dark');
   try {

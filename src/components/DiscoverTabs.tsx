@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type { TagSummary } from '@tag-vault/db';
 import Taglist from '@/components/Taglist';

@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { buttonClass, type ButtonSize } from '@/components/buttons';
 
 export async function openRandomTag(push: (url: string) => unknown) {

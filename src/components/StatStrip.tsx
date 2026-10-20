@@ -1,4 +1,6 @@
-type Stat = { label: string; value?: string };
+import type { ReactNode } from 'react';
+
+type Stat = { label: string; value?: ReactNode };
 
 export default function StatStrip({ stats }: { stats: Stat[] }) {
   return (

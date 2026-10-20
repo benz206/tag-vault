@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import useSWR from 'swr';
@@ -32,7 +34,7 @@ export function rowTemplate(columns: TagColumn[]): string {
     .join(' ');
 }
 
-function Owner({ ownerId }: { ownerId: string }) {
+export function Owner({ ownerId }: { ownerId: string }) {
   const owner = useOwner(ownerId);
   return (
     <span className="flex min-w-0 items-center gap-1.5">

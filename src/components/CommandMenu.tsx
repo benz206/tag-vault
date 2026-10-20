@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState, type KeyboardEvent } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import useSWR from 'swr';
 import type { SearchQuery } from '@tag-vault/db';

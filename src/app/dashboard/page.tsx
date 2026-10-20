@@ -1,0 +1,54 @@
+import type { Metadata } from 'next';
+import { findOwnerTags, getOwnerStats } from '@tag-vault/db';
+import SignInRequired from '@/components/SignInRequired';
+import StatStrip from '@/components/StatStrip';
+import Taglist from '@/components/Taglist';
+import { getSession } from '@/lib/auth';
+
+export const metadata: Metadata = { title: 'Dashboard' };
+
+export default async function DashboardPage() {
+  const session = await getSession();
+  if (!session) return <SignInRequired callbackUrl="/dashboard" />;
+
+  const [tags, stats] = await Promise.all([
+    findOwnerTags(session.user.id),
+    getOwnerStats(session.user.id)
+  ]);
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 pt-16 pb-20 sm:px-6 lg:pt-20">
+      <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">Dashboard</h1>
+      <p className="mt-3 text-xl text-muted">
+        Tags you own, including private and NSFW ones.
+      </p>
+      <div className="mt-8">
+        <StatStrip
+          stats={[
+            { label: 'Tags', value: stats.tags.total.toLocaleString() },
+            { label: 'Shared', value: stats.tags.public.toLocaleString() },
+            { label: 'Private', value: stats.tags.private.toLocaleString() },
+            { label: 'NSFW', value: stats.tags.nsfw.toLocaleString() },
+            { label: 'Total uses', value: stats.uses.toLocaleString() }
+          ]}
+        />
+      </div>
+      <section className="mt-12">
+        <h2 className="mb-6 text-[28px] leading-8 tracking-tight">
+          Your tags.{' '}
+          <span className="text-faint">
+            {tags.length.toLocaleString()} in total.
+          </span>
+        </h2>
+        {tags.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-line-strong bg-surface px-4 py-12 text-center text-sm text-muted">
+            You don&apos;t own any tags yet. Tags you create with Carl-bot will
+            show up here.
+          </div>
+        ) : (
+          <Taglist tags={tags} defaultSortLabel="Newest" />
+        )}
+      </section>
+    </div>
+  );
+}

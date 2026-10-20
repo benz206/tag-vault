@@ -1,40 +1,28 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type { DiscordUser } from '@tag-vault/db';
-import { getDb } from '@tag-vault/db';
+import { getDb, type DiscordUser } from '@tag-vault/db';
 
-type ErrorRes = { error: string };
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const DISCORD_FETCH_TIMEOUT_MS = 5000;
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<DiscordUser | ErrorRes>
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ discord_id: string }> }
 ) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  const { discord_id } = req.query;
-  if (
-    !discord_id ||
-    Array.isArray(discord_id) ||
-    !/^\d{15,20}$/.test(discord_id)
-  ) {
-    return res.status(400).json({ error: 'Invalid discord_id' });
+  const { discord_id } = await params;
+  if (!/^\d{15,20}$/.test(discord_id)) {
+    return Response.json({ error: 'Invalid discord_id' }, { status: 400 });
   }
 
   try {
     const db = await getDb();
     const collection = db.collection('Users');
     const cached = await collection.findOne({ id: discord_id });
+    const cacheHeaders = { 'Cache-Control': 'public, max-age=3600' };
 
     if (
       cached &&
       Date.now() - new Date(cached.lastFetched).getTime() < ONE_DAY_MS
     ) {
-      res.setHeader('Cache-Control', 'public, max-age=3600');
-      return res.status(200).json(toDiscordUser(cached));
+      return Response.json(toDiscordUser(cached), { headers: cacheHeaders });
     }
 
     try {
@@ -44,16 +32,15 @@ export default async function handler(
         { $set: { ...userData, lastFetched: new Date() } },
         { upsert: true }
       );
-      res.setHeader('Cache-Control', 'public, max-age=3600');
-      return res.status(200).json(userData);
+      return Response.json(userData, { headers: cacheHeaders });
     } catch (error) {
       if (!cached) throw error;
       // Fall back to stale cached data on Discord fetch failure
-      return res.status(200).json(toDiscordUser(cached));
+      return Response.json(toDiscordUser(cached));
     }
   } catch (error) {
     console.error('discord user error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

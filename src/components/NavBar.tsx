@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { buttonClass } from '@/components/buttons';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -26,7 +28,7 @@ function DiscordLogo() {
 }
 
 function NavLink({ href, children }: { href: string; children: string }) {
-  const { pathname } = useRouter();
+  const pathname = usePathname();
   const active = pathname === href;
   return (
     <Link
