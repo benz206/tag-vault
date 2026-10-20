@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { requireSession } from "@/lib/auth";
-import { TAG_SUMMARY_PROJECTION, toTagSummary } from "@/lib/tags";
+import {
+    PUBLIC_TAG_FILTER,
+    TAG_SUMMARY_PROJECTION,
+    toTagSummary,
+} from "@/lib/tags";
 import { getDb } from "@/utils/mongodb/mongo";
 import { Error as ErrorType, SearchQuery } from "@/types";
 
@@ -36,13 +40,7 @@ export default async function handler(
                         text: { query: search, path: { wildcard: "*" } },
                     },
                 },
-                {
-                    $match: {
-                        deleted: { $ne: true },
-                        nsfw: false,
-                        safe: { $in: ["safe", "unrated"] },
-                    },
-                },
+                { $match: PUBLIC_TAG_FILTER },
                 { $limit: 50 },
                 { $project: TAG_SUMMARY_PROJECTION },
             ])

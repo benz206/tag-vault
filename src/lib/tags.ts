@@ -16,6 +16,12 @@ export const TAG_SUMMARY_PROJECTION = {
     safe: 1,
 } as const;
 
+export const PUBLIC_TAG_FILTER = {
+    deleted: { $ne: true },
+    nsfw: false,
+    safe: { $in: ["safe", "unrated"] },
+};
+
 function toIso(value: unknown): string {
     if (value instanceof Date) return value.toISOString();
     return value ? String(value) : "";

@@ -84,3 +84,8 @@ export type BrowseQuery = {
 export type TagBatchQuery = {
     tags: TagSummary[];
 };
+
+export type DiscoverQuery = {
+    popular: TagSummary[];
+    newest: TagSummary[];
+};
