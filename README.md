@@ -6,15 +6,15 @@ This is not affiliated or endorsed by BotLabs, Carl-bots parent company.
 
 ## Running the project
 
-You'll need [Node.js](https://nodejs.org/en/) and [pnpm](https://pnpm.io/) installed. Then do the following:
+You'll need [Bun](https://bun.sh/) installed. Then do the following:
 
 ```sh
 git clone https://github.com/Leg3ndary/tag-vault.git
 
 cd tag-vault
 
-pnpm install
-pnpm dev
+bun install
+bun dev
 ```
 
 Create a `.env.local` with:
