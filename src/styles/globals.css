@@ -6,43 +6,28 @@
     --color-darkbg: #000311;
 
     --spacing-128: 32rem;
-
-    --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
-    --background-image-gradient-conic: conic-gradient(
-        from 180deg at 50% 50%,
-        var(--tw-gradient-stops)
-    );
-
-    --background-size-400: 400%;
 }
 
-:root {
-    --background: #000311;
-    --background-light: #32374f;
-    --blue: #51e5ff;
-    --pink: #ec368d;
-    --yellow-green: #bbcd4c;
-    --green: #768041;
-}
+@layer base {
+    body {
+        color: white;
+        background: var(--color-darkbg);
+    }
 
-body {
-    color: white;
-    background: var(--background);
-}
+    h1 {
+        font-size: 7rem;
+        font-weight: 800;
+    }
 
-h1 {
-    font-size: 7rem;
-    font-weight: 800;
-}
+    h2 {
+        font-size: 3rem;
+        font-weight: 700;
+    }
 
-h2 {
-    font-size: 3rem;
-    font-weight: 700;
-}
-
-p,
-span,
-a {
-    font-size: 1.25rem;
-    font-weight: 500;
+    p,
+    span,
+    a {
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
 }

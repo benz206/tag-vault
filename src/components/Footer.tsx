@@ -1,21 +1,19 @@
 export default function Footer() {
     return (
-        <div className="relative flex flex-row items-center w-full h-16 p-8 bg-slate-900">
-            <p className="text-xs font-semibold text-slate-700 lg:text-md">
+        <footer className="flex flex-col gap-1 w-full px-8 py-5 sm:flex-row sm:items-center bg-slate-900">
+            <p className="text-xs font-semibold text-slate-400 lg:text-sm">
                 Copyright ©{" "}
                 <a
-                    className="text-slate-700"
+                    className="text-xs font-bold text-slate-300 hover:text-white lg:text-sm"
                     href="https://github.com/Leg3ndary"
                 >
-                    <span className="text-xs font-bold lg:text-md">
-                        Leg3ndary
-                    </span>
+                    Leg3ndary
                 </a>
                 , 2023
             </p>
-            <p className="ml-auto text-xs font-bold text-slate-700 lg:text-md">
+            <p className="text-xs font-bold sm:ml-auto text-slate-400 lg:text-sm">
                 This project is not affiliated with BotLabs or Discord.
             </p>
-        </div>
+        </footer>
     );
 }

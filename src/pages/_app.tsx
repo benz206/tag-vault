@@ -29,7 +29,7 @@ export default function App({
     pageProps: { session, ...pageProps },
 }: AppProps) {
     return (
-        <main className={firaSans.className}>
+        <div className={firaSans.className}>
             <SessionProvider session={session}>
                 <SWRConfig value={swrConfig}>
                     <Layout>
@@ -37,6 +37,6 @@ export default function App({
                     </Layout>
                 </SWRConfig>
             </SessionProvider>
-        </main>
+        </div>
     );
 }

@@ -9,7 +9,9 @@ export default function Custom404() {
             </Head>
             <div className="flex justify-center w-full h-full">
                 <div className="flex flex-col flex-wrap content-center justify-center w-full h-128 bg-cyan-400 gap-4">
-                    <h1>404 - Page Not Found</h1>
+                    <h1 className="px-4 text-4xl text-center lg:text-7xl">
+                        404 - Page Not Found
+                    </h1>
                     <Link
                         href="/"
                         className="px-6 py-2 text-center transition-colors duration-300 border-2 border-white rounded-xl hover:bg-white hover:text-cyan-500"
