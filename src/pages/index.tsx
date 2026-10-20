@@ -2,16 +2,8 @@ import Head from "next/head";
 import Taglist from "@/components/Taglist";
 import StatsList from "@/components/StatsList";
 import { motion } from "motion/react";
-import { ShortTagData } from "@/types";
 
-const featuredTags: ShortTagData[] = [
-    { id: 1157946 },
-    { id: 1111722 },
-    { id: 1217391 },
-    { id: 825576 },
-    { id: 962280 },
-    { id: 865606 },
-];
+const featuredTagIds = [1157946, 1111722, 1217391, 825576, 962280, 865606];
 
 export default function Home() {
     return (
@@ -36,9 +28,7 @@ export default function Home() {
                         Featured Tags
                     </h1>
                 </motion.div>
-                <div className="relative h-auto w-max">
-                    <Taglist tags={featuredTags} animDelay={2} />
-                </div>
+                <Taglist ids={featuredTagIds} />
             </div>
         </>
     );

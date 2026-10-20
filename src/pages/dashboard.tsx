@@ -1,10 +1,9 @@
-import { useMemo } from "react";
 import Head from "next/head";
 import useSWR from "swr";
 import Taglist from "@/components/Taglist";
 import DashStatsList from "@/components/DashStatsList";
 import { motion } from "motion/react";
-import { ShortTagData, OwnerTagsQuery } from "@/types";
+import { OwnerTagsQuery } from "@/types";
 import { useSession, signIn } from "next-auth/react";
 
 export default function Dashboard() {
@@ -17,11 +16,6 @@ export default function Dashboard() {
 
     const { data: ownerTagsData } = useSWR<OwnerTagsQuery>(
         session?.user?.id ? `/api/tags/owner/${session.user.id}` : null
-    );
-
-    const ownerTags: ShortTagData[] = useMemo(
-        () => ownerTagsData?.tags.map((tag) => ({ id: tag })) ?? [],
-        [ownerTagsData]
     );
 
     return (
@@ -44,9 +38,13 @@ export default function Dashboard() {
                 >
                     <h1 className="text-5xl text-center lg:text-7xl">Tags</h1>
                 </motion.div>
-                <div className="relative h-auto w-max">
-                    <Taglist tags={ownerTags} animDelay={1} />
-                </div>
+                {ownerTagsData?.tags.length === 0 ? (
+                    <p className="py-10 text-center">
+                        You don&apos;t have any tags yet.
+                    </p>
+                ) : (
+                    <Taglist ids={ownerTagsData?.tags ?? []} />
+                )}
             </div>
         </>
     );

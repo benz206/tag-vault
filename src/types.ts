@@ -59,10 +59,6 @@ export type SearchQuery = {
     search: TagSummary[];
 };
 
-export type ShortTagData = {
-    id: number;
-};
-
 export type ShortDiscordUser = {
     id: number;
     username: string;

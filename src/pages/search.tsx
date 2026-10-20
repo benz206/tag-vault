@@ -125,7 +125,7 @@ export default function SearchPage() {
                             <h2 className="pt-12">
                                 {searchData.search.length} results were found.
                             </h2>
-                            <Taglist tags={searchData.search} animDelay={0} />
+                            <Taglist key={submitted} tags={searchData.search} />
                         </div>
                     ) : (
                         <h2 className="p-12">
