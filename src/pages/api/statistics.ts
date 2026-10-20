@@ -34,7 +34,7 @@ export default async function handler(
         return res.status(200).json({
             all_tag_count: allTagCount,
             public_tag_count: publicTagCount,
-            latest_last_fetched: lastFetched as Date,
+            latest_last_fetched: lastFetched?.toISOString() ?? null,
         });
     } catch (error) {
         console.error("statistics error:", error);
