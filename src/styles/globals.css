@@ -1,158 +1,160 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@source inline("bg-ctp-{rosewater,flamingo,pink,mauve,red,maroon,peach,yellow,green,teal,sky,sapphire,blue,lavender}");
+@source inline(
+  'bg-ctp-{rosewater,flamingo,pink,mauve,red,maroon,peach,yellow,green,teal,sky,sapphire,blue,lavender}'
+);
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-    --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-    --color-canvas: var(--canvas);
-    --color-surface: var(--surface);
-    --color-subtle: var(--subtle);
-    --color-chip: var(--chip);
-    --color-chip-hover: var(--chip-hover);
-    --color-line: var(--line);
-    --color-line-strong: var(--line-strong);
-    --color-ink: var(--ink);
-    --color-ink-2: var(--ink-2);
-    --color-ink-3: var(--ink-3);
-    --color-muted: var(--muted);
-    --color-faint: var(--faint);
-    --color-on-accent: var(--on-accent);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-chip: var(--chip);
+  --color-chip-hover: var(--chip-hover);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-on-accent: var(--on-accent);
 
-    --color-ctp-rosewater: var(--ctp-rosewater);
-    --color-ctp-flamingo: var(--ctp-flamingo);
-    --color-ctp-pink: var(--ctp-pink);
-    --color-ctp-mauve: var(--ctp-mauve);
-    --color-ctp-red: var(--ctp-red);
-    --color-ctp-maroon: var(--ctp-maroon);
-    --color-ctp-peach: var(--ctp-peach);
-    --color-ctp-yellow: var(--ctp-yellow);
-    --color-ctp-green: var(--ctp-green);
-    --color-ctp-teal: var(--ctp-teal);
-    --color-ctp-sky: var(--ctp-sky);
-    --color-ctp-sapphire: var(--ctp-sapphire);
-    --color-ctp-blue: var(--ctp-blue);
-    --color-ctp-lavender: var(--ctp-lavender);
+  --color-ctp-rosewater: var(--ctp-rosewater);
+  --color-ctp-flamingo: var(--ctp-flamingo);
+  --color-ctp-pink: var(--ctp-pink);
+  --color-ctp-mauve: var(--ctp-mauve);
+  --color-ctp-red: var(--ctp-red);
+  --color-ctp-maroon: var(--ctp-maroon);
+  --color-ctp-peach: var(--ctp-peach);
+  --color-ctp-yellow: var(--ctp-yellow);
+  --color-ctp-green: var(--ctp-green);
+  --color-ctp-teal: var(--ctp-teal);
+  --color-ctp-sky: var(--ctp-sky);
+  --color-ctp-sapphire: var(--ctp-sapphire);
+  --color-ctp-blue: var(--ctp-blue);
+  --color-ctp-lavender: var(--ctp-lavender);
 }
 
 :root {
-    --canvas: #eff1f5;
-    --surface: #ffffff;
-    --subtle: #e6e9ef;
-    --chip: #e6e9ef;
-    --chip-hover: #dce0e8;
-    --line: #dce0e8;
-    --line-strong: #bcc0cc;
-    --ink: #4c4f69;
-    --ink-2: #4c4f69;
-    --ink-3: #5c5f77;
-    --muted: #6c6f85;
-    --faint: #8c8fa1;
-    --on-accent: #11111b;
-    --accent-from: var(--ctp-pink);
-    --accent-to: var(--ctp-maroon);
+  --canvas: #eff1f5;
+  --surface: #ffffff;
+  --subtle: #e6e9ef;
+  --chip: #e6e9ef;
+  --chip-hover: #dce0e8;
+  --line: #dce0e8;
+  --line-strong: #bcc0cc;
+  --ink: #4c4f69;
+  --ink-2: #4c4f69;
+  --ink-3: #5c5f77;
+  --muted: #6c6f85;
+  --faint: #8c8fa1;
+  --on-accent: #11111b;
+  --accent-from: var(--ctp-pink);
+  --accent-to: var(--ctp-maroon);
 
-    --ctp-rosewater: #dc8a78;
-    --ctp-flamingo: #dd7878;
-    --ctp-pink: #ea76cb;
-    --ctp-mauve: #8839ef;
-    --ctp-red: #d20f39;
-    --ctp-maroon: #e64553;
-    --ctp-peach: #fe640b;
-    --ctp-yellow: #df8e1d;
-    --ctp-green: #40a02b;
-    --ctp-teal: #179299;
-    --ctp-sky: #04a5e5;
-    --ctp-sapphire: #209fb5;
-    --ctp-blue: #1e66f5;
-    --ctp-lavender: #7287fd;
+  --ctp-rosewater: #dc8a78;
+  --ctp-flamingo: #dd7878;
+  --ctp-pink: #ea76cb;
+  --ctp-mauve: #8839ef;
+  --ctp-red: #d20f39;
+  --ctp-maroon: #e64553;
+  --ctp-peach: #fe640b;
+  --ctp-yellow: #df8e1d;
+  --ctp-green: #40a02b;
+  --ctp-teal: #179299;
+  --ctp-sky: #04a5e5;
+  --ctp-sapphire: #209fb5;
+  --ctp-blue: #1e66f5;
+  --ctp-lavender: #7287fd;
 }
 
 .dark {
-    --canvas: #181825;
-    --surface: #1e1e2e;
-    --subtle: #11111b;
-    --chip: #313244;
-    --chip-hover: #45475a;
-    --line: #313244;
-    --line-strong: #45475a;
-    --ink: #cdd6f4;
-    --ink-2: #bac2de;
-    --ink-3: #a6adc8;
-    --muted: #9399b2;
-    --faint: #6c7086;
-    --on-accent: #11111b;
-    --accent-from: var(--ctp-pink);
-    --accent-to: var(--ctp-red);
+  --canvas: #181825;
+  --surface: #1e1e2e;
+  --subtle: #11111b;
+  --chip: #313244;
+  --chip-hover: #45475a;
+  --line: #313244;
+  --line-strong: #45475a;
+  --ink: #cdd6f4;
+  --ink-2: #bac2de;
+  --ink-3: #a6adc8;
+  --muted: #9399b2;
+  --faint: #6c7086;
+  --on-accent: #11111b;
+  --accent-from: var(--ctp-pink);
+  --accent-to: var(--ctp-red);
 
-    --ctp-rosewater: #f5e0dc;
-    --ctp-flamingo: #f2cdcd;
-    --ctp-pink: #f5c2e7;
-    --ctp-mauve: #cba6f7;
-    --ctp-red: #f38ba8;
-    --ctp-maroon: #eba0ac;
-    --ctp-peach: #fab387;
-    --ctp-yellow: #f9e2af;
-    --ctp-green: #a6e3a1;
-    --ctp-teal: #94e2d5;
-    --ctp-sky: #89dceb;
-    --ctp-sapphire: #74c7ec;
-    --ctp-blue: #89b4fa;
-    --ctp-lavender: #b4befe;
+  --ctp-rosewater: #f5e0dc;
+  --ctp-flamingo: #f2cdcd;
+  --ctp-pink: #f5c2e7;
+  --ctp-mauve: #cba6f7;
+  --ctp-red: #f38ba8;
+  --ctp-maroon: #eba0ac;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+  --ctp-green: #a6e3a1;
+  --ctp-teal: #94e2d5;
+  --ctp-sky: #89dceb;
+  --ctp-sapphire: #74c7ec;
+  --ctp-blue: #89b4fa;
+  --ctp-lavender: #b4befe;
 }
 
 @theme {
-    --animate-rise: rise 0.5s ease-out both;
+  --animate-rise: rise 0.5s ease-out both;
 
-    @keyframes rise {
-        from {
-            opacity: 0;
-            transform: translateY(8px);
-        }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
     }
+  }
 
-    --animate-drop: drop 0.15s ease-out;
+  --animate-drop: drop 0.15s ease-out;
 
-    @keyframes drop {
-        from {
-            opacity: 0;
-            transform: translateY(-4px);
-        }
+  @keyframes drop {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
     }
+  }
 }
 
 @layer base {
-    html {
-        color-scheme: light;
-    }
+  html {
+    color-scheme: light;
+  }
 
-    html.dark {
-        color-scheme: dark;
-    }
+  html.dark {
+    color-scheme: dark;
+  }
 
-    body {
-        color: var(--ink);
-        background-color: var(--canvas);
-        background-image: radial-gradient(var(--line) 1px, transparent 1px);
-        background-size: 20px 20px;
-        -webkit-font-smoothing: antialiased;
-    }
+  body {
+    color: var(--ink);
+    background-color: var(--canvas);
+    background-image: radial-gradient(var(--line) 1px, transparent 1px);
+    background-size: 20px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    button:not(:disabled),
-    [role="button"]:not(:disabled),
-    summary {
-        cursor: pointer;
-    }
+  button:not(:disabled),
+  [role='button']:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
 
-    :focus-visible {
-        outline: 2px solid var(--ctp-mauve);
-        outline-offset: 2px;
-    }
+  :focus-visible {
+    outline: 2px solid var(--ctp-mauve);
+    outline-offset: 2px;
+  }
 
-    ::selection {
-        background: color-mix(in srgb, var(--ctp-pink) 35%, transparent);
-    }
+  ::selection {
+    background: color-mix(in srgb, var(--ctp-pink) 35%, transparent);
+  }
 }

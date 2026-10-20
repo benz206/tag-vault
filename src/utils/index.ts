@@ -1,3 +1,3 @@
-export { getTagColor } from "@/utils/functions/getTagColor";
-export { formatDate } from "@/utils/functions/formatDate";
-export { getTimeSince } from "@/utils/functions/getTimeSince";
+export { getTagColor } from '@/utils/functions/getTagColor';
+export { formatDate } from '@/utils/functions/formatDate';
+export { getTimeSince } from '@/utils/functions/getTimeSince';

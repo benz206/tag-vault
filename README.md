@@ -19,11 +19,11 @@ bun dev
 
 Create a `.env.local` with:
 
-| Variable | Purpose |
-| --- | --- |
-| `MONGO_DB_URL` | MongoDB connection string (the path selects the database, default `TagDB`) |
-| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | Discord OAuth app for login |
-| `NEXTAUTH_SECRET` | Session signing secret |
-| `Bot_Token` | Discord bot token used to look up tag owners |
+| Variable                                     | Purpose                                                                    |
+| -------------------------------------------- | -------------------------------------------------------------------------- |
+| `MONGO_DB_URL`                               | MongoDB connection string (the path selects the database, default `TagDB`) |
+| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | Discord OAuth app for login                                                |
+| `NEXTAUTH_SECRET`                            | Session signing secret                                                     |
+| `Bot_Token`                                  | Discord bot token used to look up tag owners                               |
 
 Note this won't work unless you have a MongoDB database with all the tags inside, however I'll probably add fake datasets later so people can actually run the project locally.
