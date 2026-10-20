@@ -1,8 +1,10 @@
 import { cache, type ReactNode } from 'react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { findTag, type TagData } from '@tag-vault/db';
 import CopyButton from '@/components/CopyButton';
+import { buttonClass } from '@/components/buttons';
 import Pill from '@/components/Pill';
 import TagScriptCode from '@/components/TagScriptCode';
 import { OwnerLabel } from '@/components/Tagbox';
@@ -26,6 +28,9 @@ export async function generateMetadata({
   params: Params;
 }): Promise<Metadata> {
   const tag = await loadTag((await params).id);
+  if (tag === 'removed') {
+    return { title: 'Tag removed', robots: { index: false } };
+  }
   if (!tag || !isPublic(tag)) return { title: 'Tag not found' };
   return {
     title: tag.tag_name,
@@ -38,6 +43,7 @@ export default async function TagPage({ params }: { params: Params }) {
     loadTag((await params).id),
     getSession()
   ]);
+  if (tag === 'removed') return <TagRemoved />;
   const isOwner = !!tag && session?.user?.id === tag.owner_id;
   if (
     !tag ||
@@ -126,6 +132,22 @@ export default async function TagPage({ params }: { params: Params }) {
           </dl>
         </aside>
       </div>
+    </div>
+  );
+}
+
+function TagRemoved() {
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-32 text-center sm:px-6">
+      <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">
+        This tag was removed
+      </h1>
+      <p className="mt-3 text-xl text-muted">
+        It no longer exists on Carl-bot or its owner deleted it.
+      </p>
+      <Link href="/search" className={`${buttonClass('primary')} mt-8`}>
+        Search tags
+      </Link>
     </div>
   );
 }

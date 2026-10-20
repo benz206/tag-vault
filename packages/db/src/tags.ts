@@ -1,5 +1,11 @@
 import type { Document, Filter } from 'mongodb';
 import { getDb } from './client';
+import {
+  PLACEHOLDER_CONTENT,
+  getRemovedTagIds,
+  isTagRemoved,
+  removeTag
+} from './moderation';
 import type { OwnerStats, Statistics, TagData, TagSummary } from './types';
 
 export const TAG_SUMMARY_PROJECTION = {
@@ -20,8 +26,13 @@ export const TAG_SUMMARY_PROJECTION = {
 export const PUBLIC_TAG_FILTER = {
   deleted: { $ne: true },
   nsfw: false,
-  safe: { $in: ['safe', 'unrated'] }
+  safe: { $in: ['safe', 'unrated'] },
+  content: { $ne: PLACEHOLDER_CONTENT }
 };
+
+async function publicFilter(): Promise<Filter<Document>> {
+  return { ...PUBLIC_TAG_FILTER, id: { $nin: await getRemovedTagIds() } };
+}
 
 function toIso(value: unknown): string {
   if (value instanceof Date) return value.toISOString();
@@ -59,9 +70,15 @@ async function tags() {
   return (await getDb()).collection('Tags');
 }
 
-export async function findTag(id: number): Promise<TagData | null> {
+export async function findTag(id: number): Promise<TagData | 'removed' | null> {
+  if (await isTagRemoved(id)) return 'removed';
   const doc = await (await tags()).findOne({ id });
-  return doc ? toTagData(doc) : null;
+  if (!doc) return null;
+  if (doc.content === PLACEHOLDER_CONTENT) {
+    await removeTag(id, String(doc.owner_id ?? ''), 'not_found');
+    return 'removed';
+  }
+  return toTagData(doc);
 }
 
 export async function findTagSummaries(
@@ -74,8 +91,9 @@ export async function findTagSummaries(
   )
     .find(
       {
-        id: { $in: ids },
+        id: { $in: ids, $nin: await getRemovedTagIds() },
         safe: { $ne: 'not_safe' },
+        content: { $ne: PLACEHOLDER_CONTENT },
         ...(viewerId
           ? { $or: [{ owner_id: viewerId }, publicOnly] }
           : publicOnly)
@@ -98,7 +116,7 @@ export async function searchTags(query: string): Promise<TagSummary[]> {
           text: { query, path: { wildcard: '*' } }
         }
       },
-      { $match: PUBLIC_TAG_FILTER },
+      { $match: await publicFilter() },
       { $limit: 50 },
       { $project: TAG_SUMMARY_PROJECTION }
     ])
@@ -107,10 +125,10 @@ export async function searchTags(query: string): Promise<TagSummary[]> {
 }
 
 export async function findDiscoverTags(limit = 12) {
-  const collection = await tags();
+  const [collection, filter] = await Promise.all([tags(), publicFilter()]);
   const find = (sort: Record<string, 1 | -1>) =>
     collection
-      .find(PUBLIC_TAG_FILTER, { projection: TAG_SUMMARY_PROJECTION })
+      .find(filter, { projection: TAG_SUMMARY_PROJECTION })
       .sort(sort)
       .limit(limit)
       .toArray();
@@ -127,7 +145,7 @@ export async function findDiscoverTags(limit = 12) {
 export async function findRandomTagId(): Promise<number | null> {
   const [tag] = await (await tags())
     .aggregate([
-      { $match: PUBLIC_TAG_FILTER },
+      { $match: await publicFilter() },
       { $sample: { size: 1 } },
       { $project: { _id: 0, id: 1 } }
     ])
@@ -140,7 +158,12 @@ export async function findOwnerTags(ownerId: string): Promise<TagSummary[]> {
     await tags()
   )
     .find(
-      { owner_id: ownerId, safe: { $ne: 'not_safe' } },
+      {
+        owner_id: ownerId,
+        safe: { $ne: 'not_safe' },
+        content: { $ne: PLACEHOLDER_CONTENT },
+        id: { $nin: await getRemovedTagIds() }
+      },
       { projection: TAG_SUMMARY_PROJECTION }
     )
     .sort({ created_at: -1 })
