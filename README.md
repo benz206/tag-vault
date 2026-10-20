@@ -4,6 +4,16 @@
 
 This is not affiliated or endorsed by BotLabs, Carl-bots parent company.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/home-dark.png" />
+  <img alt="TagVault home page" src="docs/screenshots/home-light.png" />
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/tag-dark.png" />
+  <img alt="A tag page on TagVault" src="docs/screenshots/tag-light.png" />
+</picture>
+
 ## Running the project
 
 You'll need [Bun](https://bun.sh/) installed. Then do the following:
