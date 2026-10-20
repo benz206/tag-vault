@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { buttonClass } from "@/components/buttons";
 import ThemeToggle from "@/components/ThemeToggle";
+import { OPEN_COMMAND_MENU } from "@/components/CommandMenu";
 
 function DiscordLogo() {
     return (
@@ -74,6 +75,18 @@ export default function NavBar() {
                 <NavLink href="/search">Search</NavLink>
                 {data && <NavLink href="/dashboard">Dashboard</NavLink>}
                 <div className="flex items-center gap-3 ml-auto">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            document.dispatchEvent(new Event(OPEN_COMMAND_MENU))
+                        }
+                        className="items-center hidden h-8 gap-6 pl-3 pr-1.5 text-sm border rounded-md md:flex bg-surface border-line text-muted hover:border-line-strong"
+                    >
+                        Search…
+                        <kbd className="px-1.5 font-mono text-xs border rounded border-line text-faint">
+                            ⌘K
+                        </kbd>
+                    </button>
                     <ThemeToggle />
                     {data ? (
                         <div ref={navRef} className="relative">
