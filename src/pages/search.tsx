@@ -88,14 +88,14 @@ export default function SearchPage() {
                             Search failed. Check your connection and try again.
                         </p>
                     ) : searchData && resultCount > 0 ? (
-                        <>
-                            <p className="mb-3 text-sm text-muted">
-                                {resultCount}{" "}
-                                {resultCount === 1 ? "result" : "results"} for
-                                “{submitted}”
-                            </p>
-                            <Taglist key={submitted} tags={searchData.search} />
-                        </>
+                        <Taglist
+                            key={submitted}
+                            tags={searchData.search}
+                            defaultSortLabel="Relevance"
+                            summary={`${resultCount} ${
+                                resultCount === 1 ? "result" : "results"
+                            } for “${submitted}”`}
+                        />
                     ) : searchData ? (
                         <div className="px-4 py-12 text-sm text-center bg-surface border border-dashed rounded-xl border-line-strong text-muted">
                             No tags match “{submitted}”. Try a shorter or more

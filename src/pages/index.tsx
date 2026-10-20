@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import useSWR from "swr";
 import { useSession, signIn } from "next-auth/react";
-import type { Statistics } from "@/types";
+import type { Statistics, TagBatchQuery } from "@/types";
 import Taglist from "@/components/Taglist";
 import StatStrip from "@/components/StatStrip";
 import TagScriptCode from "@/components/TagScriptCode";
@@ -25,6 +25,9 @@ const heroTag = {
 export default function Home() {
     const { data: session } = useSession();
     const { data: stats } = useSWR<Statistics>("/api/statistics");
+    const { data: featured, error: featuredError } = useSWR<TagBatchQuery>(
+        `/api/tags/batch?ids=${featuredTagIds.join(",")}`
+    );
 
     return (
         <>
@@ -118,7 +121,11 @@ export default function Home() {
                             A few good places to start.
                         </span>
                     </h2>
-                    <Taglist ids={featuredTagIds} />
+                    <Taglist
+                        tags={featured?.tags}
+                        error={featuredError}
+                        defaultSortLabel="Featured"
+                    />
                 </section>
             </div>
         </>

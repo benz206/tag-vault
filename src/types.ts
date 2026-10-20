@@ -60,7 +60,7 @@ export type SearchQuery = {
 };
 
 export type OwnerTagsQuery = {
-    tags: number[];
+    tags: TagSummary[];
 };
 
 export type DashStats = {

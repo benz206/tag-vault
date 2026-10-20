@@ -13,9 +13,10 @@ export default function Dashboard() {
         },
     });
 
-    const { data: ownerTagsData } = useSWR<OwnerTagsQuery>(
-        session?.user?.id ? `/api/tags/owner/${session.user.id}` : null
-    );
+    const { data: ownerTagsData, error: ownerTagsError } =
+        useSWR<OwnerTagsQuery>(
+            session?.user?.id ? `/api/tags/owner/${session.user.id}` : null
+        );
     const { data: stats } = useSWR<DashStats>(
         session ? "/api/dashstatistics" : null
     );
@@ -74,7 +75,11 @@ export default function Dashboard() {
                             with Carl-bot will show up here.
                         </div>
                     ) : (
-                        <Taglist ids={ownerTagsData?.tags ?? []} />
+                        <Taglist
+                            tags={ownerTagsData?.tags}
+                            error={ownerTagsError}
+                            defaultSortLabel="Newest"
+                        />
                     )}
                 </section>
             </div>
