@@ -47,6 +47,7 @@ export const authOptions: AuthOptions = {
         DiscordProvider({
             clientId: DISCORD_CLIENT_ID,
             clientSecret: DISCORD_CLIENT_SECRET,
+            issuer: "https://discord.com",
             authorization: {
                 params: { scope: "identify email", prompt: "none" },
             },
