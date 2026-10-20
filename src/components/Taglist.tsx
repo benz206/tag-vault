@@ -64,11 +64,19 @@ function readPrefs(): string | null {
   }
 }
 
+function parsePrefs(raw: string | null): Prefs {
+  if (!raw) return DEFAULT_PREFS;
+  try {
+    const prefs = { ...DEFAULT_PREFS, ...JSON.parse(raw) };
+    return Array.isArray(prefs.columns) ? prefs : DEFAULT_PREFS;
+  } catch {
+    return DEFAULT_PREFS;
+  }
+}
+
 function usePrefs() {
   const raw = useSyncExternalStore(subscribePrefs, readPrefs, () => null);
-  const prefs: Prefs = raw
-    ? { ...DEFAULT_PREFS, ...JSON.parse(raw) }
-    : DEFAULT_PREFS;
+  const prefs = parsePrefs(raw);
 
   function update(next: Partial<Prefs>) {
     memoryPrefs = JSON.stringify({ ...prefs, ...next });
