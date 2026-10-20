@@ -1,15 +1,20 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Layout from "@/components/Layout";
-import { Fira_Sans } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
 
-const firaSans = Fira_Sans({
-    weight: ["400", "700"],
+const geistSans = Geist({
     subsets: ["latin"],
     display: "swap",
-    preload: true,
+    variable: "--font-geist-sans",
+});
+
+const geistMono = Geist_Mono({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-geist-mono",
 });
 
 const swrConfig = {
@@ -29,7 +34,9 @@ export default function App({
     pageProps: { session, ...pageProps },
 }: AppProps) {
     return (
-        <div className={firaSans.className}>
+        <div
+            className={`${geistSans.variable} ${geistMono.variable} font-sans`}
+        >
             <SessionProvider session={session}>
                 <SWRConfig value={swrConfig}>
                     <Layout>

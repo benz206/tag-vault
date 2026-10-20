@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { primaryButton, secondaryButton } from "@/components/buttons";
 
 export default function CopyButton({
     text,
     label = "Copy",
+    primary = false,
     className = "",
 }: {
     text: string;
     label?: string;
+    primary?: boolean;
     className?: string;
 }) {
     const [copied, setCopied] = useState(false);
@@ -23,10 +26,26 @@ export default function CopyButton({
         <button
             type="button"
             onClick={handleCopy}
-            className={`px-3 py-1 rounded-md bg-slate-600 hover:bg-slate-500 transition-colors text-sm ${className}`}
+            className={`${primary ? primaryButton : secondaryButton} ${className}`}
             aria-label={label}
-            title={label}
         >
+            <svg
+                className="size-3.5"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                aria-hidden="true"
+            >
+                {copied ? (
+                    <path d="m3.5 8.5 3 3 6-7" />
+                ) : (
+                    <>
+                        <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
+                        <path d="M10.5 5.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" />
+                    </>
+                )}
+            </svg>
             {copied ? "Copied" : label}
         </button>
     );
