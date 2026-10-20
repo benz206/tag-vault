@@ -38,6 +38,7 @@ function TagName({ tag }: { tag: TagSummary }) {
       </span>
       {!tag.shared && <Pill>Private</Pill>}
       {tag.nsfw && <Pill>NSFW</Pill>}
+      {tag.hidden && <Pill>Hidden</Pill>}
     </div>
   );
 }

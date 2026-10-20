@@ -6,6 +6,7 @@ import { findTag, type TagData } from '@tag-vault/db';
 import CopyButton from '@/components/CopyButton';
 import { buttonClass } from '@/components/buttons';
 import Pill from '@/components/Pill';
+import TagOwnerActions from '@/components/TagOwnerActions';
 import TagScriptCode from '@/components/TagScriptCode';
 import { OwnerLabel } from '@/components/Tagbox';
 import { getSession } from '@/lib/auth';
@@ -19,7 +20,7 @@ const loadTag = cache(async (rawId: string) =>
 );
 
 function isPublic(tag: TagData): boolean {
-  return !tag.deleted && !tag.nsfw && tag.safe !== 'not_safe';
+  return !tag.deleted && !tag.nsfw && !tag.hidden && tag.safe !== 'not_safe';
 }
 
 export async function generateMetadata({
@@ -48,7 +49,7 @@ export default async function TagPage({ params }: { params: Params }) {
   if (
     !tag ||
     tag.safe === 'not_safe' ||
-    (!isOwner && (tag.deleted || tag.nsfw))
+    (!isOwner && (tag.deleted || tag.nsfw || tag.hidden))
   ) {
     notFound();
   }
@@ -80,6 +81,7 @@ export default async function TagPage({ params }: { params: Params }) {
             {tag.nsfw && <Pill>NSFW</Pill>}
             {tag.restricted && <Pill>Restricted</Pill>}
             {tag.deleted && <Pill>Deleted</Pill>}
+            {tag.hidden && <Pill>Hidden</Pill>}
             {tag.safe && <Pill>{tag.safe}</Pill>}
           </div>
         </div>
@@ -103,7 +105,8 @@ export default async function TagPage({ params }: { params: Params }) {
             </pre>
           </details>
         </div>
-        <aside>
+        <aside className="space-y-6">
+          {isOwner && <TagOwnerActions tagId={tag.id} hidden={tag.hidden} />}
           <dl className="divide-y divide-line self-start rounded-xl border border-line bg-surface text-sm">
             <Detail label="Owner">
               <span className="flex justify-end">

@@ -15,6 +15,7 @@ export type TagData = {
   restricted: boolean;
   shared: boolean;
   safe: string;
+  hidden: boolean;
 };
 
 export type TagSummary = {
@@ -29,6 +30,7 @@ export type TagSummary = {
   shared: boolean;
   deleted: boolean;
   safe: string;
+  hidden: boolean;
 };
 
 export type Statistics = {

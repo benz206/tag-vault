@@ -2,7 +2,9 @@ import type { Document, Filter } from 'mongodb';
 import { getDb } from './client';
 import {
   PLACEHOLDER_CONTENT,
+  getHiddenTagIds,
   getRemovedTagIds,
+  isTagHidden,
   isTagRemoved,
   removeTag
 } from './moderation';
@@ -30,8 +32,16 @@ export const PUBLIC_TAG_FILTER = {
   content: { $ne: PLACEHOLDER_CONTENT }
 };
 
+async function excludedTagIds(): Promise<number[]> {
+  const [removed, hidden] = await Promise.all([
+    getRemovedTagIds(),
+    getHiddenTagIds()
+  ]);
+  return [...removed, ...hidden];
+}
+
 async function publicFilter(): Promise<Filter<Document>> {
-  return { ...PUBLIC_TAG_FILTER, id: { $nin: await getRemovedTagIds() } };
+  return { ...PUBLIC_TAG_FILTER, id: { $nin: await excludedTagIds() } };
 }
 
 function toIso(value: unknown): string {
@@ -51,7 +61,8 @@ export function toTagSummary(doc: Document): TagSummary {
     restricted: Boolean(doc.restricted),
     shared: Boolean(doc.shared),
     deleted: Boolean(doc.deleted),
-    safe: String(doc.safe ?? '')
+    safe: String(doc.safe ?? ''),
+    hidden: false
   };
 }
 
@@ -78,7 +89,7 @@ export async function findTag(id: number): Promise<TagData | 'removed' | null> {
     await removeTag(id, String(doc.owner_id ?? ''), 'not_found');
     return 'removed';
   }
-  return toTagData(doc);
+  return { ...toTagData(doc), hidden: await isTagHidden(id) };
 }
 
 export async function findTagSummaries(
@@ -91,7 +102,7 @@ export async function findTagSummaries(
   )
     .find(
       {
-        id: { $in: ids, $nin: await getRemovedTagIds() },
+        id: { $in: ids, $nin: await excludedTagIds() },
         safe: { $ne: 'not_safe' },
         content: { $ne: PLACEHOLDER_CONTENT },
         ...(viewerId
@@ -154,6 +165,7 @@ export async function findRandomTagId(): Promise<number | null> {
 }
 
 export async function findOwnerTags(ownerId: string): Promise<TagSummary[]> {
+  const hidden = new Set(await getHiddenTagIds(ownerId));
   const docs = await (
     await tags()
   )
@@ -168,7 +180,10 @@ export async function findOwnerTags(ownerId: string): Promise<TagSummary[]> {
     )
     .sort({ created_at: -1 })
     .toArray();
-  return docs.map(toTagSummary);
+  return docs.map((doc) => ({
+    ...toTagSummary(doc),
+    hidden: hidden.has(Number(doc.id))
+  }));
 }
 
 export async function getStatistics(): Promise<Statistics> {
