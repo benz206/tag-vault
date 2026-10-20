@@ -6,9 +6,9 @@ export default function Footer() {
                     © 2023{" "}
                     <a
                         className="transition-colors hover:text-ink"
-                        href="https://github.com/Leg3ndary"
+                        href="https://github.com/benz206"
                     >
-                        Leg3ndary
+                        benz206
                     </a>
                 </p>
                 <p className="sm:ml-auto">
