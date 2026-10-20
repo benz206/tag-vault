@@ -82,14 +82,19 @@ async function tags() {
 }
 
 export async function findTag(id: number): Promise<TagData | 'removed' | null> {
-  if (await isTagRemoved(id)) return 'removed';
-  const doc = await (await tags()).findOne({ id });
+  const collection = await tags();
+  const [removed, doc, hidden] = await Promise.all([
+    isTagRemoved(id),
+    collection.findOne({ id }),
+    isTagHidden(id)
+  ]);
+  if (removed) return 'removed';
   if (!doc) return null;
   if (doc.content === PLACEHOLDER_CONTENT) {
     await removeTag(id, String(doc.owner_id ?? ''), 'not_found');
     return 'removed';
   }
-  return { ...toTagData(doc), hidden: await isTagHidden(id) };
+  return { ...toTagData(doc), hidden };
 }
 
 export async function findTagSummaries(
