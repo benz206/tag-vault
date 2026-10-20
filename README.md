@@ -14,6 +14,10 @@ This is not affiliated or endorsed by BotLabs, Carl-bots parent company.
   <img alt="A tag page on TagVault" src="docs/screenshots/tag-light.png" />
 </picture>
 
+## Demo
+
+[![Watch the TagVault demo on YouTube](https://i.ytimg.com/vi/P9jHRgsxCpU/hqdefault.jpg)](https://youtu.be/P9jHRgsxCpU)
+
 ## Running the project
 
 You'll need [Bun](https://bun.sh/) installed. Then do the following:
@@ -43,3 +47,16 @@ The app lives in `src/` (Next.js App Router), shared code in `packages/`, mainte
 | `bun run db:indexes` | Create the MongoDB indexes TagVault uses |
 
 Note this won't work unless you have a MongoDB database with all the tags inside, however I'll probably add fake datasets later so people can actually run the project locally.
+
+## Demo video
+
+The demo is a [Remotion](https://www.remotion.dev/) project in `packages/video`. Scene timing and narration lines live in `packages/video/src/script.ts`. Run these from `packages/video`:
+
+| Command             | Purpose                                                              |
+| ------------------- | -------------------------------------------------------------------- |
+| `bun run studio`    | Preview the video in Remotion Studio                                 |
+| `bun run narration` | Generate the voiceover with ElevenLabs and time each line to a scene |
+| `bun run audio`     | Fit each narration line into its scene window                        |
+| `bun run render`    | Render `out/tagvault-demo.mp4`                                       |
+
+`bun run narration` needs `ELEVENLABS_API_KEY` in `packages/video/.env`.
