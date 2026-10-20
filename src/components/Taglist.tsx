@@ -365,7 +365,7 @@ function ColumnsMenu({
                                 type="checkbox"
                                 checked={columns.includes(column.key)}
                                 onChange={() => toggle(column.key)}
-                                className="accent-rose-600 size-3.5"
+                                className="accent-(--ctp-mauve) size-3.5"
                             />
                             {column.label}
                         </label>

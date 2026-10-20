@@ -5,15 +5,15 @@ import {
 
 const TOKEN_CLASSES: Record<TagScriptTokenKind, string> = {
     text: "",
-    brace: "text-red-600 dark:text-red-400",
-    punct: "text-blue-600 dark:text-blue-400",
-    block: "text-green-700 dark:text-green-400",
-    control: "text-amber-600 dark:text-amber-300",
-    param: "text-fuchsia-600 dark:text-fuchsia-400",
-    compare: "text-fuchsia-600 dark:text-fuchsia-400",
-    math: "text-red-600 dark:text-red-400",
-    separator: "text-amber-600 dark:text-amber-300",
-    literal: "text-cyan-700 dark:text-cyan-400",
+    brace: "text-ctp-red",
+    punct: "text-ctp-blue",
+    block: "text-ctp-green",
+    control: "text-ctp-yellow",
+    param: "text-ctp-mauve",
+    compare: "text-ctp-pink",
+    math: "text-ctp-maroon",
+    separator: "text-ctp-peach",
+    literal: "text-ctp-sky",
 };
 
 export default function TagScriptCode({ source }: { source: string }) {

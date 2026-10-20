@@ -66,7 +66,7 @@ export default function NavBar() {
                     href="/"
                     className="flex items-center gap-2 mr-5 text-[17px] tracking-tight"
                 >
-                    <span className="grid font-mono text-xs font-bold text-white rounded-md size-6 place-items-center bg-linear-to-br from-pink-500 to-rose-600">
+                    <span className="grid font-mono text-xs font-bold rounded-md size-6 place-items-center text-on-accent bg-linear-to-br from-(--accent-from) to-(--accent-to)">
                         {"{}"}
                     </span>
                     Tag Vault

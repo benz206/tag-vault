@@ -3,7 +3,7 @@ const base =
 
 const variants = {
     primary:
-        "bg-linear-to-r from-pink-600 to-rose-600 text-white hover:brightness-110",
+        "bg-linear-to-r from-(--accent-from) to-(--accent-to) text-on-accent hover:brightness-105",
     dark: "bg-ink text-canvas hover:opacity-85",
     secondary: "bg-chip text-ink hover:bg-chip-hover",
 };

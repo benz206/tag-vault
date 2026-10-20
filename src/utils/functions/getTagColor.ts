@@ -2,29 +2,23 @@
 
 export function getTagColor(tagID: number, ownerID: number): string {
     const colors = [
-        "red",
-        "orange",
-        "amber",
-        "yellow",
-        "lime",
-        "green",
-        "emerald",
-        "teal",
-        "cyan",
-        "sky",
-        "blue",
-        "indigo",
-        "violet",
-        "purple",
-        "fuchsia",
+        "rosewater",
+        "flamingo",
         "pink",
-        "rose",
+        "mauve",
+        "red",
+        "maroon",
+        "peach",
+        "yellow",
+        "green",
+        "teal",
+        "sky",
+        "sapphire",
+        "blue",
+        "lavender",
     ];
 
-    const shades = [500, 600, 700];
-    const magicNumber = (tagID + ownerID) % 51;
-    const color = colors[Math.floor(magicNumber / 3)];
-    const shade = shades[magicNumber % 3];
+    const magicNumber = (tagID + ownerID) % colors.length;
 
-    return `${color}-${shade}`;
+    return `ctp-${colors[magicNumber]}`;
 }
