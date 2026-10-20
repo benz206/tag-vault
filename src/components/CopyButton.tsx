@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { primaryButton, secondaryButton } from "@/components/buttons";
+import {
+    buttonClass,
+    type ButtonSize,
+    type ButtonVariant,
+} from "@/components/buttons";
 
 export default function CopyButton({
     text,
     label = "Copy",
-    primary = false,
+    variant = "secondary",
+    size = "md",
     className = "",
 }: {
     text: string;
     label?: string;
-    primary?: boolean;
+    variant?: ButtonVariant;
+    size?: ButtonSize;
     className?: string;
 }) {
     const [copied, setCopied] = useState(false);
@@ -26,7 +32,7 @@ export default function CopyButton({
         <button
             type="button"
             onClick={handleCopy}
-            className={`${primary ? primaryButton : secondaryButton} ${className}`}
+            className={`${buttonClass(variant, size)} ${className}`}
             aria-label={label}
         >
             <svg

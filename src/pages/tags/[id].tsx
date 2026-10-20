@@ -1,14 +1,15 @@
 import type { ReactNode } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import Link from "next/link";
 import Image from "next/image";
 import useSWR from "swr";
 import { TagData, DiscordUser } from "@/types";
 import { getTagColor, formatDate } from "@/utils";
 import CopyButton from "@/components/CopyButton";
-
-const CODE_BOX_CLASSES =
-    "w-full p-3 my-2 font-mono text-sm resize-y text-slate-100 bg-slate-900 rounded-xl";
+import Pill from "@/components/Pill";
+import TagScriptCode from "@/components/TagScriptCode";
+import { buttonClass } from "@/components/buttons";
 
 export default function TagPage() {
     const router = useRouter();
@@ -24,16 +25,11 @@ export default function TagPage() {
         data?.owner_id ? `/api/discord/users/${data.owner_id}` : null
     );
 
-    const resolvedColor = data
-        ? getTagColor(Number(data.id), Number(data.owner_id))
-        : "slate-500";
-
     const loading = isLoading || (!data && !error);
     const hasEmbed = !!data?.embed && data.embed !== "{}";
-    const ownerName = userData?.global_name || userData?.username;
 
     const avatarSrc = userData?.avatar
-        ? `https://cdn.discordapp.com/avatars/${data?.owner_id}/${userData.avatar}.webp?size=128`
+        ? `https://cdn.discordapp.com/avatars/${data?.owner_id}/${userData.avatar}.webp?size=64`
         : "https://cdn.discordapp.com/embed/avatars/0.png";
 
     return (
@@ -46,213 +42,182 @@ export default function TagPage() {
                     <meta name="description" content={data.description} />
                 )}
             </Head>
-            <div
-                className={`flex justify-center h-36 lg:h-80 w-full bg-${resolvedColor} items-center`}
-            >
-                <h1 className="relative max-w-full px-4 text-4xl truncate top-4 lg:-top-4 lg:text-9xl">
-                    {data?.tag_name ?? (error ? "Not found" : "")}
-                </h1>
-            </div>
-            <div className="flex justify-center motion-safe:animate-rise">
-                <div
-                    className={`rounded-xl p-6 lg:p-8 bg-slate-700 w-11/12 border-t-8 border-${resolvedColor} shadow-${resolvedColor} shadow-xl mt-6 lg:my-12`}
-                >
-                    {loading ? (
-                        <>
-                            <div className="flex items-center mb-6">
-                                <div className="w-12 h-12 rounded-full animate-pulse bg-slate-500" />
-                                <div className="w-1/3 h-6 ml-3 animate-pulse rounded-xl bg-slate-500" />
-                            </div>
-                            <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                            <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                            <div className="w-full h-4 mb-4 animate-pulse rounded-xl bg-slate-400" />
-                        </>
-                    ) : data ? (
-                        <div className="flex flex-col">
-                            <div className="flex flex-wrap items-center gap-3">
-                                <Image
-                                    className="rounded-full"
-                                    src={avatarSrc}
-                                    alt=""
-                                    width={48}
-                                    height={48}
-                                    unoptimized
-                                />
-                                <div className="min-w-0 mr-auto">
-                                    <p className="text-xs text-slate-300">
-                                        Owner
-                                    </p>
-                                    <p className="truncate">
-                                        {ownerName || data.owner_id}
-                                    </p>
+            <div className="max-w-6xl px-4 py-10 mx-auto sm:px-6 lg:py-14">
+                {loading ? (
+                    <TagPageSkeleton />
+                ) : data ? (
+                    <>
+                        <header className="flex flex-col gap-6 pb-8 border-b sm:flex-row sm:items-start border-neutral-800">
+                            <div className="min-w-0">
+                                <div className="flex items-center gap-3">
+                                    <span
+                                        className={`size-3 shrink-0 rounded-full bg-${getTagColor(
+                                            data.id,
+                                            Number(data.owner_id)
+                                        )}`}
+                                        aria-hidden="true"
+                                    />
+                                    <h1 className="font-mono text-2xl font-semibold tracking-tight break-all sm:text-3xl">
+                                        {data.tag_name}
+                                    </h1>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                    <Badge className="bg-slate-600">
-                                        {data.uses} uses
-                                    </Badge>
-                                    <Badge
-                                        className={
-                                            data.shared
-                                                ? "bg-emerald-700"
-                                                : "bg-amber-700"
-                                        }
-                                    >
-                                        {data.shared ? "Shared" : "Private"}
-                                    </Badge>
-                                    {data.nsfw && (
-                                        <Badge className="bg-rose-700">
-                                            NSFW
-                                        </Badge>
-                                    )}
-                                    {data.restricted && (
-                                        <Badge className="bg-yellow-700">
-                                            Restricted
-                                        </Badge>
-                                    )}
-                                    {data.deleted && (
-                                        <Badge className="bg-slate-800">
-                                            Deleted
-                                        </Badge>
-                                    )}
-                                    {data.safe && (
-                                        <Badge className="bg-sky-700">
-                                            {data.safe}
-                                        </Badge>
-                                    )}
-                                </div>
-                            </div>
-                            {data.description && (
-                                <>
-                                    <SectionHeading>Description</SectionHeading>
-                                    <p className="text-base break-words whitespace-pre-line lg:text-lg">
+                                {data.description && (
+                                    <p className="max-w-2xl mt-3 break-words whitespace-pre-line text-neutral-400">
                                         {data.description}
                                     </p>
-                                </>
-                            )}
-                            <SectionHeading>Tag Content</SectionHeading>
-                            <div className="flex flex-wrap items-center gap-2">
-                                <CopyButton
-                                    text={data.content}
-                                    label="Copy content"
-                                />
-                                <CopyButton
-                                    text={String(data.id)}
-                                    label="Copy ID"
-                                />
-                                <CopyButton
-                                    text={data.tag_name}
-                                    label="Copy name"
-                                />
-                                <CopyButton
-                                    text={data.owner_id}
-                                    label="Copy owner"
-                                />
-                                {data.guild_id && (
-                                    <CopyButton
-                                        text={data.guild_id}
-                                        label="Copy guild"
-                                    />
                                 )}
+                                <div className="flex flex-wrap gap-1.5 mt-4">
+                                    <Pill>
+                                        {data.shared ? "Shared" : "Private"}
+                                    </Pill>
+                                    {data.nsfw && <Pill>NSFW</Pill>}
+                                    {data.restricted && <Pill>Restricted</Pill>}
+                                    {data.deleted && <Pill>Deleted</Pill>}
+                                    {data.safe && <Pill>{data.safe}</Pill>}
+                                </div>
                             </div>
-                            <textarea
-                                readOnly
-                                aria-label="Tag content"
-                                value={data.content}
-                                className={`${CODE_BOX_CLASSES} h-80`}
+                            <CopyButton
+                                text={data.content}
+                                label="Copy content"
+                                variant="primary"
+                                className="self-start sm:ml-auto shrink-0"
                             />
-                            {hasEmbed && (
-                                <>
-                                    <SectionHeading>Embed</SectionHeading>
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        <CopyButton
-                                            text={data.embed}
-                                            label="Copy embed"
-                                        />
-                                    </div>
-                                    <textarea
-                                        readOnly
-                                        aria-label="Tag embed"
-                                        value={data.embed}
-                                        className={`${CODE_BOX_CLASSES} h-60`}
-                                    />
-                                </>
-                            )}
-                            <SectionHeading>Meta</SectionHeading>
-                            <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-                                <MetaCell label="ID" value={String(data.id)} />
-                                <MetaCell
-                                    label="Guild"
-                                    value={data.guild_id || "N/A"}
-                                />
-                                <MetaCell
-                                    label="Sharer"
-                                    value={data.sharer || "N/A"}
-                                />
-                                <MetaCell
-                                    label="Created"
-                                    value={formatDate(
-                                        new Date(data.created_at)
-                                    )}
-                                />
-                                <MetaCell
-                                    label="Last Fetched"
-                                    value={formatDate(
-                                        new Date(data.last_fetched)
-                                    )}
-                                />
+                        </header>
+                        <div className="grid gap-8 pt-8 lg:grid-cols-[minmax(0,1fr)_17rem]">
+                            <div className="min-w-0 space-y-6">
+                                <CodePanel title="Content" text={data.content} />
+                                {hasEmbed && (
+                                    <CodePanel title="Embed" text={data.embed} />
+                                )}
+                                <details className="text-sm group">
+                                    <summary className="cursor-pointer select-none text-neutral-400 hover:text-white">
+                                        Raw JSON
+                                    </summary>
+                                    <pre className="p-4 mt-3 overflow-x-auto font-mono text-xs leading-5 border rounded-lg whitespace-pre-wrap border-neutral-800 bg-neutral-950 text-neutral-300">
+                                        {JSON.stringify(data, null, 2)}
+                                    </pre>
+                                </details>
                             </div>
-                            <details className="mt-6">
-                                <summary className="cursor-pointer select-none text-slate-300">
-                                    Raw data
-                                </summary>
-                                <pre className="p-3 mt-3 overflow-x-auto font-mono text-sm whitespace-pre-wrap rounded-xl bg-slate-900">
-                                    {JSON.stringify(data, null, 2)}
-                                </pre>
-                            </details>
+                            <aside>
+                                <dl className="text-sm border-t divide-y border-neutral-800 divide-neutral-800 lg:border-t-0">
+                                    <Detail label="Owner">
+                                        <span className="flex items-center justify-end gap-2 min-w-0">
+                                            <Image
+                                                className="rounded-full"
+                                                src={avatarSrc}
+                                                alt=""
+                                                width={20}
+                                                height={20}
+                                                unoptimized
+                                            />
+                                            <span className="truncate">
+                                                {userData?.global_name ||
+                                                    userData?.username ||
+                                                    "Unknown"}
+                                            </span>
+                                        </span>
+                                    </Detail>
+                                    <Detail label="Uses">
+                                        {data.uses.toLocaleString()}
+                                    </Detail>
+                                    <Detail label="Created">
+                                        {formatDate(new Date(data.created_at))}
+                                    </Detail>
+                                    <Detail label="Last fetched">
+                                        {formatDate(new Date(data.last_fetched))}
+                                    </Detail>
+                                    <Detail label="Tag ID" mono>
+                                        {String(data.id)}
+                                    </Detail>
+                                    <Detail label="Owner ID" mono>
+                                        {data.owner_id}
+                                    </Detail>
+                                    <Detail label="Guild ID" mono>
+                                        {data.guild_id || "None"}
+                                    </Detail>
+                                    <Detail label="Sharer ID" mono>
+                                        {data.sharer || "None"}
+                                    </Detail>
+                                </dl>
+                            </aside>
                         </div>
-                    ) : (
-                        <>
-                            <h2 className="mb-4 text-2xl truncate lg:text-5xl">
-                                Well well well...
-                            </h2>
-                            <p className="text-base lg:text-lg">
-                                Sorry! Looks like this tag failed to load.
-                            </p>
-                        </>
-                    )}
-                </div>
+                    </>
+                ) : (
+                    <div className="py-24 text-center">
+                        <h1 className="text-2xl font-semibold tracking-tight">
+                            Tag not found
+                        </h1>
+                        <p className="mt-2 text-neutral-400">
+                            It may have been deleted, made private, or be under
+                            review.
+                        </p>
+                        <Link
+                            href="/search"
+                            className={`${buttonClass("primary")} mt-6`}
+                        >
+                            Search tags
+                        </Link>
+                    </div>
+                )}
             </div>
         </>
     );
 }
 
-function SectionHeading({ children }: { children: string }) {
+function CodePanel({ title, text }: { title: string; text: string }) {
+    const lineCount = text.split("\n").length;
     return (
-        <h2 className="pt-4 pb-2 mt-4 text-xl border-t-2 lg:text-2xl border-slate-600">
-            {children}
-        </h2>
+        <section className="overflow-hidden border rounded-lg border-neutral-800 bg-neutral-950">
+            <div className="flex items-center gap-3 px-4 border-b h-11 border-neutral-800">
+                <h2 className="text-sm font-medium">{title}</h2>
+                <span className="text-xs text-neutral-500 tabular-nums">
+                    {lineCount} {lineCount === 1 ? "line" : "lines"}
+                </span>
+                <CopyButton
+                    text={text}
+                    label="Copy"
+                    size="xs"
+                    className="ml-auto"
+                />
+            </div>
+            <pre className="p-4 overflow-auto font-mono text-[13px] leading-6 break-words whitespace-pre-wrap max-h-[36rem] text-neutral-200">
+                <TagScriptCode source={text} />
+            </pre>
+        </section>
     );
 }
 
-function Badge({
-    className,
+function Detail({
+    label,
+    mono = false,
     children,
 }: {
-    className: string;
+    label: string;
+    mono?: boolean;
     children: ReactNode;
 }) {
     return (
-        <span className={`px-2 py-0.5 text-xs rounded-md ${className}`}>
-            {children}
-        </span>
+        <div className="flex items-center justify-between gap-4 py-2.5">
+            <dt className="text-neutral-500 shrink-0">{label}</dt>
+            <dd
+                className={`min-w-0 text-right truncate ${
+                    mono ? "font-mono text-xs select-all" : ""
+                }`}
+            >
+                {children}
+            </dd>
+        </div>
     );
 }
 
-function MetaCell({ label, value }: { label: string; value: string }) {
+function TagPageSkeleton() {
     return (
-        <div className="p-3 rounded-lg bg-slate-600">
-            <p className="text-xs text-slate-300">{label}</p>
-            <p className="text-sm break-all">{value}</p>
+        <div aria-hidden="true">
+            <div className="pb-8 border-b border-neutral-800">
+                <div className="w-56 h-8 rounded animate-pulse bg-neutral-800" />
+                <div className="h-4 mt-4 rounded w-96 max-w-full animate-pulse bg-neutral-900" />
+            </div>
+            <div className="mt-8 rounded-lg h-80 animate-pulse bg-neutral-950" />
         </div>
     );
 }

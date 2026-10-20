@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import useSWR from "swr";
 import type { TagBatchQuery, TagSummary } from "@/types";
 import Tagbox, { TagboxSkeleton } from "@/components/Tagbox";
+import { buttonClass } from "@/components/buttons";
 
 const PAGE_SIZE = 21;
 
@@ -31,53 +32,46 @@ export default function Taglist(props: TaglistProps) {
         listRef.current?.scrollIntoView({ behavior: "smooth" });
     }
 
-    if (error) {
-        return (
-            <p className="py-10 text-center">
-                Sorry, these tags failed to load.
-            </p>
-        );
-    }
-
     return (
-        <div ref={listRef} className="flex flex-col items-center py-8 scroll-mt-8">
-            <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 2xl:grid-cols-3">
-                {tags
-                    ? tags.map((tag, i) => (
-                          <div
-                              key={tag.id}
-                              className="motion-safe:animate-rise"
-                              style={{ animationDelay: `${i * 60}ms` }}
-                          >
-                              <Tagbox tag={tag} />
-                          </div>
-                      ))
-                    : pageIds.map((id) => <TagboxSkeleton key={id} />)}
+        <div ref={listRef} className="scroll-mt-20">
+            <div className="overflow-hidden border divide-y rounded-lg border-neutral-800 divide-neutral-800">
+                {error ? (
+                    <p className="px-4 py-10 text-sm text-center text-neutral-400">
+                        Couldn&apos;t load these tags. Refresh the page to try
+                        again.
+                    </p>
+                ) : tags ? (
+                    tags.map((tag) => <Tagbox key={tag.id} tag={tag} />)
+                ) : (
+                    pageIds.map((id) => <TagboxSkeleton key={id} />)
+                )}
             </div>
             {pageCount > 1 && (
                 <nav
-                    className="flex items-center gap-4 mt-10"
+                    className="flex items-center justify-between mt-4 text-sm text-neutral-400"
                     aria-label="Pagination"
                 >
-                    <button
-                        type="button"
-                        onClick={() => goToPage(page - 1)}
-                        disabled={page === 0}
-                        className="px-4 py-1 transition-colors border-2 rounded-3xl border-cyan-400 hover:bg-cyan-400 disabled:opacity-40 disabled:pointer-events-none"
-                    >
-                        Previous
-                    </button>
-                    <span className="text-base text-slate-300">
+                    <span className="tabular-nums">
                         Page {page + 1} of {pageCount}
                     </span>
-                    <button
-                        type="button"
-                        onClick={() => goToPage(page + 1)}
-                        disabled={page >= pageCount - 1}
-                        className="px-4 py-1 transition-colors border-2 rounded-3xl border-cyan-400 hover:bg-cyan-400 disabled:opacity-40 disabled:pointer-events-none"
-                    >
-                        Next
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            type="button"
+                            onClick={() => goToPage(page - 1)}
+                            disabled={page === 0}
+                            className={buttonClass("secondary", "sm")}
+                        >
+                            Previous
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => goToPage(page + 1)}
+                            disabled={page >= pageCount - 1}
+                            className={buttonClass("secondary", "sm")}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </nav>
             )}
         </div>

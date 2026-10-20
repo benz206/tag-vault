@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { secondaryButton } from "@/components/buttons";
+import { buttonClass } from "@/components/buttons";
 
 function DiscordLogo() {
     return (
@@ -128,7 +128,7 @@ export default function NavBar() {
                             onClick={() =>
                                 signIn("discord", { callbackUrl: "/dashboard" })
                             }
-                            className={`${secondaryButton} h-8 px-3`}
+                            className={buttonClass("secondary", "sm")}
                         >
                             <DiscordLogo />
                             Sign in
