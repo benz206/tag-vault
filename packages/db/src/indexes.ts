@@ -3,6 +3,7 @@ import { getDb } from './client';
 
 const INDEXES: Record<string, IndexDescription[]> = {
   Tags: [
+    { key: { id: 1 } },
     { key: { owner_id: 1, created_at: -1 } },
     { key: { uses: -1 } },
     { key: { created_at: -1 } },
