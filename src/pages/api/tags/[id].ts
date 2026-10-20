@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "@/lib/auth";
+import { toTagData } from "@/lib/tags";
 import { getDb } from "@/utils/mongodb/mongo";
 import { TagData } from "@/types";
 
@@ -42,27 +43,8 @@ export default async function handler(
                 .json({ error: "This tag is currently under review" });
         }
 
-        const tag: TagData = {
-            id: raw.id,
-            created_at: raw.created_at,
-            guild_id: raw.guild_id,
-            tag_name: raw.tag_name,
-            nsfw: raw.nsfw,
-            owner_id: raw.owner_id,
-            sharer: raw.sharer,
-            uses: raw.uses,
-            content: raw.content,
-            embed: raw.embed,
-            last_fetched: raw.last_fetched,
-            deleted: raw.deleted,
-            description: raw.description,
-            restricted: raw.restricted,
-            shared: raw.shared,
-            safe: raw.safe,
-        };
-
         res.setHeader("Cache-Control", "private, max-age=60");
-        return res.status(200).json(tag);
+        return res.status(200).json(toTagData(raw));
     } catch (error) {
         console.error("tag fetch error:", error);
         return res.status(500).json({ error: "Internal server error" });

@@ -27,35 +27,30 @@ export default async function handler(
     try {
         const db = await getDb();
         const collection = db.collection("Users");
-        const cached = await collection.findOne({ id: String(discord_id) });
+        const cached = await collection.findOne({ id: discord_id });
 
-        if (cached) {
-            const stale =
-                Date.now() - new Date(cached.lastFetched).getTime() > ONE_DAY_MS;
-
-            if (!stale) {
-                res.setHeader("Cache-Control", "public, max-age=3600");
-                return res.status(200).json(toDiscordUser(cached));
-            }
-
-            try {
-                const userData = await fetchUserData(discord_id);
-                await collection.updateOne(
-                    { id: discord_id },
-                    { $set: { ...userData, lastFetched: new Date() } }
-                );
-                res.setHeader("Cache-Control", "public, max-age=3600");
-                return res.status(200).json(userData);
-            } catch {
-                // Fall back to stale cached data on Discord fetch failure
-                return res.status(200).json(toDiscordUser(cached));
-            }
+        if (
+            cached &&
+            Date.now() - new Date(cached.lastFetched).getTime() < ONE_DAY_MS
+        ) {
+            res.setHeader("Cache-Control", "public, max-age=3600");
+            return res.status(200).json(toDiscordUser(cached));
         }
 
-        const userData = await fetchUserData(discord_id);
-        await collection.insertOne({ ...userData, lastFetched: new Date() });
-        res.setHeader("Cache-Control", "public, max-age=3600");
-        return res.status(200).json(userData);
+        try {
+            const userData = await fetchUserData(discord_id);
+            await collection.updateOne(
+                { id: discord_id },
+                { $set: { ...userData, lastFetched: new Date() } },
+                { upsert: true }
+            );
+            res.setHeader("Cache-Control", "public, max-age=3600");
+            return res.status(200).json(userData);
+        } catch (error) {
+            if (!cached) throw error;
+            // Fall back to stale cached data on Discord fetch failure
+            return res.status(200).json(toDiscordUser(cached));
+        }
     } catch (error) {
         console.error("discord user error:", error);
         return res.status(500).json({ error: "Internal server error" });

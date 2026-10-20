@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Document, Filter } from "mongodb";
 import { requireSession } from "@/lib/auth";
+import { TAG_SUMMARY_PROJECTION, toTagSummary } from "@/lib/tags";
 import { getDb } from "@/utils/mongodb/mongo";
-import type { BrowseQuery, TagData } from "@/types";
+import type { BrowseQuery } from "@/types";
 
 function parseBool(value: string | string[] | undefined): boolean | undefined {
     if (value === undefined) return undefined;
@@ -77,35 +78,22 @@ export default async function handler(
         pipeline.push({ $sort: { last_fetched: -1 } });
         pipeline.push({ $skip: p * ps });
         pipeline.push({ $limit: ps });
+        pipeline.push({ $project: TAG_SUMMARY_PROJECTION });
 
         const [items, totalAgg] = await Promise.all([
             collection.aggregate(pipeline).toArray(),
             collection.aggregate(countPipeline).toArray(),
         ]);
 
-        const tagData: TagData[] = items.map((item) => ({
-            id: item.id,
-            created_at: item.created_at,
-            guild_id: item.guild_id,
-            tag_name: item.tag_name,
-            nsfw: item.nsfw,
-            owner_id: item.owner_id,
-            sharer: item.sharer,
-            uses: item.uses,
-            content: item.content,
-            embed: item.embed,
-            last_fetched: item.last_fetched,
-            deleted: item.deleted,
-            description: item.description,
-            restricted: item.restricted,
-            shared: item.shared,
-            safe: item.safe,
-        }));
-
         const total = totalAgg[0]?.total ? Number(totalAgg[0].total) : 0;
         return res
             .status(200)
-            .json({ results: tagData, total, page: p, pageSize: ps });
+            .json({
+                results: items.map(toTagSummary),
+                total,
+                page: p,
+                pageSize: ps,
+            });
     } catch (error) {
         console.error("browse error:", error);
         return res.status(500).json({ error: "Internal server error" });

@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { requireSession } from "@/lib/auth";
+import { TAG_SUMMARY_PROJECTION, toTagSummary } from "@/lib/tags";
 import { getDb } from "@/utils/mongodb/mongo";
-import { Error as ErrorType, SearchQuery, TagData } from "@/types";
+import { Error as ErrorType, SearchQuery } from "@/types";
 
 export default async function handler(
     req: NextApiRequest,
@@ -43,29 +44,11 @@ export default async function handler(
                     },
                 },
                 { $limit: 50 },
+                { $project: TAG_SUMMARY_PROJECTION },
             ])
             .toArray();
 
-        const tagData: TagData[] = queries.map((q) => ({
-            id: q.id,
-            created_at: q.created_at,
-            guild_id: q.guild_id,
-            tag_name: q.tag_name,
-            nsfw: q.nsfw,
-            owner_id: q.owner_id,
-            sharer: q.sharer,
-            uses: q.uses,
-            content: q.content,
-            embed: q.embed,
-            last_fetched: q.last_fetched,
-            deleted: q.deleted,
-            description: q.description,
-            restricted: q.restricted,
-            shared: q.shared,
-            safe: q.safe,
-        }));
-
-        return res.status(200).json({ search: tagData });
+        return res.status(200).json({ search: queries.map(toTagSummary) });
     } catch (error) {
         console.error("search error:", error);
         return res.status(500).json({ error: "Internal server error" });
