@@ -6,6 +6,7 @@ import Providers from '@/app/providers';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import CommandMenu from '@/components/CommandMenu';
+import { siteUrl } from '@/lib/site';
 
 const hanken = Hanken_Grotesk({
   subsets: ['latin'],
@@ -21,10 +22,21 @@ const geistMono = Geist_Mono({
 
 const themeScript = `try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
 
+const description = 'The best place to find TagScript tags.';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: { default: 'TagVault', template: '%s | TagVault' },
-  description: 'The best place to find TagScript tags.',
-  icons: { icon: '/favicon.ico' }
+  description,
+  icons: { icon: '/favicon.ico' },
+  openGraph: {
+    type: 'website',
+    siteName: 'TagVault',
+    title: 'TagVault',
+    description,
+    url: '/'
+  },
+  twitter: { card: 'summary_large_image' }
 };
 
 export const viewport: Viewport = {

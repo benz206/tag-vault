@@ -39,9 +39,19 @@ export async function generateMetadata({
     return { title: 'Tag removed', robots: { index: false } };
   }
   if (!tag || !isPublic(tag)) return { title: 'Tag not found' };
+  const description = tag.description ?? undefined;
   return {
     title: tag.tag_name,
-    description: tag.description ?? undefined
+    description,
+    alternates: { canonical: `/tags/${tag.id}` },
+    openGraph: {
+      type: 'article',
+      siteName: 'TagVault',
+      title: tag.tag_name,
+      description,
+      url: `/tags/${tag.id}`,
+      images: '/opengraph-image'
+    }
   };
 }
 

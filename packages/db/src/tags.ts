@@ -153,6 +153,20 @@ export async function findDiscoverTags(limit = 12) {
   };
 }
 
+export async function findPublicTagIds(): Promise<
+  { id: number; last_fetched: string }[]
+> {
+  const docs = await (await tags())
+    .find(await publicFilter(), {
+      projection: { _id: 0, id: 1, last_fetched: 1 }
+    })
+    .toArray();
+  return docs.map((doc) => ({
+    id: Number(doc.id),
+    last_fetched: toIso(doc.last_fetched)
+  }));
+}
+
 export async function findRandomTagId(): Promise<number | null> {
   const [tag] = await (await tags())
     .aggregate([
