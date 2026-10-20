@@ -35,10 +35,13 @@ export default async function SearchPage({
     query ? searchTags(query).then(withOwners) : null,
     query
       ? null
-      : findDiscoverTags().then(async ({ popular, newest }) => ({
-          popular: await withOwners(popular),
-          newest: await withOwners(newest)
-        }))
+      : findDiscoverTags().then(async ({ popular, newest }) => {
+          const listed = await withOwners([...popular, ...newest]);
+          return {
+            popular: listed.slice(0, popular.length),
+            newest: listed.slice(popular.length)
+          };
+        })
   ]);
 
   return (

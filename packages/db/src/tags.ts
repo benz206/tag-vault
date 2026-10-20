@@ -141,23 +141,27 @@ export async function searchTags(query: string): Promise<TagSummary[]> {
   return docs.map(toTagSummary);
 }
 
-export async function findDiscoverTags(limit = 12) {
-  const [collection, filter] = await Promise.all([tags(), publicFilter()]);
-  const find = (sort: Record<string, 1 | -1>) =>
-    collection
-      .find(filter, { projection: TAG_SUMMARY_PROJECTION })
-      .sort(sort)
-      .limit(limit)
-      .toArray();
-  const [popular, newest] = await Promise.all([
-    find({ uses: -1 }),
-    find({ created_at: -1 })
-  ]);
-  return {
-    popular: popular.map(toTagSummary),
-    newest: newest.map(toTagSummary)
-  };
-}
+export const findDiscoverTags = unstable_cache(
+  async (limit = 12) => {
+    const [collection, filter] = await Promise.all([tags(), publicFilter()]);
+    const find = (sort: Record<string, 1 | -1>) =>
+      collection
+        .find(filter, { projection: TAG_SUMMARY_PROJECTION })
+        .sort(sort)
+        .limit(limit)
+        .toArray();
+    const [popular, newest] = await Promise.all([
+      find({ uses: -1 }),
+      find({ created_at: -1 })
+    ]);
+    return {
+      popular: popular.map(toTagSummary),
+      newest: newest.map(toTagSummary)
+    };
+  },
+  ['discover-tags'],
+  { tags: [EXCLUDED_TAGS_CACHE_TAG], revalidate: 300 }
+);
 
 export async function findPublicTagIds(): Promise<
   { id: number; last_fetched: string }[]
