@@ -1,0 +1,21 @@
+{
+  "name": "@tag-vault/video",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audio": "bun scripts/align-narration.ts",
+    "narration": "bun scripts/generate-narration.ts",
+    "render": "remotion render src/index.ts TagVaultDemo out/tagvault-demo.mp4",
+    "still": "remotion still src/index.ts TagVaultDemo out/still.png",
+    "studio": "remotion studio src/index.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.537",
+    "@remotion/google-fonts": "4.0.537",
+    "@tag-vault/tagscript": "workspace:*",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "4.0.537"
+  }
+}

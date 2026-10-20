@@ -1,0 +1,32 @@
+[
+  {
+    "scene": "intro",
+    "start": 0,
+    "end": 4.472
+  },
+  {
+    "scene": "scatter",
+    "start": 5.302,
+    "end": 10.312
+  },
+  {
+    "scene": "code",
+    "start": 11.13,
+    "end": 17.383
+  },
+  {
+    "scene": "search",
+    "start": 18.189,
+    "end": 21.818
+  },
+  {
+    "scene": "discover",
+    "start": 23.309,
+    "end": 28.018
+  },
+  {
+    "scene": "outro",
+    "start": 28.813,
+    "end": 33.219
+  }
+]
