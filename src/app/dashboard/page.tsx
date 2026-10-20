@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
-import { findOwnerTags, getOwnerStats } from '@tag-vault/db';
+import {
+  countUserFavorites,
+  findFavoriteTags,
+  findOwnerTags,
+  getOwnerStats
+} from '@tag-vault/db';
 import SignInRequired from '@/components/SignInRequired';
 import StatStrip from '@/components/StatStrip';
-import Taglist from '@/components/Taglist';
+import TagTabs from '@/components/TagTabs';
 import { getSession } from '@/lib/auth';
 import { withOwners } from '@/lib/owners';
 
@@ -12,16 +17,20 @@ export default async function DashboardPage() {
   const session = await getSession();
   if (!session) return <SignInRequired callbackUrl="/dashboard" />;
 
-  const [tags, stats] = await Promise.all([
-    findOwnerTags(session.user.id).then(withOwners),
-    getOwnerStats(session.user.id)
+  const userId = session.user.id;
+  const [tags, favorites, stats, favoriteCount] = await Promise.all([
+    findOwnerTags(userId).then(withOwners),
+    findFavoriteTags(userId).then(withOwners),
+    getOwnerStats(userId),
+    countUserFavorites(userId)
   ]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-16 pb-20 sm:px-6 lg:pt-20">
       <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">Dashboard</h1>
       <p className="mt-3 text-xl text-muted">
-        Tags you own, including private and NSFW ones.
+        Your tags, including private and hidden ones, and the tags you
+        favorited.
       </p>
       <div className="mt-8">
         <StatStrip
@@ -30,25 +39,30 @@ export default async function DashboardPage() {
             { label: 'Shared', value: stats.tags.public.toLocaleString() },
             { label: 'Private', value: stats.tags.private.toLocaleString() },
             { label: 'NSFW', value: stats.tags.nsfw.toLocaleString() },
-            { label: 'Total uses', value: stats.uses.toLocaleString() }
+            { label: 'Total uses', value: stats.uses.toLocaleString() },
+            { label: 'Favorites', value: favoriteCount.toLocaleString() }
           ]}
         />
       </div>
       <section className="mt-12">
-        <h2 className="mb-6 text-[28px] leading-8 tracking-tight">
-          Your tags.{' '}
-          <span className="text-faint">
-            {tags.length.toLocaleString()} in total.
-          </span>
-        </h2>
-        {tags.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-line-strong bg-surface px-4 py-12 text-center text-sm text-muted">
-            You don&apos;t own any tags yet. Tags you create with Carl-bot will
-            show up here.
-          </div>
-        ) : (
-          <Taglist tags={tags} defaultSortLabel="Newest" />
-        )}
+        <TagTabs
+          tabs={[
+            {
+              key: 'mine',
+              label: 'Your tags',
+              tags,
+              emptyMessage:
+                "You don't own any tags yet. Tags you create with Carl-bot will show up here."
+            },
+            {
+              key: 'favorites',
+              label: 'Favorites',
+              tags: favorites,
+              emptyMessage:
+                'No favorites yet. Use the Favorite button on any tag page to save it here.'
+            }
+          ]}
+        />
       </section>
     </div>
   );

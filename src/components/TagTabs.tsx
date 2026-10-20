@@ -4,14 +4,15 @@ import { useState } from 'react';
 import type { TagListItem } from '@tag-vault/db';
 import Taglist from '@/components/Taglist';
 
-export type DiscoverTab = {
+export type TagTab = {
   key: string;
   label: string;
   tags: TagListItem[] | undefined;
   error?: unknown;
+  emptyMessage?: string;
 };
 
-export default function DiscoverTabs({ tabs }: { tabs: DiscoverTab[] }) {
+export default function TagTabs({ tabs }: { tabs: TagTab[] }) {
   const [activeKey, setActiveKey] = useState(tabs[0].key);
   const active = tabs.find((tab) => tab.key === activeKey) ?? tabs[0];
 
@@ -40,6 +41,7 @@ export default function DiscoverTabs({ tabs }: { tabs: DiscoverTab[] }) {
         tags={active.tags}
         error={active.error}
         defaultSortLabel={active.label}
+        emptyMessage={active.emptyMessage}
       />
     </div>
   );

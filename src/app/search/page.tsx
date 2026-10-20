@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { findDiscoverTags, searchTags } from '@tag-vault/db';
-import DiscoverTabs from '@/components/DiscoverTabs';
+import TagTabs from '@/components/TagTabs';
 import SearchBox from '@/components/SearchBox';
 import SignInRequired from '@/components/SignInRequired';
 import Taglist from '@/components/Taglist';
@@ -50,7 +50,7 @@ export default async function SearchPage({
       <SearchBox initialQuery={query} />
       <div className="mt-12">
         {discover ? (
-          <DiscoverTabs
+          <TagTabs
             tabs={[
               { key: 'popular', label: 'Most used', tags: discover.popular },
               { key: 'newest', label: 'Newest', tags: discover.newest }

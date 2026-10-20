@@ -4,7 +4,7 @@ import {
   findTagSummaries,
   getStatistics
 } from '@tag-vault/db';
-import DiscoverTabs from '@/components/DiscoverTabs';
+import TagTabs from '@/components/TagTabs';
 import HeroActions from '@/components/HeroActions';
 import StatStrip from '@/components/StatStrip';
 import TagScriptCode from '@/components/TagScriptCode';
@@ -100,7 +100,7 @@ export default async function Home() {
             Hand-picked, most used, and newest.
           </span>
         </h2>
-        <DiscoverTabs
+        <TagTabs
           tabs={[
             {
               key: 'featured',

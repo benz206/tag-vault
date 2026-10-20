@@ -103,6 +103,7 @@ type TaglistProps = {
   summary?: ReactNode;
   defaultSortLabel?: string;
   skeletonCount?: number;
+  emptyMessage?: string;
 };
 
 export default function Taglist({
@@ -110,7 +111,8 @@ export default function Taglist({
   error,
   summary,
   defaultSortLabel = SORTS.default,
-  skeletonCount = 6
+  skeletonCount = 6,
+  emptyMessage
 }: TaglistProps) {
   const [prefs, setPrefs] = usePrefs();
   const [page, setPage] = useState(0);
@@ -187,7 +189,11 @@ export default function Taglist({
           </div>
         </div>
       </div>
-      {error ? (
+      {tags?.length === 0 && emptyMessage ? (
+        <div className="rounded-xl border border-dashed border-line-strong bg-surface px-4 py-12 text-center text-sm text-muted">
+          {emptyMessage}
+        </div>
+      ) : error ? (
         <p className="rounded-xl border border-line bg-surface px-4 py-10 text-center text-sm text-muted">
           Couldn&apos;t load these tags. Refresh the page to try again.
         </p>

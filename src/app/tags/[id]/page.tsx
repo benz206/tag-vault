@@ -2,8 +2,14 @@ import { cache, type ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { findTag, type TagData } from '@tag-vault/db';
+import {
+  countTagFavorites,
+  findTag,
+  isFavorite,
+  type TagData
+} from '@tag-vault/db';
 import CopyButton from '@/components/CopyButton';
+import FavoriteButton from '@/components/FavoriteButton';
 import { buttonClass } from '@/components/buttons';
 import Pill from '@/components/Pill';
 import TagOwnerActions from '@/components/TagOwnerActions';
@@ -55,7 +61,11 @@ export default async function TagPage({ params }: { params: Params }) {
   }
 
   const hasEmbed = !!tag.embed && tag.embed !== '{}';
-  const owner = await getOwner(tag.owner_id);
+  const [owner, favoriteCount, favorited] = await Promise.all([
+    getOwner(tag.owner_id),
+    countTagFavorites(tag.id),
+    session?.user?.id ? isFavorite(session.user.id, tag.id) : false
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14 pb-20 sm:px-6 lg:pt-20">
@@ -85,12 +95,18 @@ export default async function TagPage({ params }: { params: Params }) {
             {tag.safe && <Pill>{tag.safe}</Pill>}
           </div>
         </div>
-        <CopyButton
-          text={tag.content}
-          label="Copy content"
-          variant="primary"
-          className="shrink-0 self-start sm:ml-auto sm:self-auto"
-        />
+        <div className="flex shrink-0 gap-2 self-start sm:ml-auto sm:self-auto">
+          <FavoriteButton
+            tagId={tag.id}
+            favorited={favorited}
+            count={favoriteCount}
+          />
+          <CopyButton
+            text={tag.content}
+            label="Copy content"
+            variant="primary"
+          />
+        </div>
       </header>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div className="min-w-0 space-y-6">

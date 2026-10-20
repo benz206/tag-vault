@@ -77,6 +77,7 @@ export async function removeTag(
   );
   await Promise.all([
     db.collection('Tags').deleteOne({ id }),
+    db.collection('Favorites').deleteMany({ tag_id: id }),
     (await hiddenTags()).deleteOne({ id })
   ]);
 }
