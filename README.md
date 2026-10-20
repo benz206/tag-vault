@@ -17,13 +17,6 @@ bun install
 bun dev
 ```
 
-Create a `.env.local` with:
-
-| Variable                                     | Purpose                                                                    |
-| -------------------------------------------- | -------------------------------------------------------------------------- |
-| `MONGO_DB_URL`                               | MongoDB connection string (the path selects the database, default `TagDB`) |
-| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | Discord OAuth app for login                                                |
-| `NEXTAUTH_SECRET`                            | Session signing secret                                                     |
-| `Bot_Token`                                  | Discord bot token used to look up tag owners                               |
+Copy `.env.example` to `.env.local` and fill it in. See [docs/environment.md](docs/environment.md) for what each variable does.
 
 Note this won't work unless you have a MongoDB database with all the tags inside, however I'll probably add fake datasets later so people can actually run the project locally.

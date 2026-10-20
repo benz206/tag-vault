@@ -1,13 +1,13 @@
 import { MongoClient, Db, ServerApiVersion } from 'mongodb';
 
-const MONGO_DB_URL = process.env.MONGO_DB_URL;
-if (!MONGO_DB_URL) {
-  throw new Error('MONGO_DB_URL is not set');
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  throw new Error('MONGODB_URI is not set');
 }
 
 const DEFAULT_DB_NAME = (() => {
   try {
-    const url = new URL(MONGO_DB_URL);
+    const url = new URL(MONGODB_URI);
     const name = url.pathname.replace(/^\//, '');
     return name || 'TagDB';
   } catch {
@@ -22,7 +22,7 @@ declare global {
 
 const client =
   global._mongoClient ??
-  new MongoClient(MONGO_DB_URL, {
+  new MongoClient(MONGODB_URI, {
     serverApi: {
       version: ServerApiVersion.v1,
       strict: false,

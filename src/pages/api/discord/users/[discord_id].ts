@@ -74,8 +74,8 @@ function toDiscordUser(cached: Record<string, unknown>): DiscordUser {
 }
 
 async function fetchUserData(discordId: string): Promise<DiscordUser> {
-  const token = process.env.Bot_Token;
-  if (!token) throw new Error('Bot_Token is not set');
+  const token = process.env.DISCORD_BOT_TOKEN;
+  if (!token) throw new Error('DISCORD_BOT_TOKEN is not set');
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DISCORD_FETCH_TIMEOUT_MS);

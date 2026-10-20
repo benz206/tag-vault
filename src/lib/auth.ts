@@ -8,7 +8,6 @@ const {
   DISCORD_CLIENT_ID,
   DISCORD_CLIENT_SECRET,
   NEXTAUTH_SECRET,
-  SECRET,
   NEXTAUTH_URL,
   NODE_ENV
 } = process.env;
@@ -19,8 +18,7 @@ if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET) {
   );
 }
 
-const resolvedSecret = NEXTAUTH_SECRET ?? SECRET;
-if (!resolvedSecret) {
+if (!NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET must be set in env');
 }
 
@@ -60,7 +58,7 @@ export const authOptions: AuthOptions = {
       }
     })
   ],
-  secret: resolvedSecret,
+  secret: NEXTAUTH_SECRET,
   session: { strategy: 'jwt', maxAge: 60 * 60 * 24 * 30 },
   debug: NODE_ENV === 'development',
   logger: {
