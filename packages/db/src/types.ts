@@ -48,16 +48,8 @@ export type Owner = {
 
 export type TagListItem = TagSummary & { owner: Owner };
 
-export type Error = {
-  error: string;
-};
-
 export type SearchQuery = {
   search: TagSummary[];
-};
-
-export type OwnerTagsQuery = {
-  tags: TagSummary[];
 };
 
 export type OwnerStats = {
@@ -68,13 +60,4 @@ export type OwnerStats = {
     total: number;
   };
   uses: number;
-};
-
-export type TagBatchQuery = {
-  tags: TagSummary[];
-};
-
-export type DiscoverQuery = {
-  popular: TagSummary[];
-  newest: TagSummary[];
 };

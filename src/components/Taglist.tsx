@@ -10,9 +10,7 @@ import {
 import type { TagListItem } from '@tag-vault/db';
 import {
   TagCard,
-  TagCardSkeleton,
   TagRow,
-  TagRowSkeleton,
   rowTemplate,
   type TagColumn
 } from '@/components/Tagbox';
@@ -106,29 +104,25 @@ function sortTags(tags: TagListItem[], sort: SortKey): TagListItem[] {
 }
 
 type TaglistProps = {
-  tags: TagListItem[] | undefined;
-  error?: unknown;
+  tags: TagListItem[];
   summary?: ReactNode;
   defaultSortLabel?: string;
-  skeletonCount?: number;
   emptyMessage?: string;
 };
 
 export default function Taglist({
   tags,
-  error,
   summary,
   defaultSortLabel = SORTS.default,
-  skeletonCount = 6,
   emptyMessage
 }: TaglistProps) {
   const [prefs, setPrefs] = usePrefs();
   const [page, setPage] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const sorted = tags ? sortTags(tags, prefs.sort) : undefined;
-  const pageCount = Math.ceil((sorted?.length ?? 0) / PAGE_SIZE);
-  const pageTags = sorted?.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const sorted = sortTags(tags, prefs.sort);
+  const pageCount = Math.ceil(sorted.length / PAGE_SIZE);
+  const pageTags = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const grid = prefs.view === 'grid';
 
   function goToPage(next: number) {
@@ -197,23 +191,15 @@ export default function Taglist({
           </div>
         </div>
       </div>
-      {tags?.length === 0 && emptyMessage ? (
+      {tags.length === 0 && emptyMessage ? (
         <div className="rounded-xl border border-dashed border-line-strong bg-surface px-4 py-12 text-center text-sm text-muted">
           {emptyMessage}
         </div>
-      ) : error ? (
-        <p className="rounded-xl border border-line bg-surface px-4 py-10 text-center text-sm text-muted">
-          Couldn&apos;t load these tags. Refresh the page to try again.
-        </p>
       ) : grid ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {pageTags
-            ? pageTags.map((tag) => (
-                <TagCard key={tag.id} tag={tag} columns={prefs.columns} />
-              ))
-            : Array.from({ length: skeletonCount }, (_, i) => (
-                <TagCardSkeleton key={i} />
-              ))}
+          {pageTags.map((tag) => (
+            <TagCard key={tag.id} tag={tag} columns={prefs.columns} />
+          ))}
         </div>
       ) : (
         <div className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
@@ -235,13 +221,9 @@ export default function Taglist({
               </span>
             ))}
           </div>
-          {pageTags
-            ? pageTags.map((tag) => (
-                <TagRow key={tag.id} tag={tag} columns={prefs.columns} />
-              ))
-            : Array.from({ length: skeletonCount }, (_, i) => (
-                <TagRowSkeleton key={i} />
-              ))}
+          {pageTags.map((tag) => (
+            <TagRow key={tag.id} tag={tag} columns={prefs.columns} />
+          ))}
         </div>
       )}
       {pageCount > 1 && (

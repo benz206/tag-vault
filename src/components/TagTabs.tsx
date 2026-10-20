@@ -7,8 +7,7 @@ import Taglist from '@/components/Taglist';
 export type TagTab = {
   key: string;
   label: string;
-  tags: TagListItem[] | undefined;
-  error?: unknown;
+  tags: TagListItem[];
   emptyMessage?: string;
 };
 
@@ -39,7 +38,6 @@ export default function TagTabs({ tabs }: { tabs: TagTab[] }) {
       <Taglist
         key={active.key}
         tags={active.tags}
-        error={active.error}
         defaultSortLabel={active.label}
         emptyMessage={active.emptyMessage}
       />

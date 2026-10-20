@@ -4,21 +4,6 @@ const nextConfig = {
   transpilePackages: ['@tag-vault/db', '@tag-vault/tagscript'],
   poweredByHeader: false,
   compress: true,
-  images: {
-    formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'cdn.discordapp.com',
-        pathname: '/avatars/**'
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.discordapp.com',
-        pathname: '/embed/avatars/**'
-      }
-    ]
-  },
   reactCompiler: true,
   experimental: {
     optimizePackageImports: ['next-auth']
