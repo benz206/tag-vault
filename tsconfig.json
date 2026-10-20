@@ -16,6 +16,7 @@
     "verbatimModuleSyntax": false,
     "jsx": "react-jsx",
     "incremental": true,
+    "types": ["bun"],
     "plugins": [
       {
         "name": "next"
