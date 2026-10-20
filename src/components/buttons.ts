@@ -1,16 +1,17 @@
 const base =
-    "inline-flex items-center justify-center gap-2 rounded-md font-medium whitespace-nowrap transition-colors disabled:opacity-40 disabled:pointer-events-none";
+    "inline-flex items-center justify-center gap-2 rounded-md whitespace-nowrap transition disabled:opacity-40 disabled:pointer-events-none";
 
 const variants = {
-    primary: "bg-white text-black hover:bg-neutral-200",
-    secondary:
-        "border border-neutral-800 text-neutral-200 hover:bg-neutral-900 hover:text-white",
+    primary:
+        "bg-linear-to-r from-pink-600 to-rose-600 text-white hover:brightness-110",
+    dark: "bg-stone-950 text-white hover:bg-stone-800",
+    secondary: "bg-stone-100 text-stone-950 hover:bg-stone-200",
 };
 
 const sizes = {
     xs: "h-7 px-2.5 text-xs",
     sm: "h-8 px-3 text-sm",
-    md: "h-9 px-4 text-sm",
+    md: "h-10 px-4 text-sm",
 };
 
 export type ButtonVariant = keyof typeof variants;

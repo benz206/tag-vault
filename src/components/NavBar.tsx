@@ -30,8 +30,8 @@ function NavLink({ href, children }: { href: string; children: string }) {
         <Link
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`px-2.5 py-1.5 text-sm rounded-md transition-colors hover:text-white ${
-                active ? "text-white" : "text-neutral-400"
+            className={`px-3 py-1.5 text-[15px] rounded-md transition-colors hover:text-stone-950 ${
+                active ? "text-stone-950" : "text-stone-600"
             }`}
         >
             {children}
@@ -59,13 +59,13 @@ export default function NavBar() {
         data?.user?.image || "https://cdn.discordapp.com/embed/avatars/0.png";
 
     return (
-        <nav className="sticky top-0 z-20 border-b border-neutral-800 bg-black/80 backdrop-blur">
-            <div className="flex items-center h-14 max-w-6xl gap-2 px-4 mx-auto sm:px-6">
+        <nav className="sticky top-0 z-20 border-b border-stone-200 bg-white/90 backdrop-blur">
+            <div className="flex items-center h-16 max-w-6xl gap-1 px-4 mx-auto sm:px-6">
                 <Link
                     href="/"
-                    className="flex items-center gap-2 mr-4 text-sm font-semibold tracking-tight"
+                    className="flex items-center gap-2 mr-5 text-[17px] tracking-tight"
                 >
-                    <span className="grid font-mono text-xs font-bold text-black bg-white rounded size-6 place-items-center">
+                    <span className="grid font-mono text-xs font-bold text-white rounded-md size-6 place-items-center bg-linear-to-br from-pink-500 to-rose-600">
                         {"{}"}
                     </span>
                     Tag Vault
@@ -95,16 +95,16 @@ export default function NavBar() {
                             {profileOpen && (
                                 <div
                                     role="menu"
-                                    className="absolute right-0 z-10 w-56 p-1 mt-2 border rounded-lg shadow-2xl top-full border-neutral-800 bg-neutral-950 motion-safe:animate-drop"
+                                    className="absolute right-0 z-10 w-56 p-1 mt-2 bg-white border rounded-xl shadow-lg shadow-stone-950/5 top-full border-stone-200 motion-safe:animate-drop"
                                 >
-                                    <p className="px-3 py-2 text-sm truncate text-neutral-400">
+                                    <p className="px-3 py-2 text-sm truncate text-stone-500">
                                         {data.user?.name}
                                     </p>
-                                    <div className="h-px my-1 bg-neutral-800" />
+                                    <div className="h-px my-1 bg-stone-200" />
                                     <Link
                                         href="/dashboard"
                                         role="menuitem"
-                                        className="block px-3 py-2 text-sm rounded-md hover:bg-neutral-900"
+                                        className="block px-3 py-2 text-sm rounded-md hover:bg-stone-100"
                                         onClick={() => setProfileOpen(false)}
                                     >
                                         Dashboard
@@ -112,7 +112,7 @@ export default function NavBar() {
                                     <button
                                         type="button"
                                         role="menuitem"
-                                        className="block w-full px-3 py-2 text-sm text-left rounded-md hover:bg-neutral-900"
+                                        className="block w-full px-3 py-2 text-sm text-left rounded-md hover:bg-stone-100"
                                         onClick={() =>
                                             signOut({ callbackUrl: "/" })
                                         }
@@ -128,7 +128,7 @@ export default function NavBar() {
                             onClick={() =>
                                 signIn("discord", { callbackUrl: "/dashboard" })
                             }
-                            className={buttonClass("secondary", "sm")}
+                            className={buttonClass("dark", "sm")}
                         >
                             <DiscordLogo />
                             Sign in

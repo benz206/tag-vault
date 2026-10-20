@@ -35,15 +35,15 @@ export default function SearchPage() {
             <Head>
                 <title>Search | TagVault</title>
             </Head>
-            <div className="max-w-6xl px-4 py-12 mx-auto sm:px-6 lg:py-16">
-                <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            <div className="max-w-6xl px-4 pt-16 pb-20 mx-auto sm:px-6 lg:pt-20">
+                <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">
                     Search tags
                 </h1>
-                <p className="mt-2 text-neutral-400">
+                <p className="mt-3 text-xl text-stone-500">
                     Matches tag names, descriptions, and content.
                 </p>
                 <form
-                    className="flex gap-2 mt-8"
+                    className="flex max-w-2xl gap-2 p-1.5 mt-8 bg-white border rounded-xl border-stone-200 shadow-sm focus-within:border-stone-400"
                     onSubmit={handleSubmit}
                     role="search"
                 >
@@ -52,7 +52,7 @@ export default function SearchPage() {
                     </label>
                     <div className="relative flex-1">
                         <svg
-                            className="absolute -translate-y-1/2 pointer-events-none size-4 left-3 top-1/2 text-neutral-500"
+                            className="absolute -translate-y-1/2 pointer-events-none size-4 left-3 top-1/2 text-stone-400"
                             viewBox="0 0 20 20"
                             fill="none"
                             stroke="currentColor"
@@ -65,7 +65,7 @@ export default function SearchPage() {
                         </svg>
                         <input
                             id="tag-search"
-                            className="w-full pr-3 text-sm border rounded-md h-9 pl-9 bg-neutral-950 border-neutral-800 placeholder:text-neutral-500"
+                            className="w-full h-10 pr-3 text-base bg-transparent pl-9 placeholder:text-stone-400 focus-visible:outline-none"
                             type="search"
                             placeholder="Try “embed” or “ticket”"
                             value={query}
@@ -84,12 +84,12 @@ export default function SearchPage() {
                 </form>
                 <div className="mt-10">
                     {error ? (
-                        <p className="text-sm text-neutral-400">
+                        <p className="text-sm text-stone-500">
                             Search failed. Check your connection and try again.
                         </p>
                     ) : searchData && resultCount > 0 ? (
                         <>
-                            <p className="mb-3 text-sm text-neutral-400">
+                            <p className="mb-3 text-sm text-stone-500">
                                 {resultCount}{" "}
                                 {resultCount === 1 ? "result" : "results"} for
                                 “{submitted}”
@@ -97,7 +97,7 @@ export default function SearchPage() {
                             <Taglist key={submitted} tags={searchData.search} />
                         </>
                     ) : searchData ? (
-                        <div className="px-4 py-12 text-sm text-center border border-dashed rounded-lg border-neutral-800 text-neutral-400">
+                        <div className="px-4 py-12 text-sm text-center bg-white border border-dashed rounded-xl border-stone-300 text-stone-500">
                             No tags match “{submitted}”. Try a shorter or more
                             general keyword.
                         </div>

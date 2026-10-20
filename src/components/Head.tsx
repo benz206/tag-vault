@@ -13,7 +13,7 @@ export default function PageHead() {
                 name="viewport"
                 content="width=device-width, initial-scale=1, minimum-scale=1"
             />
-            <meta name="theme-color" content="#000000" />
+            <meta name="theme-color" content="#ffffff" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
     );

@@ -1,14 +1,14 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Layout from "@/components/Layout";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Hanken_Grotesk } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
 
-const geistSans = Geist({
+const hanken = Hanken_Grotesk({
     subsets: ["latin"],
     display: "swap",
-    variable: "--font-geist-sans",
+    variable: "--font-hanken",
 });
 
 const geistMono = Geist_Mono({
@@ -35,7 +35,7 @@ export default function App({
 }: AppProps) {
     return (
         <div
-            className={`${geistSans.variable} ${geistMono.variable} font-sans`}
+            className={`${hanken.variable} ${geistMono.variable} font-sans`}
         >
             <SessionProvider session={session}>
                 <SWRConfig value={swrConfig}>

@@ -34,9 +34,9 @@ export default function Taglist(props: TaglistProps) {
 
     return (
         <div ref={listRef} className="scroll-mt-20">
-            <div className="overflow-hidden border divide-y rounded-lg border-neutral-800 divide-neutral-800">
+            <div className="overflow-hidden bg-white border divide-y rounded-xl border-stone-200 divide-stone-200">
                 {error ? (
-                    <p className="px-4 py-10 text-sm text-center text-neutral-400">
+                    <p className="px-4 py-10 text-sm text-center text-stone-500">
                         Couldn&apos;t load these tags. Refresh the page to try
                         again.
                     </p>
@@ -48,7 +48,7 @@ export default function Taglist(props: TaglistProps) {
             </div>
             {pageCount > 1 && (
                 <nav
-                    className="flex items-center justify-between mt-4 text-sm text-neutral-400"
+                    className="flex items-center justify-between mt-4 text-sm text-stone-500"
                     aria-label="Pagination"
                 >
                     <span className="tabular-nums">

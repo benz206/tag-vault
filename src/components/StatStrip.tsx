@@ -2,13 +2,13 @@ type Stat = { label: string; value?: string };
 
 export default function StatStrip({ stats }: { stats: Stat[] }) {
     return (
-        <dl className="grid grid-cols-2 gap-px overflow-hidden border rounded-lg sm:flex bg-neutral-800 border-neutral-800 [&>*:last-child:nth-child(odd)]:col-span-2">
+        <dl className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
             {stats.map((stat) => (
-                <div key={stat.label} className="flex-1 px-5 py-4 bg-black">
-                    <dt className="text-sm text-neutral-400">{stat.label}</dt>
-                    <dd className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
+                <div key={stat.label} className="flex items-center gap-2">
+                    <dt className="text-stone-500">{stat.label}</dt>
+                    <dd className="px-1.5 py-0.5 font-mono text-xs bg-white border rounded-md border-stone-200 tabular-nums text-stone-950">
                         {stat.value ?? (
-                            <span className="block w-20 rounded h-7 animate-pulse bg-neutral-900" />
+                            <span className="inline-block w-12 h-3 align-middle rounded animate-pulse bg-stone-100" />
                         )}
                     </dd>
                 </div>

@@ -32,22 +32,27 @@ export default function Home() {
                 <title>TagVault — find TagScript tags</title>
             </Head>
             <div className="max-w-6xl px-4 mx-auto sm:px-6">
-                <section className="grid items-center gap-12 py-16 lg:grid-cols-2 lg:py-24 motion-safe:animate-rise">
+                <section className="grid items-center gap-12 pt-16 pb-14 lg:grid-cols-[1.1fr_1fr] lg:pt-24 motion-safe:animate-rise">
                     <div>
-                        <h1 className="text-4xl font-semibold tracking-tighter text-balance sm:text-6xl">
+                        <h1 className="text-5xl leading-[1.05] tracking-[-0.03em] text-balance sm:text-[64px]">
                             TagScript tags, ready to copy.
                         </h1>
-                        <p className="max-w-md mt-5 text-lg text-neutral-400 text-pretty">
+                        <p className="max-w-lg mt-5 text-xl leading-snug text-stone-500 text-pretty">
                             Browse thousands of Carl-bot tags shared across
-                            Discord servers. Open one, copy its content, and use
-                            it in your own server.
+                            Discord servers, then use them in your own.
                         </p>
                         <div className="flex flex-wrap gap-3 mt-8">
-                            <Link href="/search" className={buttonClass("primary")}>
+                            <Link
+                                href="/search"
+                                className={buttonClass("primary")}
+                            >
                                 Search tags
                             </Link>
                             {session ? (
-                                <Link href="/dashboard" className={buttonClass()}>
+                                <Link
+                                    href="/dashboard"
+                                    className={buttonClass()}
+                                >
                                     View your tags
                                 </Link>
                             ) : (
@@ -64,49 +69,54 @@ export default function Home() {
                                 </button>
                             )}
                         </div>
+                        <div className="mt-10">
+                            <StatStrip
+                                stats={[
+                                    {
+                                        label: "Tags archived",
+                                        value: stats?.all_tag_count.toLocaleString(),
+                                    },
+                                    {
+                                        label: "Shared publicly",
+                                        value: stats?.public_tag_count.toLocaleString(),
+                                    },
+                                    {
+                                        label: "Last updated",
+                                        value: stats?.latest_last_fetched
+                                            ? `${getTimeSince(new Date(stats.latest_last_fetched))} ago`
+                                            : undefined,
+                                    },
+                                ]}
+                            />
+                        </div>
                     </div>
                     <Link
                         href={`/tags/${heroTag.id}`}
-                        className="block min-w-0 overflow-hidden transition-colors border rounded-lg border-neutral-800 bg-neutral-950 hover:border-neutral-600"
+                        className="relative block min-w-0 overflow-hidden transition bg-white border shadow-sm rounded-xl border-stone-200 hover:shadow-md"
                     >
-                        <div className="flex items-center gap-2.5 px-4 border-b h-11 border-neutral-800">
-                            <span
-                                className={`size-2 rounded-full bg-${heroTag.color}`}
-                                aria-hidden="true"
-                            />
+                        <span
+                            className={`absolute inset-x-0 top-0 h-[3px] bg-${heroTag.color}`}
+                            aria-hidden="true"
+                        />
+                        <div className="flex items-center px-5 border-b h-12 border-stone-200">
                             <span className="font-mono text-sm">
                                 {heroTag.name}
                             </span>
-                            <span className="ml-auto text-xs text-neutral-500">
+                            <span className="ml-auto text-sm text-stone-500">
                                 Open tag
                             </span>
                         </div>
-                        <pre className="p-4 overflow-x-auto font-mono text-[13px] leading-6 text-neutral-200">
+                        <pre className="px-5 py-4 font-mono text-[13px] leading-6 break-words whitespace-pre-wrap bg-stone-50 text-stone-800">
                             <TagScriptCode source={heroTag.snippet} />
                         </pre>
                     </Link>
                 </section>
-                <StatStrip
-                    stats={[
-                        {
-                            label: "Tags archived",
-                            value: stats?.all_tag_count.toLocaleString(),
-                        },
-                        {
-                            label: "Shared publicly",
-                            value: stats?.public_tag_count.toLocaleString(),
-                        },
-                        {
-                            label: "Last updated",
-                            value: stats?.latest_last_fetched
-                                ? `${getTimeSince(new Date(stats.latest_last_fetched))} ago`
-                                : undefined,
-                        },
-                    ]}
-                />
-                <section className="py-16">
-                    <h2 className="mb-4 text-xl font-semibold tracking-tight">
-                        Featured tags
+                <section className="pt-10 pb-20">
+                    <h2 className="mb-6 text-[28px] leading-8 tracking-tight">
+                        Featured tags.{" "}
+                        <span className="text-stone-400">
+                            A few good places to start.
+                        </span>
                     </h2>
                     <Taglist ids={featuredTagIds} />
                 </section>
