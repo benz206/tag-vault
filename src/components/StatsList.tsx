@@ -23,6 +23,7 @@ function getTimeSince(startDate: Date): string {
 
 export default function StatsList() {
     const { data: statsData } = useSWR<Statistics>("/api/statistics");
+    const pulse = statsData ? "" : " animate-pulse";
 
     return (
         <div className="relative flex flex-col items-center justify-center w-full gap-10 px-4 -mt-20 md:flex-row md:items-stretch md:gap-4 lg:gap-18">
@@ -33,11 +34,11 @@ export default function StatsList() {
                 delayMs={0}
             >
                 Explore a{" "}
-                <span className="font-bold text-cyan-300 animate-pulse">
+                <span className="font-bold text-cyan-300">
                     dynamic
                 </span>{" "}
                 database with{" "}
-                <span className="font-bold text-cyan-300 animate-pulse">
+                <span className={`font-bold text-cyan-300${pulse}`}>
                     {statsData?.all_tag_count
                         ? statsData.all_tag_count.toLocaleString()
                         : "loading..."}
@@ -51,11 +52,11 @@ export default function StatsList() {
                 delayMs={200}
             >
                 From{" "}
-                <span className="font-thin text-green-300 animate-pulse">
+                <span className="font-thin text-green-300">
                     simple
                 </span>{" "}
                 tags to{" "}
-                <span className="font-bold text-green-600 animate-pulse">
+                <span className="font-bold text-green-400">
                     complex
                 </span>{" "}
                 commands, find what you need with ease.
@@ -68,7 +69,7 @@ export default function StatsList() {
             >
                 Every tag in the vault is ready to use. The last update was
                 only{" "}
-                <span className="font-bold text-rose-400 animate-pulse">
+                <span className={`font-bold text-rose-400${pulse}`}>
                     {statsData?.latest_last_fetched
                         ? getTimeSince(new Date(statsData.latest_last_fetched))
                         : "loading..."}
