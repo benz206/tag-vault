@@ -1,7 +1,6 @@
 import type { Document, Filter } from 'mongodb';
 import { getDb } from './client';
 import {
-  PLACEHOLDER_CONTENT,
   getHiddenTagIds,
   getRemovedTagIds,
   isTagHidden,
@@ -9,6 +8,11 @@ import {
   removeTag
 } from './moderation';
 import type { OwnerStats, Statistics, TagData, TagSummary } from './types';
+import {
+  PLACEHOLDER_CONTENT,
+  visibleTagFilter,
+  type ExcludedTagIds
+} from './visibility';
 
 export const TAG_SUMMARY_PROJECTION = {
   _id: 0,
@@ -25,23 +29,16 @@ export const TAG_SUMMARY_PROJECTION = {
   safe: 1
 } as const;
 
-export const PUBLIC_TAG_FILTER = {
-  deleted: { $ne: true },
-  nsfw: false,
-  safe: { $in: ['safe', 'unrated'] },
-  content: { $ne: PLACEHOLDER_CONTENT }
-};
-
-async function excludedTagIds(): Promise<number[]> {
+async function excludedTagIds(): Promise<ExcludedTagIds> {
   const [removed, hidden] = await Promise.all([
     getRemovedTagIds(),
     getHiddenTagIds()
   ]);
-  return [...removed, ...hidden];
+  return { removed, hidden };
 }
 
 async function publicFilter(): Promise<Filter<Document>> {
-  return { ...PUBLIC_TAG_FILTER, id: { $nin: await excludedTagIds() } };
+  return visibleTagFilter(await excludedTagIds());
 }
 
 function toIso(value: unknown): string {
@@ -101,18 +98,15 @@ export async function findTagSummaries(
   ids: number[],
   viewerId?: string
 ): Promise<TagSummary[]> {
-  const publicOnly = { deleted: { $ne: true }, nsfw: false };
   const docs = await (
     await tags()
   )
     .find(
       {
-        id: { $in: ids, $nin: await excludedTagIds() },
-        safe: { $ne: 'not_safe' },
-        content: { $ne: PLACEHOLDER_CONTENT },
-        ...(viewerId
-          ? { $or: [{ owner_id: viewerId }, publicOnly] }
-          : publicOnly)
+        $and: [
+          { id: { $in: ids } },
+          visibleTagFilter(await excludedTagIds(), viewerId)
+        ]
       },
       { projection: TAG_SUMMARY_PROJECTION }
     )
@@ -161,7 +155,9 @@ export async function findDiscoverTags(limit = 12) {
 export async function findPublicTagIds(): Promise<
   { id: number; last_fetched: string }[]
 > {
-  const docs = await (await tags())
+  const docs = await (
+    await tags()
+  )
     .find(await publicFilter(), {
       projection: { _id: 0, id: 1, last_fetched: 1 }
     })
@@ -191,9 +187,10 @@ export async function findOwnerTags(ownerId: string): Promise<TagSummary[]> {
     .find(
       {
         owner_id: ownerId,
-        safe: { $ne: 'not_safe' },
-        content: { $ne: PLACEHOLDER_CONTENT },
-        id: { $nin: await getRemovedTagIds() }
+        ...visibleTagFilter(
+          { removed: await getRemovedTagIds(), hidden: [] },
+          ownerId
+        )
       },
       { projection: TAG_SUMMARY_PROJECTION }
     )

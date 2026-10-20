@@ -2,7 +2,7 @@ import { cache, type ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { countTagFavorites, findTag, isFavorite } from '@tag-vault/db';
+import { canView, countTagFavorites, findTag, isFavorite } from '@tag-vault/db';
 import CopyButton from '@/components/CopyButton';
 import FavoriteButton from '@/components/FavoriteButton';
 import { buttonClass } from '@/components/buttons';
@@ -12,7 +12,6 @@ import TagScriptCode from '@/components/TagScriptCode';
 import { OwnerLabel } from '@/components/Tagbox';
 import { getSession } from '@/lib/auth';
 import { getOwner } from '@/lib/owners';
-import { isPublic } from '@/lib/tags';
 import { formatDate, getTagColor } from '@/utils';
 
 type Params = Promise<{ id: string }>;
@@ -30,7 +29,7 @@ export async function generateMetadata({
   if (tag === 'removed') {
     return { title: 'Tag removed', robots: { index: false } };
   }
-  if (!tag || !isPublic(tag)) return { title: 'Tag not found' };
+  if (!tag || !canView(tag)) return { title: 'Tag not found' };
   const description = tag.description ?? undefined;
   return {
     title: tag.tag_name,
@@ -52,14 +51,8 @@ export default async function TagPage({ params }: { params: Params }) {
     getSession()
   ]);
   if (tag === 'removed') return <TagRemoved />;
-  const isOwner = !!tag && session?.user?.id === tag.owner_id;
-  if (
-    !tag ||
-    tag.safe === 'not_safe' ||
-    (!isOwner && (tag.deleted || tag.nsfw || tag.hidden))
-  ) {
-    notFound();
-  }
+  if (!tag || !canView(tag, session?.user?.id)) notFound();
+  const isOwner = session?.user?.id === tag.owner_id;
 
   const hasEmbed = !!tag.embed && tag.embed !== '{}';
   const [owner, favoriteCount, favorited] = await Promise.all([

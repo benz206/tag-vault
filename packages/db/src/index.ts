@@ -7,3 +7,4 @@ export * from './moderation';
 export * from './owners';
 export * from './tags';
 export * from './types';
+export * from './visibility';

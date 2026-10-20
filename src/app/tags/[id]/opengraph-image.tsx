@@ -1,7 +1,6 @@
 import { ImageResponse } from 'next/og';
-import { findTag } from '@tag-vault/db';
+import { canView, findTag } from '@tag-vault/db';
 import SiteImage from '@/app/opengraph-image';
-import { isPublic } from '@/lib/tags';
 
 export const alt = 'A TagScript tag on TagVault';
 export const size = { width: 1200, height: 630 };
@@ -18,7 +17,7 @@ export default async function Image({
 }) {
   const { id } = await params;
   const tag = /^\d+$/.test(id) ? await findTag(Number(id)) : null;
-  if (!tag || tag === 'removed' || !isPublic(tag)) return SiteImage();
+  if (!tag || tag === 'removed' || !canView(tag)) return SiteImage();
 
   const lines = tag.content
     .split('\n')

@@ -2,7 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { findTag, removeTag, setFavorite, setTagHidden } from '@tag-vault/db';
+import {
+  canView,
+  findTag,
+  removeTag,
+  setFavorite,
+  setTagHidden
+} from '@tag-vault/db';
 import { getSession } from '@/lib/auth';
 
 async function requireOwnedTag(tagId: number) {
@@ -25,14 +31,7 @@ export async function setFavoriteAction(tagId: number, favorite: boolean) {
   const session = await getSession();
   if (!session?.user?.id) throw new Error('Sign in to favorite tags.');
   const tag = await findTag(tagId);
-  const isOwner =
-    !!tag && tag !== 'removed' && tag.owner_id === session.user.id;
-  if (
-    !tag ||
-    tag === 'removed' ||
-    tag.safe === 'not_safe' ||
-    (!isOwner && (tag.deleted || tag.nsfw || tag.hidden))
-  ) {
+  if (!tag || tag === 'removed' || !canView(tag, session.user.id)) {
     throw new Error('This tag is not available.');
   }
   await setFavorite(session.user.id, tagId, favorite);

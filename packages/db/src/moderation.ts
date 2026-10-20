@@ -1,8 +1,5 @@
 import { getDb } from './client';
 
-export const PLACEHOLDER_CONTENT =
-  "Sorry! It doesn't seem like your tag was found...";
-
 export type RemovalReason = 'not_found' | 'owner_request';
 
 type RemovedTag = {
