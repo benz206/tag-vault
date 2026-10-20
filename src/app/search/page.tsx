@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import { findDiscoverTags, searchTags } from '@tag-vault/db';
 import TagTabs from '@/components/TagTabs';
 import SearchBox from '@/components/SearchBox';
-import SignInRequired from '@/components/SignInRequired';
 import Taglist from '@/components/Taglist';
-import { getSession } from '@/lib/auth';
 import { withOwners } from '@/lib/owners';
+import { allowSearch } from '@/lib/rateLimit';
 
 type SearchParams = Promise<{ q?: string | string[] }>;
 
@@ -27,12 +26,10 @@ export default async function SearchPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const session = await getSession();
-  if (!session) return <SignInRequired callbackUrl="/search" />;
-
   const query = readQuery((await searchParams).q);
+  const limited = query ? !(await allowSearch()) : false;
   const [results, discover] = await Promise.all([
-    query ? searchTags(query).then(withOwners) : null,
+    query && !limited ? searchTags(query).then(withOwners) : null,
     query
       ? null
       : findDiscoverTags().then(async ({ popular, newest }) => {
@@ -52,7 +49,11 @@ export default async function SearchPage({
       </p>
       <SearchBox initialQuery={query} />
       <div className="mt-12">
-        {discover ? (
+        {limited ? (
+          <div className="rounded-xl border border-dashed border-line-strong bg-surface px-4 py-12 text-center text-sm text-muted">
+            You&apos;re searching too quickly. Wait a minute and try again.
+          </div>
+        ) : discover ? (
           <TagTabs
             tabs={[
               { key: 'popular', label: 'Most used', tags: discover.popular },

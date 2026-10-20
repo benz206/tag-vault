@@ -16,7 +16,8 @@ const INDEXES: Record<string, IndexDescription[]> = {
     { key: { user_id: 1, tag_id: 1 }, unique: true },
     { key: { user_id: 1, created_at: -1 } },
     { key: { tag_id: 1 } }
-  ]
+  ],
+  RateLimits: [{ key: { expires_at: 1 }, expireAfterSeconds: 0 }]
 };
 
 export async function ensureIndexes(): Promise<Record<string, string[]>> {

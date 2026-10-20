@@ -10,6 +10,7 @@ Run `bun run db:indexes` after setting up a new database.
 | `RemovedTags` | TagVault          | Tombstones: `id`, `owner_id`, `reason` (`not_found` or `owner_request`), `removed_at`.    |
 | `HiddenTags`  | TagVault          | Tags their owner hid: `id`, `owner_id`, `hidden_at`.                                      |
 | `Favorites`   | TagVault          | `user_id`, `tag_id`, `created_at`. Unique per user and tag.                               |
+| `RateLimits`  | TagVault          | Per-minute request counters: `_id` (key and window), `count`, `expires_at` (TTL).         |
 
 ## Removal
 
