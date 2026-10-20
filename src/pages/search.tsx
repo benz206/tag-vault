@@ -1,10 +1,24 @@
-import { useState, FormEvent } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import useSWR from "swr";
-import { SearchQuery } from "@/types";
+import { DiscoverQuery, SearchQuery } from "@/types";
 import Taglist from "@/components/Taglist";
+import DiscoverTabs from "@/components/DiscoverTabs";
+import RandomTagButton from "@/components/RandomTagButton";
 import { buttonClass } from "@/components/buttons";
 import { useSession, signIn } from "next-auth/react";
+
+const SUGGESTIONS = [
+    "embed",
+    "welcome",
+    "ticket",
+    "giveaway",
+    "poll",
+    "8ball",
+    "afk",
+    "verify",
+];
 
 export default function SearchPage() {
     const { status } = useSession({
@@ -14,18 +28,63 @@ export default function SearchPage() {
         },
     });
 
-    const [query, setQuery] = useState("");
-    const [submitted, setSubmitted] = useState<string | null>(null);
+    const router = useRouter();
+    const inputRef = useRef<HTMLInputElement>(null);
+    const urlQuery = typeof router.query.q === "string" ? router.query.q : "";
+    const [draft, setDraft] = useState<string | null>(null);
+    const query = draft ?? urlQuery;
 
-    const { data: searchData, error, isLoading } = useSWR<SearchQuery>(
-        submitted ? `/api/tags/search/${encodeURIComponent(submitted)}` : null
+    const {
+        data: searchData,
+        error,
+        isLoading,
+    } = useSWR<SearchQuery>(
+        urlQuery ? `/api/tags/search/${encodeURIComponent(urlQuery)}` : null
     );
+    const { data: discover, error: discoverError } = useSWR<DiscoverQuery>(
+        urlQuery ? null : "/api/tags/discover"
+    );
+
+    function runSearch(value: string) {
+        const trimmed = value.trim();
+        router.replace(
+            trimmed ? { pathname: "/search", query: { q: trimmed } } : "/search",
+            undefined,
+            { shallow: true }
+        );
+    }
+
+    useEffect(() => {
+        if (draft === null) return;
+        const trimmed = draft.trim();
+        if (trimmed === urlQuery || trimmed.length === 1) return;
+        const timer = setTimeout(() => runSearch(trimmed), 300);
+        return () => clearTimeout(timer);
+    });
+
+    useEffect(() => {
+        function focusOnSlash(event: KeyboardEvent) {
+            const target = event.target as HTMLElement;
+            if (
+                event.key === "/" &&
+                !["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)
+            ) {
+                event.preventDefault();
+                inputRef.current?.focus();
+            }
+        }
+        document.addEventListener("keydown", focusOnSlash);
+        return () => document.removeEventListener("keydown", focusOnSlash);
+    }, []);
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const trimmed = query.trim();
-        if (!trimmed) return;
-        setSubmitted(trimmed);
+        runSearch(query);
+    }
+
+    function pickSuggestion(suggestion: string) {
+        setDraft(suggestion);
+        runSearch(suggestion);
     }
 
     const resultCount = searchData?.search.length ?? 0;
@@ -33,7 +92,11 @@ export default function SearchPage() {
     return (
         <>
             <Head>
-                <title>Search | TagVault</title>
+                <title>
+                    {urlQuery
+                        ? `${urlQuery} | Search | TagVault`
+                        : "Search | TagVault"}
+                </title>
             </Head>
             <div className="max-w-6xl px-4 pt-16 pb-20 mx-auto sm:px-6 lg:pt-20">
                 <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">
@@ -64,15 +127,19 @@ export default function SearchPage() {
                             <path d="m17 17-3.5-3.5" />
                         </svg>
                         <input
+                            ref={inputRef}
                             id="tag-search"
-                            className="w-full h-10 pr-3 text-base bg-transparent pl-9 placeholder:text-faint focus-visible:outline-none"
+                            className="w-full h-10 pr-10 text-base bg-transparent pl-9 placeholder:text-faint focus-visible:outline-none"
                             type="search"
                             placeholder="Try “embed” or “ticket”"
                             value={query}
-                            onChange={(e) => setQuery(e.currentTarget.value)}
+                            onChange={(e) => setDraft(e.currentTarget.value)}
                             maxLength={30}
                             disabled={status === "loading"}
                         />
+                        <kbd className="absolute hidden px-1.5 font-mono text-xs -translate-y-1/2 border rounded right-2 top-1/2 sm:block border-line text-faint">
+                            /
+                        </kbd>
                     </div>
                     <button
                         className={buttonClass("primary")}
@@ -82,26 +149,71 @@ export default function SearchPage() {
                         {isLoading ? "Searching…" : "Search"}
                     </button>
                 </form>
-                <div className="mt-10">
-                    {error ? (
+                <div className="flex flex-wrap items-center gap-2 mt-4">
+                    <span className="mr-1 text-sm text-muted">Try</span>
+                    {SUGGESTIONS.map((suggestion) => (
+                        <button
+                            key={suggestion}
+                            type="button"
+                            onClick={() => pickSuggestion(suggestion)}
+                            aria-pressed={urlQuery === suggestion}
+                            className={`h-7 px-2.5 text-sm rounded-md border transition-colors ${
+                                urlQuery === suggestion
+                                    ? "bg-ink text-canvas border-ink"
+                                    : "bg-surface border-line text-ink-3 hover:border-line-strong hover:text-ink"
+                            }`}
+                        >
+                            {suggestion}
+                        </button>
+                    ))}
+                    <span className="mx-1 text-line-strong" aria-hidden="true">
+                        |
+                    </span>
+                    <RandomTagButton size="xs" />
+                </div>
+                <div className="mt-12">
+                    {!urlQuery ? (
+                        <DiscoverTabs
+                            tabs={[
+                                {
+                                    key: "popular",
+                                    label: "Most used",
+                                    tags: discover?.popular,
+                                    error: discoverError,
+                                },
+                                {
+                                    key: "newest",
+                                    label: "Newest",
+                                    tags: discover?.newest,
+                                    error: discoverError,
+                                },
+                            ]}
+                        />
+                    ) : error ? (
                         <p className="text-sm text-muted">
                             Search failed. Check your connection and try again.
                         </p>
-                    ) : searchData && resultCount > 0 ? (
-                        <Taglist
-                            key={submitted}
-                            tags={searchData.search}
-                            defaultSortLabel="Relevance"
-                            summary={`${resultCount} ${
-                                resultCount === 1 ? "result" : "results"
-                            } for “${submitted}”`}
-                        />
-                    ) : searchData ? (
-                        <div className="px-4 py-12 text-sm text-center bg-surface border border-dashed rounded-xl border-line-strong text-muted">
-                            No tags match “{submitted}”. Try a shorter or more
-                            general keyword.
+                    ) : searchData && resultCount === 0 ? (
+                        <div className="px-4 py-12 text-sm text-center border border-dashed bg-surface rounded-xl border-line-strong text-muted">
+                            No tags match “{urlQuery}”. Try a shorter or more
+                            general keyword, or one of the suggestions above.
                         </div>
-                    ) : null}
+                    ) : (
+                        <Taglist
+                            key={urlQuery}
+                            tags={searchData?.search}
+                            defaultSortLabel="Relevance"
+                            summary={
+                                searchData
+                                    ? `${resultCount} ${
+                                          resultCount === 1
+                                              ? "result"
+                                              : "results"
+                                      } for “${urlQuery}”`
+                                    : `Searching for “${urlQuery}”…`
+                            }
+                        />
+                    )}
                 </div>
             </div>
         </>
