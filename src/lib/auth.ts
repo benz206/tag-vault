@@ -35,13 +35,12 @@ export const authOptions: AuthOptions = {
       clientSecret: DISCORD_CLIENT_SECRET,
       issuer: 'https://discord.com',
       authorization: {
-        params: { scope: 'identify email', prompt: 'none' }
+        params: { scope: 'identify', prompt: 'none' }
       },
       profile(profile: DiscordProfile) {
         return {
           id: profile.id,
           name: profile.global_name ?? profile.username,
-          email: profile.email,
           image: profile.avatar
             ? avatarUrl(profile.id, profile.avatar, 128)
             : defaultAvatarUrl(profile.id, profile.discriminator)
