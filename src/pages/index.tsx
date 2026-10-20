@@ -2,8 +2,9 @@ import Head from "next/head";
 import Link from "next/link";
 import useSWR from "swr";
 import { useSession, signIn } from "next-auth/react";
-import type { Statistics, TagBatchQuery } from "@/types";
-import Taglist from "@/components/Taglist";
+import type { DiscoverQuery, Statistics, TagBatchQuery } from "@/types";
+import DiscoverTabs from "@/components/DiscoverTabs";
+import RandomTagButton from "@/components/RandomTagButton";
 import StatStrip from "@/components/StatStrip";
 import TagScriptCode from "@/components/TagScriptCode";
 import { buttonClass } from "@/components/buttons";
@@ -28,6 +29,8 @@ export default function Home() {
     const { data: featured, error: featuredError } = useSWR<TagBatchQuery>(
         `/api/tags/batch?ids=${featuredTagIds.join(",")}`
     );
+    const { data: discover, error: discoverError } =
+        useSWR<DiscoverQuery>("/api/tags/discover");
 
     return (
         <>
@@ -71,6 +74,7 @@ export default function Home() {
                                     Sign in with Discord
                                 </button>
                             )}
+                            <RandomTagButton />
                         </div>
                         <div className="mt-10">
                             <StatStrip
@@ -116,15 +120,32 @@ export default function Home() {
                 </section>
                 <section className="pt-10 pb-20">
                     <h2 className="mb-6 text-[28px] leading-8 tracking-tight">
-                        Featured tags.{" "}
+                        Discover tags.{" "}
                         <span className="text-faint">
-                            A few good places to start.
+                            Hand-picked, most used, and newest.
                         </span>
                     </h2>
-                    <Taglist
-                        tags={featured?.tags}
-                        error={featuredError}
-                        defaultSortLabel="Featured"
+                    <DiscoverTabs
+                        tabs={[
+                            {
+                                key: "featured",
+                                label: "Featured",
+                                tags: featured?.tags,
+                                error: featuredError,
+                            },
+                            {
+                                key: "popular",
+                                label: "Most used",
+                                tags: discover?.popular,
+                                error: discoverError,
+                            },
+                            {
+                                key: "newest",
+                                label: "Newest",
+                                tags: discover?.newest,
+                                error: discoverError,
+                            },
+                        ]}
                     />
                 </section>
             </div>
