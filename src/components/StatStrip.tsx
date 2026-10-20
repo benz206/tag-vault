@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-type Stat = { label: string; value?: ReactNode };
+type Stat = { label: string; value: ReactNode };
 
 export default function StatStrip({ stats }: { stats: Stat[] }) {
   return (
@@ -9,9 +9,7 @@ export default function StatStrip({ stats }: { stats: Stat[] }) {
         <div key={stat.label} className="flex items-center gap-2">
           <dt className="text-muted">{stat.label}</dt>
           <dd className="rounded-md border border-line bg-surface px-1.5 py-0.5 font-mono text-xs text-ink tabular-nums">
-            {stat.value ?? (
-              <span className="inline-block h-3 w-12 animate-pulse rounded bg-chip align-middle" />
-            )}
+            {stat.value}
           </dd>
         </div>
       ))}

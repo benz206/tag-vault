@@ -46,10 +46,6 @@ export async function countTagFavorites(tagId: number): Promise<number> {
   return (await favorites()).countDocuments({ tag_id: tagId });
 }
 
-export async function countUserFavorites(userId: string): Promise<number> {
-  return (await favorites()).countDocuments({ user_id: userId });
-}
-
 export async function findFavoriteTags(userId: string): Promise<TagSummary[]> {
   const ids = await (
     await favorites()

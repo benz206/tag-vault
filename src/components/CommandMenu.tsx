@@ -58,8 +58,12 @@ export default function CommandMenu() {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const canSearch = !!session && debounced.length >= 2;
-  const { data: results, isLoading } = useSWR<SearchQuery>(
+  const canSearch = debounced.length >= 2;
+  const {
+    data: results,
+    error,
+    isLoading
+  } = useSWR<SearchQuery>(
     open && canSearch
       ? `/api/tags/search/${encodeURIComponent(debounced)}`
       : null
@@ -110,7 +114,6 @@ export default function CommandMenu() {
           id: 'auth',
           section: 'Actions',
           label: 'Sign in with Discord',
-          detail: 'Required to search tags',
           run: () => signIn('discord')
         }
   ];
@@ -197,9 +200,7 @@ export default function CommandMenu() {
               setActive(0);
             }}
             onKeyDown={onInputKeyDown}
-            placeholder={
-              session ? 'Search tags or type a command…' : 'Type a command…'
-            }
+            placeholder="Search tags or type a command…"
             role="combobox"
             aria-expanded="true"
             aria-controls="command-list"
@@ -255,6 +256,11 @@ export default function CommandMenu() {
           ))}
           {canSearch && isLoading && (
             <li className="px-3 py-2 text-sm text-faint">Searching tags…</li>
+          )}
+          {canSearch && error && (
+            <li className="px-3 py-2 text-sm text-faint">
+              Couldn&apos;t search right now. Try again in a minute.
+            </li>
           )}
         </ul>
       </div>

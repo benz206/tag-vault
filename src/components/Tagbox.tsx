@@ -124,25 +124,3 @@ export function TagCard({
     </Link>
   );
 }
-
-export function TagRowSkeleton() {
-  return (
-    <div className="flex items-center gap-6 py-4 pr-5 pl-6" aria-hidden="true">
-      <div className="h-4 w-32 animate-pulse rounded bg-line" />
-      <div className="h-4 flex-1 animate-pulse rounded bg-chip" />
-    </div>
-  );
-}
-
-export function TagCardSkeleton() {
-  return (
-    <div
-      className="h-36 rounded-xl border border-line bg-surface p-5"
-      aria-hidden="true"
-    >
-      <div className="h-4 w-32 animate-pulse rounded bg-line" />
-      <div className="mt-4 h-3 w-full animate-pulse rounded bg-chip" />
-      <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-chip" />
-    </div>
-  );
-}

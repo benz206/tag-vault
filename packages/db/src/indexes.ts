@@ -3,6 +3,7 @@ import { getDb } from './client';
 
 const INDEXES: Record<string, IndexDescription[]> = {
   Tags: [
+    { key: { id: 1 } },
     { key: { owner_id: 1, created_at: -1 } },
     { key: { uses: -1 } },
     { key: { created_at: -1 } },
@@ -10,12 +11,13 @@ const INDEXES: Record<string, IndexDescription[]> = {
   ],
   Users: [{ key: { id: 1 }, unique: true }],
   RemovedTags: [{ key: { id: 1 }, unique: true }],
-  HiddenTags: [{ key: { id: 1 }, unique: true }, { key: { owner_id: 1 } }],
+  HiddenTags: [{ key: { id: 1 }, unique: true }],
   Favorites: [
     { key: { user_id: 1, tag_id: 1 }, unique: true },
     { key: { user_id: 1, created_at: -1 } },
     { key: { tag_id: 1 } }
-  ]
+  ],
+  RateLimits: [{ key: { expires_at: 1 }, expireAfterSeconds: 0 }]
 };
 
 export async function ensureIndexes(): Promise<Record<string, string[]>> {

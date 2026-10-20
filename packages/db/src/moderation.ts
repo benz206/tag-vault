@@ -1,8 +1,5 @@
 import { getDb } from './client';
 
-export const PLACEHOLDER_CONTENT =
-  "Sorry! It doesn't seem like your tag was found...";
-
 export type RemovalReason = 'not_found' | 'owner_request';
 
 type RemovedTag = {
@@ -26,11 +23,8 @@ export async function isTagHidden(id: number): Promise<boolean> {
   return (await (await hiddenTags()).countDocuments({ id }, { limit: 1 })) > 0;
 }
 
-export async function getHiddenTagIds(ownerId?: string): Promise<number[]> {
-  return (await hiddenTags()).distinct(
-    'id',
-    ownerId ? { owner_id: ownerId } : {}
-  );
+export async function getHiddenTagIds(): Promise<number[]> {
+  return (await hiddenTags()).distinct('id');
 }
 
 export async function setTagHidden(

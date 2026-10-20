@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import {
-  countUserFavorites,
   findFavoriteTags,
   findOwnerTags,
-  getOwnerStats
+  summarizeOwnerTags
 } from '@tag-vault/db';
 import SignInRequired from '@/components/SignInRequired';
 import StatStrip from '@/components/StatStrip';
@@ -18,12 +17,11 @@ export default async function DashboardPage() {
   if (!session) return <SignInRequired callbackUrl="/dashboard" />;
 
   const userId = session.user.id;
-  const [tags, favorites, stats, favoriteCount] = await Promise.all([
+  const [tags, favorites] = await Promise.all([
     findOwnerTags(userId).then(withOwners),
-    findFavoriteTags(userId).then(withOwners),
-    getOwnerStats(userId),
-    countUserFavorites(userId)
+    findFavoriteTags(userId).then(withOwners)
   ]);
+  const stats = summarizeOwnerTags(tags);
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-16 pb-20 sm:px-6 lg:pt-20">
@@ -40,7 +38,7 @@ export default async function DashboardPage() {
             { label: 'Private', value: stats.tags.private.toLocaleString() },
             { label: 'NSFW', value: stats.tags.nsfw.toLocaleString() },
             { label: 'Total uses', value: stats.uses.toLocaleString() },
-            { label: 'Favorites', value: favoriteCount.toLocaleString() }
+            { label: 'Favorites', value: favorites.length.toLocaleString() }
           ]}
         />
       </div>

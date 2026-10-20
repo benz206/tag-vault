@@ -21,9 +21,11 @@ docs/           this documentation
 - Pages are server components that call `@tag-vault/db` directly. There are
   no client-side data fetches for page content.
 - `/` is statically rendered and revalidated every five minutes.
-- `/search`, `/dashboard` and `/tags/[id]` render per request because they
-  depend on the session. `/search` reads `?q=` on the server; the search box
-  updates the URL as you type.
+- `/search`, `/dashboard` and `/tags/[id]` render per request. `/search`
+  reads `?q=` on the server and the search box updates the URL as you type.
+  Search is open to everyone and limited to 30 searches a minute per signed-in
+  user or per IP (`src/lib/rateLimit.ts`), shared by the page and the command
+  menu's `/api/tags/search/[search]`.
 - Mutations (favorite, hide, delete) are server actions in
   `src/app/tags/[id]/actions.ts` and re-check ownership on the server.
 - The remaining route handlers serve the browser only: next-auth, `/api/alive`,

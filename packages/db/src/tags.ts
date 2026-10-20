@@ -1,14 +1,19 @@
 import type { Document, Filter } from 'mongodb';
+import { unstable_cache } from 'next/cache';
 import { getDb } from './client';
 import {
-  PLACEHOLDER_CONTENT,
   getHiddenTagIds,
   getRemovedTagIds,
   isTagHidden,
   isTagRemoved,
   removeTag
 } from './moderation';
-import type { OwnerStats, Statistics, TagData, TagSummary } from './types';
+import type { Statistics, TagData, TagSummary } from './types';
+import {
+  PLACEHOLDER_CONTENT,
+  visibleTagFilter,
+  type ExcludedTagIds
+} from './visibility';
 
 export const TAG_SUMMARY_PROJECTION = {
   _id: 0,
@@ -25,23 +30,22 @@ export const TAG_SUMMARY_PROJECTION = {
   safe: 1
 } as const;
 
-export const PUBLIC_TAG_FILTER = {
-  deleted: { $ne: true },
-  nsfw: false,
-  safe: { $in: ['safe', 'unrated'] },
-  content: { $ne: PLACEHOLDER_CONTENT }
-};
+export const EXCLUDED_TAGS_CACHE_TAG = 'excluded-tag-ids';
 
-async function excludedTagIds(): Promise<number[]> {
-  const [removed, hidden] = await Promise.all([
-    getRemovedTagIds(),
-    getHiddenTagIds()
-  ]);
-  return [...removed, ...hidden];
-}
+const excludedTagIds = unstable_cache(
+  async (): Promise<ExcludedTagIds> => {
+    const [removed, hidden] = await Promise.all([
+      getRemovedTagIds(),
+      getHiddenTagIds()
+    ]);
+    return { removed, hidden };
+  },
+  [EXCLUDED_TAGS_CACHE_TAG],
+  { tags: [EXCLUDED_TAGS_CACHE_TAG], revalidate: 3600 }
+);
 
 async function publicFilter(): Promise<Filter<Document>> {
-  return { ...PUBLIC_TAG_FILTER, id: { $nin: await excludedTagIds() } };
+  return visibleTagFilter(await excludedTagIds());
 }
 
 function toIso(value: unknown): string {
@@ -82,32 +86,34 @@ async function tags() {
 }
 
 export async function findTag(id: number): Promise<TagData | 'removed' | null> {
-  if (await isTagRemoved(id)) return 'removed';
-  const doc = await (await tags()).findOne({ id });
+  const collection = await tags();
+  const [removed, doc, hidden] = await Promise.all([
+    isTagRemoved(id),
+    collection.findOne({ id }),
+    isTagHidden(id)
+  ]);
+  if (removed) return 'removed';
   if (!doc) return null;
   if (doc.content === PLACEHOLDER_CONTENT) {
     await removeTag(id, String(doc.owner_id ?? ''), 'not_found');
     return 'removed';
   }
-  return { ...toTagData(doc), hidden: await isTagHidden(id) };
+  return { ...toTagData(doc), hidden };
 }
 
 export async function findTagSummaries(
   ids: number[],
   viewerId?: string
 ): Promise<TagSummary[]> {
-  const publicOnly = { deleted: { $ne: true }, nsfw: false };
   const docs = await (
     await tags()
   )
     .find(
       {
-        id: { $in: ids, $nin: await excludedTagIds() },
-        safe: { $ne: 'not_safe' },
-        content: { $ne: PLACEHOLDER_CONTENT },
-        ...(viewerId
-          ? { $or: [{ owner_id: viewerId }, publicOnly] }
-          : publicOnly)
+        $and: [
+          { id: { $in: ids } },
+          visibleTagFilter(await excludedTagIds(), viewerId)
+        ]
       },
       { projection: TAG_SUMMARY_PROJECTION }
     )
@@ -135,28 +141,34 @@ export async function searchTags(query: string): Promise<TagSummary[]> {
   return docs.map(toTagSummary);
 }
 
-export async function findDiscoverTags(limit = 12) {
-  const [collection, filter] = await Promise.all([tags(), publicFilter()]);
-  const find = (sort: Record<string, 1 | -1>) =>
-    collection
-      .find(filter, { projection: TAG_SUMMARY_PROJECTION })
-      .sort(sort)
-      .limit(limit)
-      .toArray();
-  const [popular, newest] = await Promise.all([
-    find({ uses: -1 }),
-    find({ created_at: -1 })
-  ]);
-  return {
-    popular: popular.map(toTagSummary),
-    newest: newest.map(toTagSummary)
-  };
-}
+export const findDiscoverTags = unstable_cache(
+  async (limit = 12) => {
+    const [collection, filter] = await Promise.all([tags(), publicFilter()]);
+    const find = (sort: Record<string, 1 | -1>) =>
+      collection
+        .find(filter, { projection: TAG_SUMMARY_PROJECTION })
+        .sort(sort)
+        .limit(limit)
+        .toArray();
+    const [popular, newest] = await Promise.all([
+      find({ uses: -1 }),
+      find({ created_at: -1 })
+    ]);
+    return {
+      popular: popular.map(toTagSummary),
+      newest: newest.map(toTagSummary)
+    };
+  },
+  ['discover-tags'],
+  { tags: [EXCLUDED_TAGS_CACHE_TAG], revalidate: 300 }
+);
 
 export async function findPublicTagIds(): Promise<
   { id: number; last_fetched: string }[]
 > {
-  const docs = await (await tags())
+  const docs = await (
+    await tags()
+  )
     .find(await publicFilter(), {
       projection: { _id: 0, id: 1, last_fetched: 1 }
     })
@@ -179,17 +191,13 @@ export async function findRandomTagId(): Promise<number | null> {
 }
 
 export async function findOwnerTags(ownerId: string): Promise<TagSummary[]> {
-  const hidden = new Set(await getHiddenTagIds(ownerId));
+  const excluded = await excludedTagIds();
+  const hidden = new Set(excluded.hidden);
   const docs = await (
     await tags()
   )
     .find(
-      {
-        owner_id: ownerId,
-        safe: { $ne: 'not_safe' },
-        content: { $ne: PLACEHOLDER_CONTENT },
-        id: { $nin: await getRemovedTagIds() }
-      },
+      { owner_id: ownerId, ...visibleTagFilter(excluded, ownerId) },
       { projection: TAG_SUMMARY_PROJECTION }
     )
     .sort({ created_at: -1 })
@@ -215,25 +223,5 @@ export async function getStatistics(): Promise<Statistics> {
     all_tag_count: allTagCount,
     public_tag_count: publicTagCount,
     latest_last_fetched: lastFetched?.toISOString() ?? null
-  };
-}
-
-export async function getOwnerStats(ownerId: string): Promise<OwnerStats> {
-  const collection = await tags();
-  const byOwner: Filter<Document> = { owner_id: ownerId };
-  const [total, shared, nsfw, usesAgg] = await Promise.all([
-    collection.countDocuments(byOwner),
-    collection.countDocuments({ ...byOwner, shared: true }),
-    collection.countDocuments({ ...byOwner, nsfw: true }),
-    collection
-      .aggregate([
-        { $match: byOwner },
-        { $group: { _id: null, total: { $sum: '$uses' } } }
-      ])
-      .toArray()
-  ]);
-  return {
-    tags: { public: shared, private: total - shared, nsfw, total },
-    uses: usesAgg[0]?.total ?? 0
   };
 }

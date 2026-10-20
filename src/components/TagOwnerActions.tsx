@@ -1,7 +1,11 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { deleteTagAction, setHiddenAction } from '@/app/tags/[id]/actions';
+import {
+  deleteTagAction,
+  setHiddenAction,
+  type ActionResult
+} from '@/app/tags/[id]/actions';
 import { buttonClass } from '@/components/buttons';
 
 export default function TagOwnerActions({
@@ -12,7 +16,16 @@ export default function TagOwnerActions({
   hidden: boolean;
 }) {
   const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function run(action: () => Promise<ActionResult>) {
+    setError(null);
+    startTransition(async () => {
+      const result = await action();
+      if (result) setError(result.error);
+    });
+  }
 
   return (
     <div className="rounded-xl border border-line bg-surface p-5">
@@ -26,7 +39,7 @@ export default function TagOwnerActions({
         <button
           type="button"
           disabled={isPending}
-          onClick={() => startTransition(() => setHiddenAction(tagId, !hidden))}
+          onClick={() => run(() => setHiddenAction(tagId, !hidden))}
           className={buttonClass('secondary', 'sm')}
         >
           {hidden ? 'Unhide tag' : 'Hide tag'}
@@ -36,7 +49,7 @@ export default function TagOwnerActions({
             <button
               type="button"
               disabled={isPending}
-              onClick={() => startTransition(() => deleteTagAction(tagId))}
+              onClick={() => run(() => deleteTagAction(tagId))}
               className={`${buttonClass('secondary', 'sm')} text-ctp-red`}
             >
               {isPending ? 'Deleting…' : 'Delete permanently'}
@@ -63,6 +76,11 @@ export default function TagOwnerActions({
       {confirming && (
         <p className="mt-3 text-sm text-muted">
           This removes the tag from TagVault for good. It stays on Carl-bot.
+        </p>
+      )}
+      {error && (
+        <p role="alert" className="mt-3 text-sm text-ctp-red">
+          {error}
         </p>
       )}
     </div>
