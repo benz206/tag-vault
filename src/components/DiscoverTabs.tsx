@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import type { TagSummary } from '@tag-vault/db';
+import type { TagListItem } from '@tag-vault/db';
 import Taglist from '@/components/Taglist';
 
 export type DiscoverTab = {
   key: string;
   label: string;
-  tags: TagSummary[] | undefined;
+  tags: TagListItem[] | undefined;
   error?: unknown;
 };
 

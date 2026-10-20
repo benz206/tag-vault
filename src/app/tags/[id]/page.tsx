@@ -5,8 +5,9 @@ import { findTag, type TagData } from '@tag-vault/db';
 import CopyButton from '@/components/CopyButton';
 import Pill from '@/components/Pill';
 import TagScriptCode from '@/components/TagScriptCode';
-import { Owner } from '@/components/Tagbox';
+import { OwnerLabel } from '@/components/Tagbox';
 import { getSession } from '@/lib/auth';
+import { getOwner } from '@/lib/owners';
 import { formatDate, getTagColor } from '@/utils';
 
 type Params = Promise<{ id: string }>;
@@ -47,6 +48,7 @@ export default async function TagPage({ params }: { params: Params }) {
   }
 
   const hasEmbed = !!tag.embed && tag.embed !== '{}';
+  const owner = await getOwner(tag.owner_id);
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-14 pb-20 sm:px-6 lg:pt-20">
@@ -99,7 +101,7 @@ export default async function TagPage({ params }: { params: Params }) {
           <dl className="divide-y divide-line self-start rounded-xl border border-line bg-surface text-sm">
             <Detail label="Owner">
               <span className="flex justify-end">
-                <Owner ownerId={tag.owner_id} />
+                <OwnerLabel owner={owner} />
               </span>
             </Detail>
             <Detail label="Uses">{tag.uses.toLocaleString()}</Detail>

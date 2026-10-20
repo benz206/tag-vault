@@ -4,6 +4,7 @@ import SignInRequired from '@/components/SignInRequired';
 import StatStrip from '@/components/StatStrip';
 import Taglist from '@/components/Taglist';
 import { getSession } from '@/lib/auth';
+import { withOwners } from '@/lib/owners';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
@@ -12,7 +13,7 @@ export default async function DashboardPage() {
   if (!session) return <SignInRequired callbackUrl="/dashboard" />;
 
   const [tags, stats] = await Promise.all([
-    findOwnerTags(session.user.id),
+    findOwnerTags(session.user.id).then(withOwners),
     getOwnerStats(session.user.id)
   ]);
 

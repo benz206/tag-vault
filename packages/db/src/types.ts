@@ -37,19 +37,14 @@ export type Statistics = {
   latest_last_fetched: string | null;
 };
 
-export type DiscordUser = {
+export type Owner = {
   id: string;
-  username: string;
-  avatar: string;
-  discriminator: string;
-  public_flags: number;
-  flags: number;
-  banner: string | null;
-  accent_color: number;
-  global_name: string;
-  avatar_decoration_data: null;
-  banner_color: string;
+  name: string;
+  avatarUrl: string;
+  fallbackAvatarUrl: string;
 };
+
+export type TagListItem = TagSummary & { owner: Owner };
 
 export type Error = {
   error: string;

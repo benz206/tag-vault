@@ -5,6 +5,7 @@ import SearchBox from '@/components/SearchBox';
 import SignInRequired from '@/components/SignInRequired';
 import Taglist from '@/components/Taglist';
 import { getSession } from '@/lib/auth';
+import { withOwners } from '@/lib/owners';
 
 type SearchParams = Promise<{ q?: string | string[] }>;
 
@@ -31,8 +32,13 @@ export default async function SearchPage({
 
   const query = readQuery((await searchParams).q);
   const [results, discover] = await Promise.all([
-    query ? searchTags(query) : null,
-    query ? null : findDiscoverTags()
+    query ? searchTags(query).then(withOwners) : null,
+    query
+      ? null
+      : findDiscoverTags().then(async ({ popular, newest }) => ({
+          popular: await withOwners(popular),
+          newest: await withOwners(newest)
+        }))
   ]);
 
   return (

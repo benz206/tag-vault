@@ -7,7 +7,7 @@ import {
   useSyncExternalStore,
   type ReactNode
 } from 'react';
-import type { TagSummary } from '@tag-vault/db';
+import type { TagListItem } from '@tag-vault/db';
 import {
   TagCard,
   TagCardSkeleton,
@@ -81,8 +81,8 @@ function usePrefs() {
   return [prefs, update] as const;
 }
 
-function sortTags(tags: TagSummary[], sort: SortKey): TagSummary[] {
-  const time = (tag: TagSummary) => new Date(tag.created_at).getTime();
+function sortTags(tags: TagListItem[], sort: SortKey): TagListItem[] {
+  const time = (tag: TagListItem) => new Date(tag.created_at).getTime();
   switch (sort) {
     case 'uses':
       return [...tags].sort((a, b) => b.uses - a.uses);
@@ -98,7 +98,7 @@ function sortTags(tags: TagSummary[], sort: SortKey): TagSummary[] {
 }
 
 type TaglistProps = {
-  tags: TagSummary[] | undefined;
+  tags: TagListItem[] | undefined;
   error?: unknown;
   summary?: ReactNode;
   defaultSortLabel?: string;

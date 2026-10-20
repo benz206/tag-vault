@@ -9,6 +9,7 @@ import HeroActions from '@/components/HeroActions';
 import StatStrip from '@/components/StatStrip';
 import TagScriptCode from '@/components/TagScriptCode';
 import TimeAgo from '@/components/TimeAgo';
+import { withOwners } from '@/lib/owners';
 import { getTagColor } from '@/utils';
 
 export const revalidate = 300;
@@ -32,6 +33,13 @@ export default async function Home() {
     findTagSummaries(featuredTagIds),
     findDiscoverTags()
   ]);
+  const listed = await withOwners([
+    ...featured,
+    ...discover.popular,
+    ...discover.newest
+  ]);
+  const popularStart = featured.length;
+  const newestStart = popularStart + discover.popular.length;
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -94,9 +102,17 @@ export default async function Home() {
         </h2>
         <DiscoverTabs
           tabs={[
-            { key: 'featured', label: 'Featured', tags: featured },
-            { key: 'popular', label: 'Most used', tags: discover.popular },
-            { key: 'newest', label: 'Newest', tags: discover.newest }
+            {
+              key: 'featured',
+              label: 'Featured',
+              tags: listed.slice(0, popularStart)
+            },
+            {
+              key: 'popular',
+              label: 'Most used',
+              tags: listed.slice(popularStart, newestStart)
+            },
+            { key: 'newest', label: 'Newest', tags: listed.slice(newestStart) }
           ]}
         />
       </section>

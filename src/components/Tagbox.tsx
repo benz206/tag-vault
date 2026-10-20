@@ -1,25 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import useSWR from 'swr';
-import type { DiscordUser, TagSummary } from '@tag-vault/db';
+import type { Owner, TagListItem, TagSummary } from '@tag-vault/db';
+import Avatar from '@/components/Avatar';
 import { getTagColor, formatDate } from '@/utils';
 import Pill from '@/components/Pill';
 
 export type TagColumn = 'description' | 'owner' | 'uses' | 'created';
-
-const DEFAULT_AVATAR = 'https://cdn.discordapp.com/embed/avatars/0.png';
-
-function useOwner(ownerId: string) {
-  const { data } = useSWR<DiscordUser>(`/api/discord/users/${ownerId}`);
-  return {
-    name: data?.global_name || data?.username || 'Unknown',
-    avatarUrl: data?.avatar
-      ? `https://cdn.discordapp.com/avatars/${ownerId}/${data.avatar}.webp?size=32`
-      : DEFAULT_AVATAR
-  };
-}
 
 export function rowTemplate(columns: TagColumn[]): string {
   const show = (column: TagColumn) => columns.includes(column);
@@ -34,18 +21,10 @@ export function rowTemplate(columns: TagColumn[]): string {
     .join(' ');
 }
 
-export function Owner({ ownerId }: { ownerId: string }) {
-  const owner = useOwner(ownerId);
+export function OwnerLabel({ owner }: { owner: Owner }) {
   return (
     <span className="flex min-w-0 items-center gap-1.5">
-      <Image
-        className="shrink-0 rounded-full"
-        src={owner.avatarUrl}
-        alt=""
-        width={16}
-        height={16}
-        unoptimized
-      />
+      <Avatar owner={owner} size={16} />
       <span className="truncate">{owner.name}</span>
     </span>
   );
@@ -67,7 +46,7 @@ export function TagRow({
   tag,
   columns
 }: {
-  tag: TagSummary;
+  tag: TagListItem;
   columns: TagColumn[];
 }) {
   const show = (column: TagColumn) => columns.includes(column);
@@ -91,7 +70,7 @@ export function TagRow({
       )}
       {show('owner') && (
         <div className="text-xs text-muted">
-          <Owner ownerId={tag.owner_id} />
+          <OwnerLabel owner={tag.owner} />
         </div>
       )}
       {show('uses') && (
@@ -113,7 +92,7 @@ export function TagCard({
   tag,
   columns
 }: {
-  tag: TagSummary;
+  tag: TagListItem;
   columns: TagColumn[];
 }) {
   const show = (column: TagColumn) => columns.includes(column);
@@ -134,7 +113,7 @@ export function TagCard({
       )}
       {(show('owner') || show('uses') || show('created')) && (
         <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-4 text-xs text-muted tabular-nums">
-          {show('owner') && <Owner ownerId={tag.owner_id} />}
+          {show('owner') && <OwnerLabel owner={tag.owner} />}
           {show('uses') && <span>{tag.uses.toLocaleString()} uses</span>}
           {show('created') && (
             <span>{formatDate(new Date(tag.created_at))}</span>
