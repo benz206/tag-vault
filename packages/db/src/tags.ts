@@ -7,7 +7,7 @@ import {
   isTagRemoved,
   removeTag
 } from './moderation';
-import type { OwnerStats, Statistics, TagData, TagSummary } from './types';
+import type { Statistics, TagData, TagSummary } from './types';
 import {
   PLACEHOLDER_CONTENT,
   visibleTagFilter,
@@ -217,25 +217,5 @@ export async function getStatistics(): Promise<Statistics> {
     all_tag_count: allTagCount,
     public_tag_count: publicTagCount,
     latest_last_fetched: lastFetched?.toISOString() ?? null
-  };
-}
-
-export async function getOwnerStats(ownerId: string): Promise<OwnerStats> {
-  const collection = await tags();
-  const byOwner: Filter<Document> = { owner_id: ownerId };
-  const [total, shared, nsfw, usesAgg] = await Promise.all([
-    collection.countDocuments(byOwner),
-    collection.countDocuments({ ...byOwner, shared: true }),
-    collection.countDocuments({ ...byOwner, nsfw: true }),
-    collection
-      .aggregate([
-        { $match: byOwner },
-        { $group: { _id: null, total: { $sum: '$uses' } } }
-      ])
-      .toArray()
-  ]);
-  return {
-    tags: { public: shared, private: total - shared, nsfw, total },
-    uses: usesAgg[0]?.total ?? 0
   };
 }
