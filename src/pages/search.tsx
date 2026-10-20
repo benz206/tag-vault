@@ -3,6 +3,7 @@ import Head from "next/head";
 import useSWR from "swr";
 import { SearchQuery } from "@/types";
 import Taglist from "@/components/Taglist";
+import { buttonClass } from "@/components/buttons";
 import { useSession, signIn } from "next-auth/react";
 
 export default function SearchPage() {
@@ -16,7 +17,7 @@ export default function SearchPage() {
     const [query, setQuery] = useState("");
     const [submitted, setSubmitted] = useState<string | null>(null);
 
-    const { data: searchData, isLoading } = useSWR<SearchQuery>(
+    const { data: searchData, error, isLoading } = useSWR<SearchQuery>(
         submitted ? `/api/tags/search/${encodeURIComponent(submitted)}` : null
     );
 
@@ -27,113 +28,80 @@ export default function SearchPage() {
         setSubmitted(trimmed);
     }
 
-    if (status === "loading") {
-        return (
-            <div className="flex items-center justify-center w-full h-[60vh]">
-                <p>Loading...</p>
-            </div>
-        );
-    }
+    const resultCount = searchData?.search.length ?? 0;
 
     return (
         <>
             <Head>
                 <title>Search | TagVault</title>
             </Head>
-            <div className="flex flex-col w-full h-full min-h-[calc(100vh-4rem)]">
-                <div className="flex flex-col flex-wrap content-center justify-center w-full h-72 lg:h-128 bg-gradient-to-r from-pink-500 to-rose-500">
-                    <h1 className="relative p-12 mt-8 text-3xl text-center lg:text-9xl">
-                        Search Tags
-                    </h1>
-                    <div className="flex flex-col p-2 mb-10 rounded-xl bg-slate-600">
-                        <form
-                            className="flex justify-evenly"
-                            onSubmit={handleSubmit}
-                            role="search"
+            <div className="max-w-6xl px-4 py-12 mx-auto sm:px-6 lg:py-16">
+                <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Search tags
+                </h1>
+                <p className="mt-2 text-neutral-400">
+                    Matches tag names, descriptions, and content.
+                </p>
+                <form
+                    className="flex gap-2 mt-8"
+                    onSubmit={handleSubmit}
+                    role="search"
+                >
+                    <label htmlFor="tag-search" className="sr-only">
+                        Search tags
+                    </label>
+                    <div className="relative flex-1">
+                        <svg
+                            className="absolute -translate-y-1/2 pointer-events-none size-4 left-3 top-1/2 text-neutral-500"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.75"
+                            strokeLinecap="round"
+                            aria-hidden="true"
                         >
-                            <label htmlFor="tag-search" className="sr-only">
-                                Search tags
-                            </label>
-                            <input
-                                id="tag-search"
-                                className="flex-1 p-4 mr-2 text-xl text-left text-white rounded-lg lg:text-4xl bg-slate-400 text-bold placeholder:text-slate-200"
-                                type="search"
-                                placeholder="Search..."
-                                value={query}
-                                onChange={(e) => setQuery(e.currentTarget.value)}
-                                maxLength={30}
-                            />
-                            <button
-                                className={`flex items-center justify-center w-4/12 px-4 py-2 text-xl font-bold text-white rounded-lg ${
-                                    isLoading
-                                        ? "bg-cyan-500"
-                                        : "bg-cyan-400 hover:bg-cyan-500"
-                                } lg:text-4xl`}
-                                type="submit"
-                                aria-label="Submit search"
-                                disabled={isLoading || !query.trim()}
-                            >
-                                {isLoading ? (
-                                    <svg
-                                        className="w-10 h-10 text-white lg:mr-2 animate-spin"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                    >
-                                        <circle
-                                            className="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            strokeWidth="4"
-                                        />
-                                        <path
-                                            className="opacity-100"
-                                            fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                        />
-                                    </svg>
-                                ) : (
-                                    <svg
-                                        className="w-10 h-10 text-white lg:mr-2"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                        />
-                                    </svg>
-                                )}
-                                <span className="hidden text-4xl font-semibold lg:block">
-                                    Search
-                                </span>
-                            </button>
-                        </form>
+                            <circle cx="9" cy="9" r="6" />
+                            <path d="m17 17-3.5-3.5" />
+                        </svg>
+                        <input
+                            id="tag-search"
+                            className="w-full pr-3 text-sm border rounded-md h-9 pl-9 bg-neutral-950 border-neutral-800 placeholder:text-neutral-500"
+                            type="search"
+                            placeholder="Try “embed” or “ticket”"
+                            value={query}
+                            onChange={(e) => setQuery(e.currentTarget.value)}
+                            maxLength={30}
+                            disabled={status === "loading"}
+                        />
                     </div>
-                </div>
-                <div className="relative flex justify-center h-auto">
-                    {searchData && searchData.search.length > 0 ? (
-                        <div className="flex flex-col items-center">
-                            <h2 className="pt-12">
-                                {searchData.search.length} results were found.
-                            </h2>
+                    <button
+                        className={buttonClass("primary")}
+                        type="submit"
+                        disabled={isLoading || !query.trim()}
+                    >
+                        {isLoading ? "Searching…" : "Search"}
+                    </button>
+                </form>
+                <div className="mt-10">
+                    {error ? (
+                        <p className="text-sm text-neutral-400">
+                            Search failed. Check your connection and try again.
+                        </p>
+                    ) : searchData && resultCount > 0 ? (
+                        <>
+                            <p className="mb-3 text-sm text-neutral-400">
+                                {resultCount}{" "}
+                                {resultCount === 1 ? "result" : "results"} for
+                                “{submitted}”
+                            </p>
                             <Taglist key={submitted} tags={searchData.search} />
+                        </>
+                    ) : searchData ? (
+                        <div className="px-4 py-12 text-sm text-center border border-dashed rounded-lg border-neutral-800 text-neutral-400">
+                            No tags match “{submitted}”. Try a shorter or more
+                            general keyword.
                         </div>
-                    ) : (
-                        <h2 className="p-12">
-                            {searchData && searchData.search.length === 0
-                                ? "Sorry, 0 results were found."
-                                : "Search results will appear here."}
-                        </h2>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </>
