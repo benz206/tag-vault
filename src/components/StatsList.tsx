@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { Statistics } from "@/types";
-import { motion } from "motion/react";
+import StatCard from "@/components/StatCard";
 
 function getTimeSince(startDate: Date): string {
     const seconds = Math.round(
@@ -25,88 +25,56 @@ export default function StatsList() {
     const { data: statsData } = useSWR<Statistics>("/api/statistics");
 
     return (
-        <div className="flex relative flex-col flex-wrap justify-center content-center -mt-20 w-full md:flex-row lg:space-x-18 lg:h-64">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0 }}
+        <div className="relative flex flex-col items-center justify-center w-full gap-10 px-4 -mt-20 md:flex-row md:items-stretch md:gap-4 lg:gap-18">
+            <StatCard
+                title="Explore TagScript"
+                accentClassName="shadow-cyan-400 border-cyan-400"
+                titleHoverClassName="group-hover:text-cyan-300"
+                delayMs={0}
             >
-                <motion.div
-                    className="group flex flex-col p-6 mb-10 border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-cyan-400 border-cyan-400 w-80 md:m-2 md:w-[200px] lg:w-[270px] 2xl:w-[430px]"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                    <h2 className="mb-4 text-2xl text-center text-white transition-colors duration-500 ease-in-out lg:text-5xl group-hover:text-cyan-300">
-                        Explore TagScript
-                    </h2>
-                    <p>
-                        Explore a{" "}
-                        <span className="font-bold text-cyan-300 animate-pulse">
-                            dynamic
-                        </span>{" "}
-                        database with{" "}
-                        <span className="font-bold text-cyan-300 animate-pulse">
-                            {statsData?.all_tag_count
-                                ? statsData.all_tag_count.toLocaleString()
-                                : "loading..."}
-                        </span>{" "}
-                        tags.
-                    </p>
-                </motion.div>
-            </motion.div>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
+                Explore a{" "}
+                <span className="font-bold text-cyan-300 animate-pulse">
+                    dynamic
+                </span>{" "}
+                database with{" "}
+                <span className="font-bold text-cyan-300 animate-pulse">
+                    {statsData?.all_tag_count
+                        ? statsData.all_tag_count.toLocaleString()
+                        : "loading..."}
+                </span>{" "}
+                tags.
+            </StatCard>
+            <StatCard
+                title="Find PreBuilt Tags"
+                accentClassName="border-green-500 shadow-green-500"
+                titleHoverClassName="group-hover:text-green-400"
+                delayMs={200}
             >
-                <motion.div
-                    className="group flex flex-col justify-center p-6 mb-10 border-t-8 border-green-500 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-green-500 w-80 md:m-2 md:w-[200px] lg:w-[270px] 2xl:w-[430px]"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                    <h2 className="mb-4 text-2xl text-center text-white duration-500 ease-in-out group-hover:text-green-400 lg:text-5xl">
-                        Find PreBuilt Tags
-                    </h2>
-                    <p>
-                        From{" "}
-                        <span className="font-thin text-green-300 animate-pulse">
-                            simple
-                        </span>{" "}
-                        tags to{" "}
-                        <span className="font-bold text-green-600 animate-pulse">
-                            complex
-                        </span>{" "}
-                        commands, find what you need with ease.
-                    </p>
-                </motion.div>
-            </motion.div>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.4 }}
+                From{" "}
+                <span className="font-thin text-green-300 animate-pulse">
+                    simple
+                </span>{" "}
+                tags to{" "}
+                <span className="font-bold text-green-600 animate-pulse">
+                    complex
+                </span>{" "}
+                commands, find what you need with ease.
+            </StatCard>
+            <StatCard
+                title="Help Us Grow"
+                accentClassName="shadow-rose-400 border-rose-400"
+                titleHoverClassName="group-hover:text-rose-400"
+                delayMs={400}
             >
-                <motion.div
-                    className="group flex flex-col justify-center p-6 border-t-8 shadow-xl rounded-xl lg:m-0 bg-slate-600 shadow-rose-400 border-rose-400 w-80 md:m-2 md:w-[200px] lg:w-[270px] 2xl:w-[430px]"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                    <h2 className="mb-4 text-2xl text-center text-white duration-500 ease-in-out group-hover:text-rose-400 lg:text-5xl">
-                        Help Us Grow
-                    </h2>
-                    <p>
-                        Every tag in the vault is ready to use. The last update
-                        was only{" "}
-                        <span className="font-bold text-rose-400 animate-pulse">
-                            {statsData?.latest_last_fetched
-                                ? getTimeSince(
-                                      new Date(statsData.latest_last_fetched)
-                                  )
-                                : "loading..."}
-                        </span>{" "}
-                        ago.
-                    </p>
-                </motion.div>
-            </motion.div>
+                Every tag in the vault is ready to use. The last update was
+                only{" "}
+                <span className="font-bold text-rose-400 animate-pulse">
+                    {statsData?.latest_last_fetched
+                        ? getTimeSince(new Date(statsData.latest_last_fetched))
+                        : "loading..."}
+                </span>{" "}
+                ago.
+            </StatCard>
         </div>
     );
 }

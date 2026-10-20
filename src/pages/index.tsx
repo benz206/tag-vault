@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Taglist from "@/components/Taglist";
 import StatsList from "@/components/StatsList";
-import { motion } from "motion/react";
 
 const featuredTagIds = [1157946, 1111722, 1217391, 825576, 962280, 865606];
 
@@ -18,16 +17,14 @@ export default function Home() {
                     </h1>
                 </div>
                 <StatsList />
-                <motion.div
-                    className="relative flex content-center justify-center w-full p-2 pt-20"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.5 }}
+                <div
+                    className="relative flex content-center justify-center w-full p-2 pt-20 motion-safe:animate-rise"
+                    style={{ animationDelay: "500ms" }}
                 >
                     <h1 className="text-5xl text-center lg:text-7xl">
                         Featured Tags
                     </h1>
-                </motion.div>
+                </div>
                 <Taglist ids={featuredTagIds} />
             </div>
         </>

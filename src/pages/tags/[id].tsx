@@ -5,7 +5,6 @@ import Image from "next/image";
 import useSWR from "swr";
 import { TagData, DiscordUser } from "@/types";
 import { getTagColor, formatDate } from "@/utils";
-import { motion } from "motion/react";
 import CopyButton from "@/components/CopyButton";
 
 export default function TagPage() {
@@ -51,11 +50,9 @@ export default function TagPage() {
                     {data?.tag_name}
                 </h1>
             </div>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.5 }}
-                className="flex justify-center"
+            <div
+                className="flex justify-center motion-safe:animate-rise"
+                style={{ animationDelay: "500ms" }}
             >
                 <div
                     className={`rounded-xl p-8 bg-slate-700 w-11/12 border-t-8 border-${resolvedColor} shadow-${resolvedColor} shadow-xl transform transition-transform duration-440 mt-4 lg:my-12`}
@@ -276,7 +273,7 @@ export default function TagPage() {
                         </>
                     )}
                 </div>
-            </motion.div>
+            </div>
             {data && (
                 <div className="flex justify-center">
                     <div

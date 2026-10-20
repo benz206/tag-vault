@@ -2,7 +2,6 @@ import Head from "next/head";
 import useSWR from "swr";
 import Taglist from "@/components/Taglist";
 import DashStatsList from "@/components/DashStatsList";
-import { motion } from "motion/react";
 import { OwnerTagsQuery } from "@/types";
 import { useSession, signIn } from "next-auth/react";
 
@@ -30,14 +29,12 @@ export default function Dashboard() {
                     </h1>
                 </div>
                 <DashStatsList />
-                <motion.div
-                    className="relative flex content-center justify-center w-full p-2 pt-20"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.9 }}
+                <div
+                    className="relative flex content-center justify-center w-full p-2 pt-20 motion-safe:animate-rise"
+                    style={{ animationDelay: "900ms" }}
                 >
                     <h1 className="text-5xl text-center lg:text-7xl">Tags</h1>
-                </motion.div>
+                </div>
                 {ownerTagsData?.tags.length === 0 ? (
                     <p className="py-10 text-center">
                         You don&apos;t have any tags yet.

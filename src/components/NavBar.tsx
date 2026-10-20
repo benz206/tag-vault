@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { motion, AnimatePresence } from "motion/react";
 
 function DiscordLogo() {
     return (
@@ -45,16 +44,11 @@ export default function NavBar() {
 
     return (
         <nav className="absolute flex items-center w-full h-16">
-            <motion.div
-                className="relative ml-6 mr-auto"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
+            <div className="relative ml-6 mr-auto transition-transform duration-300 ease-spring hover:scale-105 active:scale-95">
                 <Link className="font-bold" href="/">
                     Tag Vault
                 </Link>
-            </motion.div>
+            </div>
             <div className="relative flex ml-auto mr-2">
                 <Link
                     href="/search"
@@ -84,38 +78,32 @@ export default function NavBar() {
                                 {data.user?.name}
                             </span>
                         </button>
-                        <AnimatePresence>
-                            {profileOpen && (
-                                <motion.div
-                                    role="menu"
-                                    className="absolute z-10 w-40 border-4 rounded-md right-1 top-12 bg-darkbg border-darkbg"
-                                    initial={{ opacity: 0, y: -5 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -5 }}
-                                    transition={{ duration: 0.3 }}
+                        {profileOpen && (
+                            <div
+                                role="menu"
+                                className="absolute z-10 w-40 border-4 rounded-md right-1 top-12 bg-darkbg border-darkbg motion-safe:animate-drop"
+                            >
+                                <Link
+                                    href="/dashboard"
+                                    prefetch
+                                    role="menuitem"
+                                    className="block px-4 py-2 text-center transition-colors duration-500 border-2 border-transparent rounded-md text-cyan-500 hover:border-cyan-500"
+                                    onClick={() => setProfileOpen(false)}
                                 >
-                                    <Link
-                                        href="/dashboard"
-                                        prefetch
-                                        role="menuitem"
-                                        className="block px-4 py-2 text-center transition-colors duration-500 border-2 border-transparent rounded-md text-cyan-500 hover:border-cyan-500"
-                                        onClick={() => setProfileOpen(false)}
-                                    >
-                                        Dashboard
-                                    </Link>
-                                    <button
-                                        type="button"
-                                        role="menuitem"
-                                        className="block w-full px-4 py-2 text-center text-red-500 transition-colors duration-500 border-2 border-transparent rounded-md hover:border-red-500"
-                                        onClick={() =>
-                                            signOut({ callbackUrl: "/" })
-                                        }
-                                    >
-                                        Sign out
-                                    </button>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                    Dashboard
+                                </Link>
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    className="block w-full px-4 py-2 text-center text-red-500 transition-colors duration-500 border-2 border-transparent rounded-md hover:border-red-500"
+                                    onClick={() =>
+                                        signOut({ callbackUrl: "/" })
+                                    }
+                                >
+                                    Sign out
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <button

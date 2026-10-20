@@ -20,7 +20,7 @@ const nextConfig = {
     },
     reactCompiler: true,
     experimental: {
-        optimizePackageImports: ["motion", "next-auth"],
+        optimizePackageImports: ["next-auth"],
     },
     async headers() {
         const securityHeaders = [
