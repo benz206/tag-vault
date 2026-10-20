@@ -1,3 +1,4 @@
+import { avatarUrl, defaultAvatarUrl } from './avatars';
 import { getDb } from './client';
 import type { Owner, TagSummary } from './types';
 
@@ -17,20 +18,13 @@ type CachedUser = {
 const inflight = new Map<string, Promise<void>>();
 let rateLimitedUntil = 0;
 
-function defaultAvatarUrl(userId: string): string {
-  const index = /^\d+$/.test(userId) ? Number((BigInt(userId) >> 22n) % 6n) : 0;
-  return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
-}
-
 function toOwner(id: string, user: CachedUser | undefined): Owner {
   const avatar = user?.avatar;
   const fallbackAvatarUrl = defaultAvatarUrl(id);
   return {
     id,
     name: user?.global_name || user?.username || 'Unknown user',
-    avatarUrl: avatar
-      ? `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar.startsWith('a_') ? 'gif' : 'webp'}?size=64`
-      : fallbackAvatarUrl,
+    avatarUrl: avatar ? avatarUrl(id, avatar, 64) : fallbackAvatarUrl,
     fallbackAvatarUrl
   };
 }

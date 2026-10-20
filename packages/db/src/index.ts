@@ -1,5 +1,6 @@
 import 'server-only';
 
+export * from './avatars';
 export * from './client';
 export * from './favorites';
 export * from './indexes';

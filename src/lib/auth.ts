@@ -2,6 +2,7 @@ import type { AuthOptions, Session } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import { getServerSession } from 'next-auth';
 import DiscordProvider, { DiscordProfile } from 'next-auth/providers/discord';
+import { avatarUrl, defaultAvatarUrl } from '@tag-vault/db';
 
 const {
   DISCORD_CLIENT_ID,
@@ -27,17 +28,6 @@ if (NODE_ENV === 'production' && !NEXTAUTH_URL) {
   );
 }
 
-function discordAvatarUrl(profile: DiscordProfile): string {
-  if (!profile.avatar) {
-    const fallback =
-      (Number(profile.discriminator) || Number(BigInt(profile.id) >> 22n)) % 5;
-    return `https://cdn.discordapp.com/embed/avatars/${fallback}.png`;
-  }
-  const animated = profile.avatar.startsWith('a_');
-  const ext = animated ? 'gif' : 'webp';
-  return `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${ext}?size=128`;
-}
-
 export const authOptions: AuthOptions = {
   providers: [
     DiscordProvider({
@@ -52,7 +42,9 @@ export const authOptions: AuthOptions = {
           id: profile.id,
           name: profile.global_name ?? profile.username,
           email: profile.email,
-          image: discordAvatarUrl(profile)
+          image: profile.avatar
+            ? avatarUrl(profile.id, profile.avatar, 128)
+            : defaultAvatarUrl(profile.id, profile.discriminator)
         };
       }
     })
