@@ -12,7 +12,7 @@ export default function Custom404() {
                 <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">
                     Page not found
                 </h1>
-                <p className="mt-3 text-xl text-stone-500">
+                <p className="mt-3 text-xl text-muted">
                     Check the address, or head back to the homepage.
                 </p>
                 <Link href="/" className={`${buttonClass("primary")} mt-8`}>

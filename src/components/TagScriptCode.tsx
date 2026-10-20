@@ -7,13 +7,13 @@ export default function TagScriptCode({ source }: { source: string }) {
                 if (i % 2 === 0) return part;
                 if (part.startsWith("(")) {
                     return (
-                        <span key={i} className="text-rose-600">
+                        <span key={i} className="text-rose-600 dark:text-rose-400">
                             {part}
                         </span>
                     );
                 }
                 return (
-                    <span key={i} className="text-stone-400">
+                    <span key={i} className="text-faint">
                         {part}
                     </span>
                 );

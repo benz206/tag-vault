@@ -22,23 +22,23 @@ export default function Tagbox({ tag }: { tag: TagSummary }) {
     return (
         <Link
             href={`/tags/${tag.id}`}
-            className={`${ROW_CLASSES} transition-colors hover:bg-stone-50 focus-visible:-outline-offset-2`}
+            className={`${ROW_CLASSES} transition-colors hover:bg-subtle focus-visible:-outline-offset-2`}
         >
             <span
                 className={`absolute left-0 w-[3px] rounded-r inset-y-3 bg-${color}`}
                 aria-hidden="true"
             />
             <div className="flex items-center min-w-0 gap-2">
-                <span className="font-mono text-sm truncate text-stone-950">
+                <span className="font-mono text-sm truncate text-ink">
                     {tag.tag_name}
                 </span>
                 {!tag.shared && <Pill>Private</Pill>}
                 {tag.nsfw && <Pill>NSFW</Pill>}
             </div>
-            <p className="text-sm line-clamp-2 sm:line-clamp-1 text-stone-600">
+            <p className="text-sm line-clamp-2 sm:line-clamp-1 text-ink-3">
                 {tag.description || "No description"}
             </p>
-            <div className="flex items-center gap-4 text-xs text-stone-500 tabular-nums">
+            <div className="flex items-center gap-4 text-xs text-muted tabular-nums">
                 <span className="flex items-center min-w-0 gap-1.5">
                     <Image
                         className="rounded-full"
@@ -68,9 +68,9 @@ export default function Tagbox({ tag }: { tag: TagSummary }) {
 export function TagboxSkeleton() {
     return (
         <div className={ROW_CLASSES} aria-hidden="true">
-            <div className="w-32 h-4 rounded animate-pulse bg-stone-200" />
-            <div className="w-3/4 h-4 rounded animate-pulse bg-stone-100" />
-            <div className="w-40 h-4 rounded animate-pulse bg-stone-100" />
+            <div className="w-32 h-4 rounded animate-pulse bg-line" />
+            <div className="w-3/4 h-4 rounded animate-pulse bg-chip" />
+            <div className="w-40 h-4 rounded animate-pulse bg-chip" />
         </div>
     );
 }

@@ -60,7 +60,7 @@ export default function TagPage() {
                                     {data.tag_name}
                                 </h1>
                                 {data.description && (
-                                    <p className="max-w-2xl mt-3 text-lg break-words whitespace-pre-line text-stone-500">
+                                    <p className="max-w-2xl mt-3 text-lg break-words whitespace-pre-line text-muted">
                                         {data.description}
                                     </p>
                                 )}
@@ -88,16 +88,16 @@ export default function TagPage() {
                                     <CodePanel title="Embed" text={data.embed} />
                                 )}
                                 <details className="text-sm group">
-                                    <summary className="cursor-pointer select-none text-stone-500 hover:text-stone-950">
+                                    <summary className="cursor-pointer select-none text-muted hover:text-ink">
                                         Raw JSON
                                     </summary>
-                                    <pre className="p-4 mt-3 overflow-x-auto font-mono text-xs leading-5 bg-white border rounded-xl whitespace-pre-wrap border-stone-200 text-stone-600">
+                                    <pre className="p-4 mt-3 overflow-x-auto font-mono text-xs leading-5 bg-surface border rounded-xl whitespace-pre-wrap border-line text-ink-3">
                                         {JSON.stringify(data, null, 2)}
                                     </pre>
                                 </details>
                             </div>
                             <aside>
-                                <dl className="self-start text-sm bg-white border divide-y rounded-xl border-stone-200 divide-stone-200">
+                                <dl className="self-start text-sm bg-surface border divide-y rounded-xl border-line divide-line">
                                     <Detail label="Owner">
                                         <span className="flex items-center justify-end gap-2 min-w-0">
                                             <Image
@@ -145,7 +145,7 @@ export default function TagPage() {
                         <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">
                             Tag not found
                         </h1>
-                        <p className="mt-2 text-stone-500">
+                        <p className="mt-2 text-muted">
                             It may have been deleted, made private, or be under
                             review.
                         </p>
@@ -165,10 +165,10 @@ export default function TagPage() {
 function CodePanel({ title, text }: { title: string; text: string }) {
     const lineCount = text.split("\n").length;
     return (
-        <section className="overflow-hidden bg-white border rounded-xl border-stone-200">
-            <div className="flex items-center gap-3 px-5 border-b h-12 border-stone-200">
+        <section className="overflow-hidden bg-surface border rounded-xl border-line">
+            <div className="flex items-center gap-3 px-5 border-b h-12 border-line">
                 <h2 className="text-[15px]">{title}</h2>
-                <span className="text-xs text-stone-500 tabular-nums">
+                <span className="text-xs text-muted tabular-nums">
                     {lineCount} {lineCount === 1 ? "line" : "lines"}
                 </span>
                 <CopyButton
@@ -178,7 +178,7 @@ function CodePanel({ title, text }: { title: string; text: string }) {
                     className="ml-auto"
                 />
             </div>
-            <pre className="px-5 py-4 overflow-auto font-mono text-[13px] leading-6 break-words whitespace-pre-wrap max-h-[36rem] bg-stone-50 text-stone-800">
+            <pre className="px-5 py-4 overflow-auto font-mono text-[13px] leading-6 break-words whitespace-pre-wrap max-h-[36rem] bg-subtle text-ink-2">
                 <TagScriptCode source={text} />
             </pre>
         </section>
@@ -196,7 +196,7 @@ function Detail({
 }) {
     return (
         <div className="flex items-center justify-between gap-4 px-5 py-3">
-            <dt className="text-stone-500 shrink-0">{label}</dt>
+            <dt className="text-muted shrink-0">{label}</dt>
             <dd
                 className={`min-w-0 text-right truncate ${
                     mono ? "font-mono text-xs select-all" : ""
@@ -212,10 +212,10 @@ function TagPageSkeleton() {
     return (
         <div aria-hidden="true">
             <div className="pb-10">
-                <div className="w-56 h-8 rounded animate-pulse bg-stone-200" />
-                <div className="h-4 mt-4 rounded w-96 max-w-full animate-pulse bg-stone-100" />
+                <div className="w-56 h-8 rounded animate-pulse bg-line" />
+                <div className="h-4 mt-4 rounded w-96 max-w-full animate-pulse bg-chip" />
             </div>
-            <div className="border rounded-xl h-80 animate-pulse bg-stone-50 border-stone-200" />
+            <div className="border rounded-xl h-80 animate-pulse bg-subtle border-line" />
         </div>
     );
 }

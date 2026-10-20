@@ -2,9 +2,54 @@
 
 @source inline("bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose}-{500,600,700}");
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
     --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
     --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-subtle: var(--subtle);
+    --color-chip: var(--chip);
+    --color-chip-hover: var(--chip-hover);
+    --color-line: var(--line);
+    --color-line-strong: var(--line-strong);
+    --color-ink: var(--ink);
+    --color-ink-2: var(--ink-2);
+    --color-ink-3: var(--ink-3);
+    --color-muted: var(--muted);
+    --color-faint: var(--faint);
+}
+
+:root {
+    --canvas: #ffffff;
+    --surface: #ffffff;
+    --subtle: #fafaf9;
+    --chip: #f5f5f4;
+    --chip-hover: #e7e5e4;
+    --line: #e7e5e4;
+    --line-strong: #d6d3d1;
+    --ink: #0c0a09;
+    --ink-2: #292524;
+    --ink-3: #57534e;
+    --muted: #78716c;
+    --faint: #a8a29e;
+}
+
+.dark {
+    --canvas: #0c0a09;
+    --surface: #161312;
+    --subtle: #1f1b19;
+    --chip: #292524;
+    --chip-hover: #36302d;
+    --line: #2a2522;
+    --line-strong: #44403c;
+    --ink: #fafaf9;
+    --ink-2: #e7e5e4;
+    --ink-3: #c9c4c0;
+    --muted: #a8a29e;
+    --faint: #78716c;
 }
 
 @theme {
@@ -32,13 +77,14 @@
         color-scheme: light;
     }
 
+    html.dark {
+        color-scheme: dark;
+    }
+
     body {
-        color: var(--color-stone-950);
-        background-color: #fff;
-        background-image: radial-gradient(
-            var(--color-stone-200) 1px,
-            transparent 1px
-        );
+        color: var(--ink);
+        background-color: var(--canvas);
+        background-image: radial-gradient(var(--line) 1px, transparent 1px);
         background-size: 20px 20px;
         -webkit-font-smoothing: antialiased;
     }
@@ -55,6 +101,6 @@
     }
 
     ::selection {
-        background: var(--color-rose-100);
+        background: color-mix(in srgb, var(--color-rose-500) 25%, transparent);
     }
 }

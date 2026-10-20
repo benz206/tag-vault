@@ -4,8 +4,8 @@ const base =
 const variants = {
     primary:
         "bg-linear-to-r from-pink-600 to-rose-600 text-white hover:brightness-110",
-    dark: "bg-stone-950 text-white hover:bg-stone-800",
-    secondary: "bg-stone-100 text-stone-950 hover:bg-stone-200",
+    dark: "bg-ink text-canvas hover:opacity-85",
+    secondary: "bg-chip text-ink hover:bg-chip-hover",
 };
 
 const sizes = {

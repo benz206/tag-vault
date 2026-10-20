@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { buttonClass } from "@/components/buttons";
+import ThemeToggle from "@/components/ThemeToggle";
 
 function DiscordLogo() {
     return (
@@ -30,8 +31,8 @@ function NavLink({ href, children }: { href: string; children: string }) {
         <Link
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`px-3 py-1.5 text-[15px] rounded-md transition-colors hover:text-stone-950 ${
-                active ? "text-stone-950" : "text-stone-600"
+            className={`px-3 py-1.5 text-[15px] rounded-md transition-colors hover:text-ink ${
+                active ? "text-ink" : "text-ink-3"
             }`}
         >
             {children}
@@ -59,7 +60,7 @@ export default function NavBar() {
         data?.user?.image || "https://cdn.discordapp.com/embed/avatars/0.png";
 
     return (
-        <nav className="sticky top-0 z-20 border-b border-stone-200 bg-white/90 backdrop-blur">
+        <nav className="sticky top-0 z-20 border-b border-line bg-canvas/90 backdrop-blur">
             <div className="flex items-center h-16 max-w-6xl gap-1 px-4 mx-auto sm:px-6">
                 <Link
                     href="/"
@@ -72,7 +73,8 @@ export default function NavBar() {
                 </Link>
                 <NavLink href="/search">Search</NavLink>
                 {data && <NavLink href="/dashboard">Dashboard</NavLink>}
-                <div className="ml-auto">
+                <div className="flex items-center gap-3 ml-auto">
+                    <ThemeToggle />
                     {data ? (
                         <div ref={navRef} className="relative">
                             <button
@@ -95,16 +97,16 @@ export default function NavBar() {
                             {profileOpen && (
                                 <div
                                     role="menu"
-                                    className="absolute right-0 z-10 w-56 p-1 mt-2 bg-white border rounded-xl shadow-lg shadow-stone-950/5 top-full border-stone-200 motion-safe:animate-drop"
+                                    className="absolute right-0 z-10 w-56 p-1 mt-2 bg-surface border rounded-xl shadow-lg shadow-stone-950/5 top-full border-line motion-safe:animate-drop"
                                 >
-                                    <p className="px-3 py-2 text-sm truncate text-stone-500">
+                                    <p className="px-3 py-2 text-sm truncate text-muted">
                                         {data.user?.name}
                                     </p>
-                                    <div className="h-px my-1 bg-stone-200" />
+                                    <div className="h-px my-1 bg-line" />
                                     <Link
                                         href="/dashboard"
                                         role="menuitem"
-                                        className="block px-3 py-2 text-sm rounded-md hover:bg-stone-100"
+                                        className="block px-3 py-2 text-sm rounded-md hover:bg-chip"
                                         onClick={() => setProfileOpen(false)}
                                     >
                                         Dashboard
@@ -112,7 +114,7 @@ export default function NavBar() {
                                     <button
                                         type="button"
                                         role="menuitem"
-                                        className="block w-full px-3 py-2 text-sm text-left rounded-md hover:bg-stone-100"
+                                        className="block w-full px-3 py-2 text-sm text-left rounded-md hover:bg-chip"
                                         onClick={() =>
                                             signOut({ callbackUrl: "/" })
                                         }

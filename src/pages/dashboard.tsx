@@ -29,7 +29,7 @@ export default function Dashboard() {
                 <h1 className="text-4xl tracking-[-0.03em] sm:text-5xl">
                     Dashboard
                 </h1>
-                <p className="mt-3 text-xl text-stone-500">
+                <p className="mt-3 text-xl text-muted">
                     Tags you own, including private and NSFW ones.
                 </p>
                 <div className="mt-8">
@@ -62,14 +62,14 @@ export default function Dashboard() {
                     <h2 className="mb-6 text-[28px] leading-8 tracking-tight">
                         Your tags.{" "}
                         {ownerTagsData && (
-                            <span className="text-stone-400">
+                            <span className="text-faint">
                                 {ownerTagsData.tags.length.toLocaleString()} in
                                 total.
                             </span>
                         )}
                     </h2>
                     {ownerTagsData?.tags.length === 0 ? (
-                        <div className="px-4 py-12 text-sm text-center bg-white border border-dashed rounded-xl border-stone-300 text-stone-500">
+                        <div className="px-4 py-12 text-sm text-center bg-surface border border-dashed rounded-xl border-line-strong text-muted">
                             You don&apos;t own any tags yet. Tags you create
                             with Carl-bot will show up here.
                         </div>

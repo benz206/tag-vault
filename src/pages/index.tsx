@@ -37,7 +37,7 @@ export default function Home() {
                         <h1 className="text-5xl leading-[1.05] tracking-[-0.03em] text-balance sm:text-[64px]">
                             TagScript tags, ready to copy.
                         </h1>
-                        <p className="max-w-lg mt-5 text-xl leading-snug text-stone-500 text-pretty">
+                        <p className="max-w-lg mt-5 text-xl leading-snug text-muted text-pretty">
                             Browse thousands of Carl-bot tags shared across
                             Discord servers, then use them in your own.
                         </p>
@@ -92,21 +92,21 @@ export default function Home() {
                     </div>
                     <Link
                         href={`/tags/${heroTag.id}`}
-                        className="relative block min-w-0 overflow-hidden transition bg-white border shadow-sm rounded-xl border-stone-200 hover:shadow-md"
+                        className="relative block min-w-0 overflow-hidden transition bg-surface border shadow-sm rounded-xl border-line hover:shadow-md"
                     >
                         <span
                             className={`absolute inset-x-0 top-0 h-[3px] bg-${heroTag.color}`}
                             aria-hidden="true"
                         />
-                        <div className="flex items-center px-5 border-b h-12 border-stone-200">
+                        <div className="flex items-center px-5 border-b h-12 border-line">
                             <span className="font-mono text-sm">
                                 {heroTag.name}
                             </span>
-                            <span className="ml-auto text-sm text-stone-500">
+                            <span className="ml-auto text-sm text-muted">
                                 Open tag
                             </span>
                         </div>
-                        <pre className="px-5 py-4 font-mono text-[13px] leading-6 break-words whitespace-pre-wrap bg-stone-50 text-stone-800">
+                        <pre className="px-5 py-4 font-mono text-[13px] leading-6 break-words whitespace-pre-wrap bg-subtle text-ink-2">
                             <TagScriptCode source={heroTag.snippet} />
                         </pre>
                     </Link>
@@ -114,7 +114,7 @@ export default function Home() {
                 <section className="pt-10 pb-20">
                     <h2 className="mb-6 text-[28px] leading-8 tracking-tight">
                         Featured tags.{" "}
-                        <span className="text-stone-400">
+                        <span className="text-faint">
                             A few good places to start.
                         </span>
                     </h2>
